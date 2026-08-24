@@ -27,6 +27,24 @@ export const dictionary: DictionaryTerm[] = [
     source: cba('2024 CBA §2.PP, §10.D'),
   },
   {
+    id: 'lineholder',
+    term: 'Lineholder',
+    category: 'Scheduling',
+    definition:
+      'A Flight Attendant holding a PBS-awarded Line of Time — a month of concrete sequences (70–90 credit hours standard). Every Flight Attendant bids in PBS as either a Lineholder or a Reserve; the two are the only line types.',
+    businessPurpose:
+      'Lineholders are the committed workforce covering the published month; Reserves provide the flexible buffer around them.',
+    whyItMatters:
+      'Which type you hold determines your whole month: trips vs availability windows, TTS/UBL/ETB vs ROTA/ROTD, guarantee math vs RAP rules.',
+    whereUsed: ['PBS awards', 'TTS/UBL/ETB', 'Payroll guarantees', 'Credit Window'],
+    example:
+      'An FA awarded an 84-hour line with 13 days off is a Lineholder: she flies exactly those trips and reshapes them only via TTS/ETB.',
+    related: ['pbs', 'reserve-line', 'line-of-time', 'credit-window', 'tts'],
+    developerRelevance:
+      'Top-level discriminator on schedule records (lineType: LINE | RESERVE); drives which engines and rules apply.',
+    source: cba('2024 CBA §2.EE, §12.A.1'),
+  },
+  {
     id: 'tts',
     term: 'Trip Trade System',
     shortName: 'TTS',
@@ -412,7 +430,7 @@ export const dictionary: DictionaryTerm[] = [
     term: 'Red Flagging Open Time',
     category: 'Scheduling',
     definition:
-      'Sequences flagged by Crew Schedule that pay a 150% premium rate but credit at 100% when picked up from open time.',
+      'Sequences flagged by Crew Schedule that pay a 150% premium rate but credit at 100% when picked up from open time. Bases offer red-flag flying via a Crew Portal banner; once flagged, the flag (and premium) cannot be removed until after 0400 HBT one day prior to departure. Premium rules differ for pickups vs trades (overlap rules) and for Reserves (ROTA/ROTD).',
     businessPurpose:
       'Incentivizes pickup of hard-to-cover flying while keeping credit-based limits intact.',
     whyItMatters:

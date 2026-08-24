@@ -6,15 +6,26 @@ import { useKnowledgeStore } from '../stores/knowledge'
 import { useProgressStore } from '../stores/progress'
 import MarkdownView from '../components/MarkdownView.vue'
 import QuizCard from '../components/QuizCard.vue'
-import DeveloperModeTabs from '../components/DeveloperModeTabs.vue'
 import SourceTag from '../components/SourceTag.vue'
-import type { DictionaryTerm } from '../data/types'
+import type { DictionaryTerm, ModuleSection } from '../data/types'
 
 const route = useRoute()
 const knowledge = useKnowledgeStore()
 const progress = useProgressStore()
 
+const friendlyTitles: Record<string, string> = {
+  overview: 'What is this?',
+  why: 'Why it exists',
+  process: 'How it works',
+  system: 'Systems involved',
+  data: 'Information behind it',
+  examples: 'Real examples',
+}
+
 const mod = computed(() => moduleById(String(route.params.id)))
+const sections = computed<ModuleSection[]>(() =>
+  (mod.value?.sections ?? []).filter((s) => s.key !== 'developer'),
+)
 const nextModule = computed(() => {
   if (!mod.value) return undefined
   return modules.find((m) => m.number === mod.value!.number + 1)
@@ -46,21 +57,12 @@ function relatedFor(id: string): DictionaryTerm[] {
       {{ mod.tagline }}
     </v-alert>
 
-    <!-- Developer Mode panel -->
-    <div v-if="mod.developerView" class="mb-8">
-      <div class="text-h6 font-weight-bold mb-3 d-flex align-center">
-        <v-icon icon="mdi-code-tags" class="mr-2" color="primary" />
-        Developer Mode
-      </div>
-      <DeveloperModeTabs :view="mod.developerView" />
-    </div>
-
     <!-- Sections -->
-    <template v-for="(section, idx) in mod.sections" :key="section.key">
+    <template v-for="(section, idx) in sections" :key="section.key">
       <v-card class="mb-5" elevation="1">
         <v-toolbar density="comfortable" color="transparent">
           <v-toolbar-title class="text-subtitle-1 font-weight-bold">
-            <span class="text-medium-emphasis mr-2">{{ idx + 1 }}.</span>{{ section.title }}
+            <span class="text-medium-emphasis mr-2">{{ idx + 1 }}.</span>{{ friendlyTitles[section.key] ?? section.title }}
           </v-toolbar-title>
           <template #append>
             <v-btn

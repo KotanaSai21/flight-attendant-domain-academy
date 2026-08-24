@@ -112,11 +112,6 @@ if (typeof route.query.term === 'string') jumpToTerm(route.query.term)
               <span class="text-body-2"><strong>Example:</strong> {{ t.example }}</span>
             </v-alert>
 
-            <div class="text-caption font-weight-bold text-primary">DEVELOPER RELEVANCE</div>
-            <p class="text-body-2 mb-3">
-              <code>{{ t.developerRelevance }}</code>
-            </p>
-
             <div class="d-flex flex-wrap align-center ga-1">
               <span class="text-caption font-weight-bold text-primary mr-1">RELATED:</span>
               <v-chip

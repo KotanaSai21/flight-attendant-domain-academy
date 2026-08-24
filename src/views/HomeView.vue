@@ -42,13 +42,6 @@ const features = [
     to: '/map',
     color: '#5A2D82',
   },
-  {
-    icon: 'mdi-code-braces',
-    title: 'Developer Mode',
-    text: 'Every core topic exposes Business / Systems / Data / Technical views.',
-    to: '/learn/pbs',
-    color: '#0B6A0B',
-  },
 ]
 
 const audience = [
@@ -63,14 +56,18 @@ const audience = [
 <template>
   <v-container fluid class="pa-8">
     <v-sheet
-      class="hero rounded-xl pa-10 mb-8"
-      elevation="3"
-      style="background: linear-gradient(135deg, #003057 0%, #0061ab 60%, #0078d2 100%)"
+      class="hero rounded-xl pa-10 mb-10"
+      elevation="4"
+      style="background: linear-gradient(135deg, #003057 0%, #0061ab 55%, #0078d2 100%)"
     >
       <div class="text-white">
-        <div class="text-overline mb-2">Flight Attendant Domain Academy</div>
-        <h1 class="text-h3 font-weight-bold mb-3">Zero airline experience → domain-ready in days.</h1>
-        <p class="text-body-1 mb-4" style="max-width: 720px; opacity: 0.92">
+        <v-chip color="white" variant="outlined" size="small" class="mb-4" prepend-icon="mdi-airplane">
+          FLIGHT ATTENDANT DOMAIN ACADEMY
+        </v-chip>
+        <h1 class="text-h3 font-weight-bold mb-3" style="letter-spacing: -0.5px">
+          Zero airline experience → domain-ready in days.
+        </h1>
+        <p class="text-body-1 mb-6" style="max-width: 720px; opacity: 0.92">
           An interactive platform for developers, analysts, QA and product owners to master the
           American Airlines Flight Attendant domain — PBS, TTS/UBL, ETB, Reserve (RAP/ROTA/ROTD),
           Seniority, Payroll and more — grounded in the 2024 CBA and Implementation LOAs.
@@ -79,19 +76,26 @@ const audience = [
           <v-btn size="large" color="white" variant="flat" to="/learn" prepend-icon="mdi-play-circle">
             Start learning
           </v-btn>
-          <v-btn size="large" color="white" variant="outlined" to="/dictionary" prepend-icon="mdi-magnify">
+          <v-btn
+            size="large"
+            color="white"
+            variant="outlined"
+            to="/dictionary"
+            prepend-icon="mdi-magnify"
+          >
             Browse the dictionary
           </v-btn>
         </div>
       </div>
     </v-sheet>
 
-    <h2 class="text-h5 font-weight-bold mb-4">Explore the platform</h2>
+    <h2 class="text-h5 font-weight-bold mb-5">Explore the platform</h2>
     <v-row>
       <v-col v-for="f in features" :key="f.title" cols="12" sm="6" md="4">
-        <v-card :to="f.to" hover height="100%">
-          <v-card-text class="pa-6">
-            <v-icon :icon="f.icon" :color="f.color" size="36" class="mb-3" />
+        <v-card :to="f.to" hover height="100%" class="feature-card d-flex flex-column overflow-hidden">
+          <div :style="{ background: f.color }" class="accent-bar" />
+          <v-card-text class="pa-6 pt-5 flex-grow-1">
+            <v-icon :icon="f.icon" :color="f.color" size="34" class="mb-3" />
             <div class="text-h6 font-weight-bold mb-1">{{ f.title }}</div>
             <p class="text-body-2 text-medium-emphasis mb-0">{{ f.text }}</p>
           </v-card-text>
@@ -103,14 +107,36 @@ const audience = [
       <v-col cols="12" md="7">
         <v-card variant="tonal" color="primary">
           <v-card-text class="pa-6">
-            <div class="text-h6 font-weight-bold mb-2">Success criteria</div>
-            <ul class="pl-5 ma-0">
-              <li>Understand Flight Attendant operations end-to-end</li>
-              <li>Explain PBS, TTS, ETB, Reserve and Seniority confidently</li>
-              <li>Navigate core workflows and their system touch-points</li>
-              <li>Connect business concepts to system behavior</li>
-              <li><strong>Become domain-ready within 3–5 days</strong></li>
-            </ul>
+            <div class="text-h6 font-weight-bold mb-3 d-flex align-center">
+              <v-icon icon="mdi-flag-checkered" color="primary" class="mr-2" />
+              Success criteria
+            </div>
+            <v-list density="compact" class="py-0 bg-transparent">
+              <v-list-item
+                v-for="item in [
+                  'Understand Flight Attendant operations end-to-end',
+                  'Explain PBS, TTS, ETB, Reserve and Seniority confidently',
+                  'Navigate core workflows and their system touch-points',
+                  'Connect business concepts to system behavior',
+                ]"
+                :key="item"
+                class="px-0 min-height-0"
+              >
+                <template #prepend>
+                  <v-icon icon="mdi-check-circle" size="18" color="success" class="mr-2" />
+                </template>
+                <span class="text-body-2">{{ item }}</span>
+              </v-list-item>
+            </v-list>
+            <v-alert
+              density="comfortable"
+              type="info"
+              variant="tonal"
+              icon="mdi-timer-sand"
+              class="mt-4 mb-0"
+            >
+              <strong>Become domain-ready within 3–5 days</strong> using the platform alone.
+            </v-alert>
           </v-card-text>
         </v-card>
       </v-col>
@@ -132,3 +158,16 @@ const audience = [
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.accent-bar {
+  height: 4px;
+  width: 100%;
+}
+.min-height-0 {
+  min-height: 0 !important;
+}
+.feature-card :deep(.v-card-text) {
+  padding-top: 20px;
+}
+</style>

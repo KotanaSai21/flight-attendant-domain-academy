@@ -24,55 +24,74 @@ function search() {
 
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" app permanent>
-      <div class="pa-4 d-flex align-center">
-        <v-icon icon="mdi-airplane" color="primary" size="28" class="mr-2" />
+    <v-navigation-drawer v-model="drawer" app permanent :width="272">
+      <div class="brand pa-5 d-flex align-center">
+        <v-avatar color="primary" size="40" class="mr-3">
+          <v-icon icon="mdi-airplane" color="white" />
+        </v-avatar>
         <div>
-          <div class="text-subtitle-1 font-weight-bold text-primary leading-tight">Domain Academy</div>
+          <div class="text-subtitle-1 font-weight-bold text-primary">Domain Academy</div>
           <div class="text-caption text-medium-emphasis">AA Flight Attendant</div>
         </div>
       </div>
       <v-divider />
-      <v-list density="comfortable" nav>
+      <v-list density="comfortable" nav class="px-2">
         <v-list-item
           v-for="item in nav"
           :key="item.to"
           :to="item.to"
           :prepend-icon="item.icon"
           :title="item.title"
+          rounded="lg"
           :active="route.path === item.to"
+          color="primary"
+          class="mb-1"
         />
       </v-list>
       <v-divider />
-      <v-list-subheader class="text-caption">Learning Modules</v-list-subheader>
-      <v-list density="compact" nav>
+      <div class="text-caption text-medium-emphasis px-5 pt-3 pb-1 font-weight-medium">
+        LEARNING MODULES
+      </div>
+      <v-list density="compact" nav class="px-2 pb-4">
         <v-list-item
           v-for="m in modules"
           :key="m.id"
           :to="`/learn/${m.id}`"
           :title="`${m.number}. ${m.title}`"
-          active-color="primary"
+          rounded="lg"
+          color="primary"
         >
           <template #prepend>
             <v-icon :icon="m.icon" size="18" :color="m.color" />
           </template>
         </v-list-item>
       </v-list>
+
+      <template #append>
+        <div class="pa-4 text-caption text-medium-emphasis border-thin">
+          Sources: AA/APFA 2024 CBA · Implementation LOA · APFA
+        </div>
+      </template>
     </v-navigation-drawer>
 
-    <v-app-bar flat border>
+    <v-app-bar flat height="64" color="white" border>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-toolbar-title class="font-weight-bold text-primary d-none d-sm-block">
+        Flight Attendant Domain Academy
+      </v-toolbar-title>
       <v-spacer />
-      <div style="max-width: 480px" class="w-100 mr-4">
+      <div style="max-width: 420px" class="w-100 mr-4">
         <v-text-field
           v-model="query"
-          placeholder="Search terms, modules, scenarios…  (e.g. Reserve, PBS)"
+          placeholder="Search terms, modules, scenarios…"
           prepend-inner-icon="mdi-magnify"
           density="compact"
           variant="solo-filled"
+          flat
           hide-details
           single-line
           clearable
+          bg-color="grey-lighten-3"
           @keyup.enter="search()"
           @click:clear="query = ''"
         />
@@ -81,13 +100,19 @@ function search() {
 
     <v-main>
       <router-view />
-      <v-footer class="text-caption text-medium-emphasis mt-8" border>
-        <span>
+      <v-footer height="auto" class="text-caption text-medium-emphasis mt-10 py-4" color="white" border>
+        <v-container fluid class="pa-0">
           Flight Attendant Domain Academy — internal training platform. Content grounded in the
           AA/APFA 2024 CBA & LOAs; external items tagged “Source: APFA Website”. Not a legal
           reference — always consult the contract.
-        </span>
+        </v-container>
       </v-footer>
     </v-main>
   </v-app>
 </template>
+
+<style scoped>
+.brand {
+  background: linear-gradient(135deg, #eaf3fb 0%, #f5f7fa 100%);
+}
+</style>

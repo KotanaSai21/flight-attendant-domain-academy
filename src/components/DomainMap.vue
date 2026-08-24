@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { VueFlow, MarkerType, type Edge, type Node, type NodeMouseEvent } from '@vue-flow/core'
+import { dictionary } from '../data/dictionary'
 import type { DictionaryTerm } from '../data/types'
 
 interface MapNode {
@@ -120,12 +121,8 @@ function onNodeClick({ node }: NodeMouseEvent) {
     emit('select', null)
     return
   }
-  const el = document.getElementById(`term-${termId}`)
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    el.classList.add('term-flash')
-    setTimeout(() => el.classList.remove('term-flash'), 1600)
-  }
+  const term = dictionary.find((t) => t.id === termId) ?? null
+  emit('select', term)
 }
 </script>
 

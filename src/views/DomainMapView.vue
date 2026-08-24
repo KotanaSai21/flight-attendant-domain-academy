@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 import DomainMap from '../components/DomainMap.vue'
 import SourceTag from '../components/SourceTag.vue'
 import type { DictionaryTerm } from '../data/types'
 
 const selected = ref<DictionaryTerm | null>(null)
+const panel = ref<HTMLElement | null>(null)
+
+async function onSelect(term: DictionaryTerm | null) {
+  selected.value = term
+  if (term) {
+    await nextTick()
+    panel.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }
+}
 </script>
 
 <template>
@@ -16,11 +25,11 @@ const selected = ref<DictionaryTerm | null>(null)
 
     <v-row>
       <v-col cols="12">
-        <DomainMap @select="selected = $event" />
+        <DomainMap @select="onSelect" />
       </v-col>
     </v-row>
 
-    <v-card v-if="selected" class="mt-6" elevation="3">
+    <v-card v-if="selected" ref="panel" class="mt-6" elevation="3">
       <v-toolbar density="compact" color="grey-lighten-4">
         <v-toolbar-title class="font-weight-bold">{{ selected.term }}</v-toolbar-title>
         <template #append>
@@ -32,7 +41,7 @@ const selected = ref<DictionaryTerm | null>(null)
       </v-toolbar>
       <v-card-text>
         <p class="mb-2">{{ selected.definition }}</p>
-        <p class="text-body-2 text-medium-emphasis mb-0"><strong>Systems:</strong> {{ selected.developerRelevance }}</p>
+        <p class="text-body-2 text-medium-emphasis mb-0"><strong>In practice:</strong> {{ selected.developerRelevance }}</p>
       </v-card-text>
     </v-card>
 

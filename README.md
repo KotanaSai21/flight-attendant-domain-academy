@@ -27,8 +27,8 @@ Content provenance is enforced in-app via source chips: **AA/APFA Contract**, **
 | 7 | Reserve | 15 | Business Scenarios Capstone |
 | 8 | TTS |  |  |
 
-Each module: Beginner Overview · Why It Exists · Business Process · System Impact · Data Impact ·
-Developer Perspective · Real Examples · Interactive Quiz (+ Developer Mode tabs on core topics).
+Each module: What is this? · Why It Exists · How It Works · Systems Involved · Information Behind It ·
+Real Examples · Interactive Quiz — pure domain, no developer jargon.
 
 ## Features
 
