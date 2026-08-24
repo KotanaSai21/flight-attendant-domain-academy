@@ -1,0 +1,408 @@
+July 18, 2024
+Page 1 of 8
+LETTER OF AGREEMENT
+Between
+AMERICAN AIRLINES, INC.
+And the
+FLIGHT ATTENDANTS
+In the service of
+AMERICAN AIRLINES, INC.,
+As represented by the
+ASSOCIATION OF PROFESSIONAL FLIGHT ATTENDANTS (APFA)
+Implementation Timeline Letter of Agreement
+This Letter of Agreement (“Letter” or “LOA”) is made and entered into in accordance with
+the provisions of the Railway Labor Act, as amended, by and between American Airlines,
+Inc. (“American” or the “Company”) and the Flight Attendants in the service of American
+Airlines, Inc., as represented by the Association of Professional Flight Attendants (the
+“APFA” or “Union”), together referred to as the “Parties.”
+The Parties have reached a Tentative Agreement on items in the collective bargaining
+agreement (“CBA”) pursuant to Section 6 of the Railway Labor Act. If ratified, the
+Tentative Agreement will become the 2024 CBA. The Parties desire to specify when
+certain provisions of the 2024 CBA will be implemented and to identify a timeline and
+process for the implementation of the 2024 CBA.
+The Parties recognize the 2024 CBA includes numerous significant changes which require
+programming modifications to American’s current systems, particularly in the areas of
+scheduling, work rules, and compensation. The Parties mutually desire the timely
+implementation of the 2024 CBA with targeted completion dates as set forth herein and
+agree to work collaboratively and in good faith to achieve that result.
+The Parties thus agree as follows:
+A. Targeted Timelines
+The Parties have established target dates for implementation of the provisions of the
+agreement as listed below. All provisions of the 2024 Agreement shall be
+implemented the 1st day of the bid month following Date of Ratification (hereinafter
+“DOS”) except as provided in Appendix A to this side letter, as otherwise set forth
+herein, or as otherwise mutually agreed upon between the Parties.
+B. Contract Implementation Committee
+To help ensure a timely and successful complete implementation, the Parties will
+create a Contract Implementation Committee (CIC) upon ratification of the 2024
+CBA. The CIC will work closely together to assist in the prioritization of
+implementation items, consistent with this Letter of Agreement, and ensure
+
+-- 1 of 8 --
+
+July 18, 2024
+Page 2 of 8
+programming is completed in an expeditious manner in accordance with the Parties’
+implementation target dates. The CIC shall consist of three (3) Company members
+and three (3) Union members. At least one member of each team shall have
+participated in the negotiations for the 2024 CBA. The Union members of the CIC
+will be considered full-time CIC related work for eighteen (18) months beginning
+DOS of the 2024 CBA and shall be available for CIC related work and/or to meet
+with the Company during normal business hours. The Company will pay flight loss
+pay for the duration of the eighteen (18) months. The CIC will meet within fifteen
+(15) days of DOS and thereafter will determine its meeting schedule and meet as
+necessary during implementation.
+The Company will commit resources to the extent necessary to ensure the 2024 CBA
+is timely implemented and the Union commits to providing support through the CIC.
+C. Implementation Status Review
+At six (6) and twelve (12) months after DOS, the Parties will convene an
+implementation status review meeting to review and discuss the implementation
+process relative to the targeted implementation dates. The implementation status
+review meetings will include a cross functional team of Labor, Operations, and IT
+from the Company and APFA participants familiar and involved with the
+implementation process. The Chief Operating Officer shall attend as part of the
+Company team and the APFA National President shall attend as part of the APFA
+team. These meetings do not replace and are not a substitute for regular and
+consistent CIC meetings.
+If implementation is objectively behind the targeted implementation schedule at the
+implementation status review meetings, the Parties will discuss any additional
+resources or other measures that may be necessary to accelerate implementation.
+Nothing in this paragraph shall limit or prevent either Party from filing a grievance
+pursuant to the CBA related to the interpretation or application of this Letter of
+Agreement.
+D. Scheduling and Reserve Provisions
+The targeted timelines for implementation of Scheduling, Reserve and related
+sections will be as established in Appendix A. 	Items which require programing will
+include specified Target Implementation Dates.
+The Parties have agreed to certain provisions identified below which require
+programing of TTS, UBL and other systems. These provisions, either separately or
+when combined, involve significant complexity. The CIC, within ninety (90) days of
+DOS, will evaluate programming requirements and establish realistic target timelines
+for such provisions. The features of these provisions, among other complexities, may
+
+-- 2 of 8 --
+
+July 18, 2024
+Page 3 of 8
+increase the run time of TTS beyond the times specified in the CBA. In that event, or
+in the event other implementation challenges arise, the Parties shall meet to resolve
+the issues by making necessary changes to run times and/or other necessary
+modifications to allow for implementation of these provisions and may need to adjust
+the target timeline(s) established by the CIC. 	In the event implementation is
+infeasible, the Parties shall meet to discuss solutions. The provisions identified as
+requiring significant complexity are:
+• 	A provision allowing a Flight Attendant to add multiple sequences (2) in a
+transaction conditional on dropping a sequence in TTS.
+• 	An exception to the TTS daily limit for transactions which improves a more
+negative day.
+• 	TTS/UBL will provide an electronic means for Reserves to conduct
+TTS/UBL transactions on days off
+• 	Out of Base UBL for Lineholders and Reserves
+• 	Less than Minimum Call-Out UBL for Lineholders
+• 	UBL Trip Improvement (originating same day)
+E. 	General
+Until the implementation of the provisions identified above, the applicable provisions
+of the prior collective bargaining agreement will remain in effect. Those provisions
+shall only remain in effect until the implementation of the respective provisions, at
+which point the contract provisions in the 2024 CBA will apply.
+IN WITNESS WHEREOF, the parties have signed this Letter of Agreement.
+FOR AMERICAN AIRLINES 	FOR THE ASSOCIATION OF
+PROFESSIONAL FLIGHT ATTENDANTS
+(APFA)
+__________________________________ 	______________________08/06/2024
+Cindi Simone 	Julie Hedrick
+Managing Director, Labor Relations 	APFA National President
+
+-- 3 of 8 --
+
+July 18, 2024
+Page 4 of 8
+Attachment A: Implementation Timeline Letter of Agreement
+Non-exclusive list of items in effect upon Date of Signing (DOS)
+DOS is 1st day of the bid month following Date of Ratification
+Contract Reference 	Description 	Effective Date
+3.A. 	Pay Rates 	Date of Signing
+3.C. 	A321/737 Lead Premium and Galley Pay
+increase for International
+Date of Signing
+3.K. 	If either the departure time or the arrival of the
+flight (based on local station time) touches or
+was scheduled to touch the actual holiday,
+Holiday/Incentive Day pay would apply for the
+entire flight segment flown
+Date of Signing
+3.P. 	Pay Discrepancies 	Date of Signing
+3.R. 	Profit Sharing (Pro-rated as of Date of Signing) 	Date of Signing
+4.A.1. 	Per Diem 	Date of Signing
+6.A.2.b. 	10-day notification changing to 15-days for site
+visits
+Date of Signing
+6.A.4. 	Improved travel for Hotel Committee to assist
+with union participation for site visits
+Date of Signing
+6.B.3.d. & e. 	Added amenities to preference list for selecting
+hotels
+Date of Signing
+6.B.5. 	Compensation for hotel delays 	Date of Signing
+6.B.6. 	Improved process for APFA to address
+assignments or transportation issues
+Date of Signing
+7.A. 	Uniform List - Updated with new items 	Date of Signing
+7.H. 	Maternity Uniforms - Provide vs loan 	Date of Signing
+8.F.2. 	Eliminate 80% LH/20% RSV for vacation
+buyback
+Date of Signing
+10.C.2.j. 	Add projected standby shifts including start time,
+length, location to the bid packet
+Date of Signing
+10.C.7. 	If cancelled sequence within the bidding period in
+PBS is awarded to FA, it will be treated as a PBS
+misaward
+Date of Signing
+10.D.11. d. 	Company must offer VC buyback on flex months 	Date of Signing
+10.J.1. b. 	Pay Protection for Lineholder who loses 3 or
+more full sequences not already pay protected
+Date of Signing
+10.T. 	Crew Scheduling Error/Misawards 	Date of Signing
+10.U.1.a & c. 	Satellite Bases - open/close a satellite base 	Date of Signing
+10.V.1. 	FA misuse of scheduling systems language 	Date of Signing
+11.D.2. b. 	If aircraft returns to gate after takeoff for “any”
+reason and does no other flying, FA will receive
+pay and credit for a completed trip
+Date of Signing
+12.A.4. 	RSV will not receive RSV rotation credit if on
+Voluntary Leave of Absence (VLOA)
+Date of Signing
+12.D.1. 	Moving GD/FD (if not mutually agreed to move,
+will be moved to end of current block of days off)
+Date of Signing
+
+-- 4 of 8 --
+
+July 18, 2024
+Page 5 of 8
+Non-exclusive list of items in effect upon Date of Signing (DOS)
+DOS is 1st day of the bid month following Date of Ratification
+Contract Reference 	Description 	Effective Date
+12.F.4 & 9. a. 	Ability to extend standby shifts to 6 or 8 hours 	Date of Signing
+12.G.1. 	RAP D 1400-0200 and once all departures are
+airborne and there are no known diversions or
+returning flights, RAP will be modified to end at
+that time.
+Date of Signing
+12.J.1. 	Redistribution of known open time by noon HBT 	Date of Signing
+12.K.3.c. 	Aggressive RSV awarded prior to Standby for
+LMCO
+Date of Signing
+12.M. 	RSV Sequence Cancellation/Removal
+procedures
+Date of Signing
+12.N. 	Company may elect not to flex RSV max on a
+flex month
+Date of Signing
+12.O. 	Priority of Trip Assignment (POTA) 	Date of Signing
+14.L.2.c 	Annual Purser training class change from a
+minimum of 80 to a minimum of 100 FAs
+Date of Signing
+14.L.5.b.iii.(a). 	Non-qualified Purser required to work Purser
+position will receive Purser Pay
+Date of Signing
+15.H. & I. 	Language Assessment/Proficiency/Education 	Date of Signing
+15.L. 	Resignation Proffer (reduced from 10 years to 7
+years)
+Date of Ratification
+16.G.12. 	Request to DH to different co-terminal from
+ROTA assignment must be made by 2230 HBT
+or time of award if ROTD assignment
+Date of Signing
+16.G.15. 	No trading 48 hour prior to report for new
+seasonal start up DH offline (add to bid sheet
+and need to communicate to FAs)
+Date of Signing
+16.G.17. 	FA option to split on if originating alternate DH is
+delayed or cancelled
+Date of Signing
+19.B. 	CRAF Improved Compensation 	Date of Signing
+19.C, E, F, G, & J. 	CRAF Streamlined Procedures 	Date of Signing
+22.A & D. 	Vacancy Transfer Procedures & Awards (new
+information to be included on posting and no
+longer have to be active on date of award and
+effective transfer date)
+Date of Signing
+22.H. 	Displacement Notification (FA to be sent
+electronic notification along with priority of return
+preference form)
+Date of Signing
+22.L. 	Mutual Transfer Procedures (probationary FA
+can be awarded one vacancy transfer or one
+mutual transfer while on probation)
+Date of Signing
+23.B.1. a. 	Voluntary Furlough (Occupational and Longevity
+Seniority continue to accrue)
+Date of Signing
+23.B.1. c. 	Leave in Lieu of Furlough unpaid (Occupational
+and Longevity Seniority continue to accrue)
+Date of Signing
+23.C.13. 	Expanded look back window when active less
+than 12 consecutive months when determining
+furlough pay
+Date of Signing
+23.D. 	Leave in Lieu of Crew Base Displacement 	Date of Signing
+
+-- 5 of 8 --
+
+July 18, 2024
+Page 6 of 8
+Non-exclusive list of items in effect upon Date of Signing (DOS)
+DOS is 1st day of the bid month following Date of Ratification
+Contract Reference 	Description 	Effective Date
+25.N. 	Unpaid LOA Chart (IOD Medical Leave) 	Date of Signing
+25.K.5. a. 	Other Employment While on Leave 	Date of Signing
+25.L.1. b. 	Individuals eligible for BR 	Date of Signing
+25.L.1. e. 	May use VC for additional BR days 	Date of Signing
+27.J. 	Class/VC Seniority Accrual on Unpaid
+IOD/Medical Leave of Absence
+Date of Signing
+29.E. 	Training Pay 	Date of Signing
+29.F.4. 	Hotel for Training for DFW commuters >50 miles
+away
+Date of Signing
+33.B.7. 	Drug & Alcohol Procedures on FA Tablet 	Date of Signing
+37.G.9. 	Inop Jumpseat qualifier for Commuting 	Date of Signing
+37.I. 	Commuter Policy 	Date of Signing
+37.O.4.b. 	Removal of letters after 1-year active 	Date of Signing
+38 	Crew Rest Procedures 	Date of Signing
+38.I. 	Significant Malfunction to Crew Bunk Procedures 	Date of Signing
+Contract Reference 	Description 	Targeted Implementation
+Date
+Letter of Agreement 	Ratification Bonus 	Ratification + 60 days
+3.D. 	Boarding Pay - 50% pay of scheduled boarding
+time based on actual equipment
+Date of Signing + 6 months
+6.B.9. 	Hotel Gainsharing Discussion 	Parties to discuss within 90
+days of ratification
+7.Q. 	Uniform payroll deductions 	Date of Signing + 2 months
+8.E 	Max increased from 6 to 7 Filler Days 	2025-26 VC fiscal year
+(May 2, 2025)
+8.B.1 	Value of VC Day:
+> 7 days = 4 hrs. pay & credit
+< 7 days = 3.5 hrs. pay & credit and .5 hrs. no
+credit
+2025-26 VC fiscal year
+(May 2, 2025)
+10.D.2. 	APFA National Contract and Scheduling Chairs
+view-only access to reports upon request in
+TTS/UBL/ETB/ROTA/ROTD
+Date of Signing + 24 months
+10.D.13.d. 	1) Speaker required pairings by language and 2)
+prefer position order per aircraft 3) generic
+double up 4) bidding the greatest numbers of off
+days
+Date of Signing + 24 months
+10.D.17. 	FA returning from LOA bidding requirements 	Date of Signing + 4 months
+10.F.2.c. 	UBL run report (add time trip opened, trips not
+awarded, and transferred sequences)
+Date of Signing + 12 months
+
+-- 6 of 8 --
+
+July 18, 2024
+Page 7 of 8
+Contract Reference 	Description 	Targeted Implementation
+Date
+10.G.2. j. 	ETB pickup outside of protected sequence
+footprint
+Date of Signing + 12 months
+10.G.4. e. 	RSV ETB HBR rest changed from 1800 to 1600 	Date of Signing + 12 months
+10.H.7. & 8. 	FA may bid specific Red Flag sequence in TTS 	Date of Signing + 6 months
+10.L.6. 	Reserve Last Trip of the Month pay protection 	Date of Signing + 12 months,
+except full sequence
+cancellations under the 10.L.1
+will be paid effective Date of
+Signing
+10.W. 	All Electronic Communication System (ECS)
+Implementation
+NOTE: Phase 1 & Phase 2 items will be based
+on programming requirements. The CIC will
+work closely together to assist in prioritization of
+the ECS items.
+Phase 1: Date of Signing + 12
+months
+Phase 2: Date of Signing + 24
+months
+11.D.6. 	1:2 Sit RIG 	Date of Signing + 6 months
+11.G. 	Standby RSV Duty Limitations now based on
+Dom Duty Chart 11. F.
+Date of Signing + 6 months
+11.M. 	Domestic On-Board Requirements 	Date of Signing +6 months
+11.O. 	Voluntary Waiver/Pay 	Date of Signing + 12 months
+12.A.3.b.. 	Reserve Rotation (applicable only to new
+FAs hired after implementation)
+Implemented within the
+duration of contract
+12.C.2.c. 	RSV trading days off with company using ballot 	Date of Signing + 12 months
+12.F.9.b. 	Standby pay and credit based on departure time
+at time of assignment of the standby sequence
+Date of Signing + 12 months
+12.G.2. 	A Reserve with a Flex Day following their RAP
+may only be assigned a sequence with a sign-in
+on or before 2359 HBT on the last day of
+Reserve
+Date of Signing + 12 months
+12.I.1. c. 	Specifics for standby bidding; attributes of
+bidding in ROTA (each standby shift will be given
+a specific identifier (similar to sequence
+numbers) with set start, end times, required days
+of RSV availability, crew base, and terminal)
+Date of Signing + 12 months
+12.K.1. c. 	Trips opening 0001-0500 and depart after 1100
+can be held out of UBL until 0700
+Date of Signing + 6 months
+12.K.1. g. 	Processing of RAPs 	Date of Signing + 12 months
+12.K.4. 	Above 40 hours on aggressive RSV do not count
+toward COT
+Date of Signing + 18 months
+12.L. 	ASG code will apply to awarded/assigned
+sequences in ROTA/D
+Date of Signing + 6 months
+12.P. 	Sequence verification and RSV assignment
+acknowledge
+Date of Signing + 12 months
+12.Q. 	Assignment/Report Info (# of RSVs by RAP, #
+speakers by RAP, RSV on standby details) (any
+reference to section paragraphs will need to be
+looked at)
+Date of Signing + 12 months
+14.D.1.,3. 	Voluntary waiver/pay 	Date of Signing + 12 months
+
+-- 7 of 8 --
+
+July 18, 2024
+Page 8 of 8
+Contract Reference 	Description 	Targeted Implementation
+Date
+14.F. 	International On-Board Requirements 	Date of Signing +6 months
+15.A 	Speaker Position on Aircraft Requirement
+Changes
+Date of Signing + 24 months
+16.H.3.4. 	Alternative DH Options (including the waiver of
+legalities)
+Date of Signing + 6 months
+16.L. 	If Deadheading FA is rescheduled to work, FA
+will be provided pay protections
+Date of Signing + 6 months
+26.F.3. 	401k Increases 	January 1, 2025
+26.G. 	Retirement SK bank/RHRA 	Date of Signing (FAs who
+retire on or after Feb 1, 2025.
+must provide the required 4
+months’ notice)
+30 	Grievance Procedure Process Changes 	January 1, 2025
+31 	System Board Process Changes 	January 1, 2025
+NOTE:
+The descriptions in the charts above may include additional contract references that are not
+specifically noted.
+Pay-related provisions will apply to sequences originating in the contract month of the effective
+date of the change.
+
+-- 8 of 8 --
+

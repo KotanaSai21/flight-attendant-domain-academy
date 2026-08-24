@@ -1,0 +1,50 @@
+/* Global styles for Flight Attendant Domain Academy */
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  color: #003057;
+  margin-top: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+}
+
+.prose code {
+  background: #eef2f7;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.prose pre {
+  background: #102a43;
+  color: #d9e2ec;
+  padding: 0.9rem 1.1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.85em;
+  line-height: 1.5;
+}
+
+.prose blockquote {
+  border-left: 4px solid #0061ab;
+  padding-left: 1rem;
+  color: #486581;
+  font-style: italic;
+}
+
+.mermaid-block {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+}
