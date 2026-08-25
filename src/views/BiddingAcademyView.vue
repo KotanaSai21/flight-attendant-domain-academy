@@ -7,6 +7,38 @@ const tab = ref('overview')
 
 const apfa = { kind: 'apfa' as const, label: 'APFA Website' }
 const cba = (reference: string) => ({ kind: 'contract' as const, label: 'AA/APFA Contract', reference })
+const deck = { kind: 'system' as const, label: 'Internal FA Lifecycle deck' }
+
+const bidMonthEvents = [
+  { day: '1', label: 'TBS bidding opens', time: '' },
+  { day: '3', label: 'RBEST ballots open', time: '1200 CT' },
+  { day: '6', label: 'LRD bidding opens', time: '1200 CT' },
+  { day: '7', label: 'TBS bidding closes', time: '' },
+  { day: '9', label: 'RBEST ballots close', time: '1200 CT' },
+  { day: '10', label: 'TBS awards / planned absences visible in TBS', time: '1200 CT' },
+  { day: '15', label: 'LRD bidding closes', time: '1200 CT' },
+  { day: '18', label: 'PBS bidding opens', time: '1200 CT' },
+  { day: '19', label: 'PBS bidding closes', time: '1200 CT' },
+  { day: '20', label: 'PBS results posted', time: '1200 CT' },
+  { day: '21', label: 'Award visible in FOS', time: '2359 CT' },
+  { day: '22', label: 'TTS opens', time: '1200 CT' },
+  { day: '27', label: 'Golden/Flex Day designation opens · RTDO ballot opens', time: '1200 CT' },
+  { day: '27+', label: 'CrewHub stops sending previous-month schedule', time: '1200 CT' },
+  { day: 'Next mo', label: 'TTS first run', time: '2300 HBT' },
+  { day: 'Next mo', label: 'ETB opens', time: '0400 HBT' },
+]
+
+const systemLegend = [
+  { sys: 'TBS', what: 'Training Bid System — bid for CQ/recurrent training events' },
+  { sys: 'RBEST', what: 'Vacation ballots (annual vacation bidding)' },
+  { sys: 'LRD', what: 'Monthly bidding tool used alongside PBS' },
+  { sys: 'PBS', what: 'Preferential Bidding System — assembles pairings into lines in seniority order' },
+  { sys: 'FOS', what: 'Flight Operating System — where the awarded schedule is published' },
+  { sys: 'TTS / ETB', what: 'Post-award changes: scheduled trade runs / real-time trade board' },
+  { sys: 'GDFD', what: 'Golden Day / Flex Day designation window' },
+  { sys: 'RTDO', what: 'Reserve-related monthly ballot (opens with the GDFD window)' },
+  { sys: 'CrewHub', what: 'App distributing the monthly schedule to FAs' },
+]
 
 const overviewFlow = `flowchart TD
   FA["Flight Attendant"] --> LH["LINEHOLDER<br/>awarded a line of trips<br/>for the whole month"]
@@ -90,6 +122,7 @@ const reserveCalendarRows = [
       <v-tab value="redflag" prepend-icon="mdi-flag">Red Flag</v-tab>
       <v-tab value="reserve" prepend-icon="mdi-phone-incoming">Reserve (ROTA/ROTD)</v-tab>
       <v-tab value="calendar" prepend-icon="mdi-calendar-blank">Calendars</v-tab>
+      <v-tab value="timeline" prepend-icon="mdi-timeline-text">Bid Month Timeline</v-tab>
     </v-tabs>
 
     <v-window v-model="tab">
@@ -419,6 +452,63 @@ const reserveCalendarRows = [
             </ol>
           </v-card-text>
         </v-card>
+      </v-window-item>
+
+      <!-- ================= TIMELINE ================= -->
+      <v-window-item value="timeline">
+        <v-alert variant="tonal" density="compact" class="mb-6" icon="mdi-timeline-text-outline">
+          The whole bid month at a glance — training bids, vacation ballots, PBS, then the trade
+          windows — by day of month. Times shown where the source lists them.
+          <div class="mt-2 d-flex ga-2 flex-wrap">
+            <SourceTag :source="deck" />
+            <SourceTag :source="apfa" />
+          </div>
+        </v-alert>
+
+        <v-row>
+          <v-col cols="12" md="7">
+            <v-card variant="outlined" class="pa-2">
+              <v-timeline side="end" density="compact" truncate-line="both" align="start">
+                <v-timeline-item
+                  v-for="e in bidMonthEvents"
+                  :key="e.day + e.label"
+                  size="x-small"
+                  :dot-color="e.day === 'Next mo' ? 'success' : 'primary'"
+                >
+                  <div class="d-flex align-center flex-wrap ga-2">
+                    <v-chip size="x-small" color="secondary" variant="tonal" label>Day {{ e.day }}</v-chip>
+                    <span class="text-body-2">{{ e.label }}</span>
+                    <span v-if="e.time" class="text-caption text-medium-emphasis">{{ e.time }}</span>
+                  </div>
+                </v-timeline-item>
+              </v-timeline>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="5">
+            <v-card variant="tonal" color="primary" class="mb-4">
+              <v-card-text>
+                <div class="text-subtitle-1 font-weight-bold mb-2">Reading the month</div>
+                <p class="text-body-2 mb-0">
+                  Training and vacation are settled <strong>first</strong> (days 1–15) so PBS (days
+                  18–21) can build lines around them. Trading (TTS/ETB) only opens after the award is
+                  published, and reserve day designations follow.
+                </p>
+              </v-card-text>
+            </v-card>
+            <v-card variant="outlined">
+              <v-card-title class="text-subtitle-1 font-weight-bold">Systems in the timeline</v-card-title>
+              <v-divider />
+              <v-list density="compact" class="py-0">
+                <v-list-item v-for="s in systemLegend" :key="s.sys">
+                  <template #prepend>
+                    <v-chip size="small" color="primary" variant="tonal" label class="mr-1">{{ s.sys }}</v-chip>
+                  </template>
+                  <span class="text-body-2">{{ s.what }}</span>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-window-item>
     </v-window>
 

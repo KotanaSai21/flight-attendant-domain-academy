@@ -106,7 +106,7 @@ Sequences are built from duty periods; lines are bundles of sequences; reserves 
   },
   {
     id: 'fa-operations',
-    number: 2,
+    number: 3,
     title: 'Flight Attendant Operations',
     icon: 'mdi-account-group',
     color: '#0078D2',
@@ -198,7 +198,7 @@ flowchart TD
   },
   {
     id: 'scheduling',
-    number: 3,
+    number: 4,
     title: 'Scheduling',
     icon: 'mdi-calendar-month',
     color: '#003057',
@@ -292,7 +292,7 @@ Bid packages must include RAP lists, event calendars, line ranges, projected lin
   },
   {
     id: 'pairings',
-    number: 4,
+    number: 5,
     title: 'Pairings & Sequences',
     icon: 'mdi-route',
     color: '#C01933',
@@ -380,7 +380,7 @@ flowchart TD
   },
   {
     id: 'pbs',
-    number: 5,
+    number: 6,
     title: 'PBS — Preferential Bidding System',
     icon: 'mdi-ballot',
     color: '#0061AB',
@@ -465,7 +465,7 @@ sequenceDiagram
   },
   {
     id: 'bidding',
-    number: 6,
+    number: 7,
     title: 'Bidding',
     icon: 'mdi-gavel',
     color: '#0078D2',
@@ -536,7 +536,7 @@ sequenceDiagram
   },
   {
     id: 'reserve',
-    number: 7,
+    number: 8,
     title: 'Reserve',
     icon: 'mdi-phone-incoming',
     color: '#C01933',
@@ -639,7 +639,7 @@ Rotation (post-ratification hires): straight Reserve × 2 years → 1-on/1-off �
   },
   {
     id: 'tts',
-    number: 8,
+    number: 9,
     title: 'TTS — Trip Trade System',
     icon: 'mdi-swap-horizontal',
     color: '#003057',

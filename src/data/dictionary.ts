@@ -675,6 +675,79 @@ export const dictionary: DictionaryTerm[] = [
     developerRelevance: 'Configuration governance: parameterized values, change logs, stakeholder signoff.',
     source: cba('2024 CBA §10.A'),
   },
+  {
+    id: 'report-time',
+    term: 'Report Time',
+    category: 'Operations',
+    definition:
+      'When the Flight Attendant must be at the gate, before the first departure of a duty period. Commuting happens on personal time, so report time still governs legality.',
+    businessPurpose:
+      'Anchors the start of every duty period — crew report status is what gate agents confirm before departure.',
+    whyItMatters:
+      'Late report = missed trip. Call-out rules, LMCO minimums and legality all key off report time.',
+    whereUsed: ['Duty period start', 'Call-out rules', 'Legality checks'],
+    example: 'A 0700 departure with a 2-hour call-out means report time 0500 — being there 0515 is a missed trip.',
+    related: ['duty-period', 'lmco', 'sequence'],
+    developerRelevance: 'Duty period start anchor; drives legality and call-out math.',
+    source: { kind: 'system', label: 'Internal FA Lifecycle deck' },
+  },
+  {
+    id: 'block-time',
+    term: 'Block Time',
+    category: 'Payroll & Credit',
+    definition:
+      'Gate-out to gate-in for a flight segment — the basis for most pay calculations.',
+    businessPurpose: 'The common currency of flying credit across scheduling and payroll.',
+    whyItMatters: 'Trip credit, line values and guarantees are built from block time.',
+    whereUsed: ['Pay calculations', 'Line values', 'Credited hours'],
+    example: 'A DFW→ORD segment block of 2:05 credits 2 hours 5 minutes toward the month.',
+    related: ['credited-hours', 'duty-period', 'duty-rig'],
+    developerRelevance: 'Per-segment measure aggregated into credit; distinct from duty time.',
+    source: { kind: 'system', label: 'Internal FA Lifecycle deck' },
+  },
+  {
+    id: 'turn',
+    term: 'Turn',
+    category: 'Operations',
+    definition:
+      'A sequence with a single duty period that returns to base the same day — the simplest trip shape.',
+    businessPurpose: 'Efficient same-day coverage without layover hotel costs.',
+    whyItMatters: 'Turns are the most common pickup/drop candidates in TTS/ETB.',
+    whereUsed: ['Sequence construction', 'TTS/ETB trades'],
+    example: 'DFW → AUS → DFW reporting 0700 and releasing 1500: one turn, home by dinner.',
+    related: ['sequence', 'duty-period'],
+    developerRelevance: 'Single-duty-period sequence; trivial closed-loop validation.',
+    source: { kind: 'system', label: 'Internal FA Lifecycle deck' },
+  },
+  {
+    id: 'commuter',
+    term: 'Commuter',
+    category: 'Operations',
+    definition:
+      'A Flight Attendant who lives outside their base city and flies to base — usually standby on a company flight — before a sequence starts. Commuting is on personal time, so report time governs legality; contracts typically add commuter protections when a connection fails.',
+    businessPurpose:
+      'A large share of FAs commute; schedules and protections must reflect that reality.',
+    whyItMatters: 'Failed commutes trigger specific protection rules — a frequent edge case.',
+    whereUsed: ['Report legality', 'Commuter protections', 'Co-terminal flexibility'],
+    example: 'Based at DFW, lives in MIA: a failed standby leg north still has contractual remedies before the sequence report.',
+    related: ['report-time', 'co-terminal', 'crew-base'],
+    developerRelevance: 'Protection workflows keyed to failed positioning travel.',
+    source: { kind: 'system', label: 'Internal FA Lifecycle deck' },
+  },
+  {
+    id: 'co-terminal',
+    term: 'Co-Terminal',
+    category: 'Operations',
+    definition:
+      'Two or more airports in the same metro area treated as a single base for reporting and pay. A sequence can open at one and close at the other; a deadhead between them is often handled as ground transport rather than a flight segment.',
+    businessPurpose: 'Metro realism: New York (JFK·LGA), Washington (DCA·IAD), Chicago (ORD·MDW), Dallas (DFW·DAL), Los Angeles (LAX + satellites).',
+    whyItMatters: 'Open-at-one-close-at-the-other changes loop validation and segment counting.',
+    whereUsed: ['Sequence construction', 'Base reporting', 'Pay'],
+    example: 'A sequence opening JFK and closing LGA is still a closed New York loop.',
+    related: ['crew-base', 'commuter', 'sequence'],
+    developerRelevance: 'Base-grouping table consulted by loop validators; ground-transport deadheads excluded from segment counts.',
+    source: cba('2024 CBA §17'),
+  },
 ]
 
 export const termById = (id: string): DictionaryTerm | undefined =>

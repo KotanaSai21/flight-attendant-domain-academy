@@ -3,7 +3,7 @@ import type { AcademyModule } from '../types'
 export const modulesPart2: AcademyModule[] = [
   {
     id: 'etb',
-    number: 9,
+    number: 10,
     title: 'ETB — Electronic Trade Board',
     icon: 'mdi-view-dashboard-variant',
     color: '#0078D2',
@@ -80,7 +80,7 @@ flowchart LR
   },
   {
     id: 'crew-management',
-    number: 10,
+    number: 11,
     title: 'Crew Management',
     icon: 'mdi-sitemap',
     color: '#0061AB',
@@ -158,7 +158,7 @@ flowchart LR
   },
   {
     id: 'payroll',
-    number: 11,
+    number: 12,
     title: 'Payroll & Credit',
     icon: 'mdi-cash-multiple',
     color: '#C01933',
@@ -252,7 +252,7 @@ Duty Rig: 1 hour credit per 2 hours on-duty, minute-prorated. Pay discrepancies 
   },
   {
     id: 'training-module',
-    number: 12,
+    number: 13,
     title: 'Training',
     icon: 'mdi-school',
     color: '#0078D2',
@@ -325,7 +325,7 @@ Duty Rig: 1 hour credit per 2 hours on-duty, minute-prorated. Pay discrepancies 
   },
   {
     id: 'international',
-    number: 13,
+    number: 14,
     title: 'International Flying',
     icon: 'mdi-earth',
     color: '#003057',
@@ -398,7 +398,7 @@ Duty Rig: 1 hour credit per 2 hours on-duty, minute-prorated. Pay discrepancies 
   },
   {
     id: 'seniority',
-    number: 14,
+    number: 15,
     title: 'Seniority',
     icon: 'mdi-format-list-numbered',
     color: '#C01933',
@@ -479,7 +479,7 @@ Non-flying Inflight roles preserve accrual while qualified; unrelated duties cap
   },
   {
     id: 'scenarios',
-    number: 15,
+    number: 16,
     title: 'Business Scenarios Capstone',
     icon: 'mdi-lightbulb-on-outline',
     color: '#0061AB',

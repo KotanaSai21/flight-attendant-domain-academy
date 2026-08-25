@@ -18,14 +18,14 @@ Content provenance is enforced in-app via source chips: **AA/APFA Contract**, **
 
 | # | Module | # | Module |
 |---|--------|---|--------|
-| 1 | Airline Fundamentals | 9 | ETB |
-| 2 | Flight Attendant Operations | 10 | Crew Management |
-| 3 | Scheduling | 11 | Payroll & Credit |
-| 4 | Pairings & Sequences | 12 | Training |
-| 5 | PBS | 13 | International Flying |
-| 6 | Bidding | 14 | Seniority |
-| 7 | Reserve | 15 | Business Scenarios Capstone |
-| 8 | TTS |  |  |
+| 1 | Airline Fundamentals | 9 | TTS |
+| 2 | FA Lifecycle & Workgroups | 10 | ETB |
+| 3 | Flight Attendant Operations | 11 | Crew Management |
+| 4 | Scheduling | 12 | Payroll & Credit |
+| 5 | Pairings & Sequences | 13 | Training |
+| 6 | PBS | 14 | International Flying |
+| 7 | Bidding | 15 | Seniority |
+| 8 | Reserve | 16 | Business Scenarios Capstone |
 
 Each module: What is this? · Why It Exists · How It Works · Systems Involved · Information Behind It ·
 Real Examples · Interactive Quiz — pure domain, no developer jargon.
