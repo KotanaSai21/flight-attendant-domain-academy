@@ -41,6 +41,33 @@ export interface ModuleSection {
   body: string // markdown; ```mermaid blocks supported
 }
 
+/** Loose-typed content block for free-form, interactive modules */
+export interface ContentBlock {
+  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'flow' | 'steps' | 'compare' | 'illustration'
+  title?: string
+  text?: string
+  body?: string // markdown
+  code?: string // mermaid
+  caption?: string
+  tone?: 'info' | 'success' | 'warning' | 'error' | 'primary'
+  icon?: string
+  color?: string
+  variant?: 'airport' | 'cabin' | 'network' | 'aircraft'
+  items?: Array<{
+    term?: string
+    definition?: string
+    id?: string // dictionary term id for deep-linking
+    icon?: string
+    label?: string
+    detail?: string
+    title?: string
+    points?: string[]
+    day?: string
+    time?: string
+    color?: string
+  }>
+}
+
 export interface AcademyModule {
   id: string
   number: number
@@ -49,7 +76,8 @@ export interface AcademyModule {
   color: string
   tagline: string
   estimatedMinutes: number
-  sections: ModuleSection[]
+  sections?: ModuleSection[]
+  blocks?: ContentBlock[]
   quiz: QuizQuestion[]
   terms: string[] // dictionary term ids
   developerView?: {

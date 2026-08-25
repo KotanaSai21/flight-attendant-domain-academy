@@ -93,6 +93,25 @@ body {
   color: #003057;
 }
 
+/* Scroll reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  will-change: opacity, transform;
+}
+.reveal.revealed {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 .mermaid-block {
   display: flex;
   justify-content: center;

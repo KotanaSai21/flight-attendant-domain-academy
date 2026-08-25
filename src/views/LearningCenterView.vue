@@ -29,13 +29,13 @@ const progress = useProgressStore()
           </v-card-text>
           <v-card-actions class="px-5 pb-4">
             <v-progress-linear
-              :model-value="progress.moduleProgress(m.id, m.sections.length + 1)"
+              :model-value="progress.moduleProgress(m.id, (m.sections?.length ?? 0) + 1)"
               color="primary"
               height="6"
               rounded
               class="flex-grow-1 mr-3"
             />
-            <span class="text-caption">{{ progress.moduleProgress(m.id, m.sections.length + 1) }}%</span>
+            <span class="text-caption">{{ progress.moduleProgress(m.id, (m.sections?.length ?? 0) + 1) }}%</span>
           </v-card-actions>
         </v-card>
       </v-col>

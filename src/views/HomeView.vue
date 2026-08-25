@@ -91,15 +91,17 @@ const audience = [
 
     <h2 class="text-h5 font-weight-bold mb-5">Explore the platform</h2>
     <v-row>
-      <v-col v-for="f in features" :key="f.title" cols="12" sm="6" md="4">
-        <v-card :to="f.to" hover height="100%" class="feature-card d-flex flex-column overflow-hidden">
-          <div :style="{ background: f.color }" class="accent-bar" />
-          <v-card-text class="pa-6 pt-5 flex-grow-1">
-            <v-icon :icon="f.icon" :color="f.color" size="34" class="mb-3" />
-            <div class="text-h6 font-weight-bold mb-1">{{ f.title }}</div>
-            <p class="text-body-2 text-medium-emphasis mb-0">{{ f.text }}</p>
-          </v-card-text>
-        </v-card>
+      <v-col v-for="(f, i) in features" :key="f.title" cols="12" sm="6" md="4">
+        <div v-reveal="i * 70">
+          <v-card :to="f.to" hover height="100%" class="feature-card d-flex flex-column overflow-hidden">
+            <div :style="{ background: f.color }" class="accent-bar" />
+            <v-card-text class="pa-6 pt-5 flex-grow-1">
+              <v-icon :icon="f.icon" :color="f.color" size="34" class="mb-3" />
+              <div class="text-h6 font-weight-bold mb-1">{{ f.title }}</div>
+              <p class="text-body-2 text-medium-emphasis mb-0">{{ f.text }}</p>
+            </v-card-text>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
 

@@ -7,6 +7,7 @@ import { useProgressStore } from '../stores/progress'
 import MarkdownView from '../components/MarkdownView.vue'
 import QuizCard from '../components/QuizCard.vue'
 import SourceTag from '../components/SourceTag.vue'
+import BlockRenderer from '../components/blocks/BlockRenderer.vue'
 import type { DictionaryTerm, ModuleSection } from '../data/types'
 
 const route = useRoute()
@@ -26,6 +27,8 @@ const mod = computed(() => moduleById(String(route.params.id)))
 const sections = computed<ModuleSection[]>(() =>
   (mod.value?.sections ?? []).filter((s) => s.key !== 'developer'),
 )
+const blocks = computed(() => mod.value?.blocks ?? [])
+const isInteractive = computed(() => blocks.value.length > 0)
 const nextModule = computed(() => {
   if (!mod.value) return undefined
   return modules.find((m) => m.number === mod.value!.number + 1)
@@ -57,7 +60,23 @@ function relatedFor(id: string): DictionaryTerm[] {
       {{ mod.tagline }}
     </v-alert>
 
-    <!-- Sections -->
+    <!-- Interactive blocks (free-form modules) -->
+    <template v-if="isInteractive">
+      <BlockRenderer :blocks="blocks" />
+      <div class="d-flex justify-end mb-8">
+        <v-btn
+          size="large"
+          :color="progress.isSectionDone(mod.id, 'module') ? 'success' : 'primary'"
+          :variant="progress.isSectionDone(mod.id, 'module') ? 'tonal' : 'flat'"
+          :prepend-icon="progress.isSectionDone(mod.id, 'module') ? 'mdi-check-circle' : 'mdi-circle-outline'"
+          @click="progress.toggleSection(mod.id, 'module')"
+        >
+          {{ progress.isSectionDone(mod.id, 'module') ? 'Module completed' : 'Mark module complete' }}
+        </v-btn>
+      </div>
+    </template>
+
+    <!-- Sections (classic modules) -->
     <template v-for="(section, idx) in sections" :key="section.key">
       <v-card class="mb-5" elevation="1">
         <v-toolbar density="comfortable" color="transparent">

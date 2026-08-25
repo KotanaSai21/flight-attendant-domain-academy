@@ -74,12 +74,16 @@ function buildDocs(): Doc[] {
     })
   }
   for (const m of modules) {
+    const sectionText = (m.sections ?? []).map((s) => s.body).join(' ').replace(/```[\s\S]*?```/g, '')
+    const blockText = (m.blocks ?? [])
+      .map((b) => [b.title, b.text, b.body, b.caption, ...(b.items ?? []).flatMap((i) => [i.term, i.definition, i.label, i.detail, ...(i.points ?? [])])].filter(Boolean).join(' '))
+      .join(' ')
     docs.push({
       kind: 'module',
       id: m.id,
       title: `Module ${m.number}: ${m.title}`,
       subtitle: `Learning Center · ${m.tagline}`,
-      body: m.sections.map((s) => s.body).join(' ').replace(/```[\s\S]*?```/g, ''),
+      body: `${sectionText} ${blockText}`,
     })
   }
   for (const s of scenarios) {
