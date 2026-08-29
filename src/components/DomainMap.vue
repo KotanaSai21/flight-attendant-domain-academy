@@ -14,11 +14,21 @@ interface MapNode {
 
 const nodesData: MapNode[] = [
   { id: 'fa', label: 'Flight Attendant Domain', icon: 'mdi-airplane', group: true },
+  { id: 'fundamentals', label: 'Airline Fundamentals', icon: 'mdi-airplane-cog', group: true },
+  { id: 'opschain', label: 'Operating Chain', icon: 'mdi-transit-connection-variant', termId: 'operations-chain', group: false },
+  { id: 'phases', label: 'Flight Phases', icon: 'mdi-chart-timeline-variant', termId: 'flight-phases', group: false },
+  { id: 'crewclock', label: 'Crew Clock', icon: 'mdi-timeline-clock-outline', termId: 'duty-period', group: false },
+  { id: 'd0', label: 'D0', icon: 'mdi-clock-check-outline', termId: 'd0', group: false },
+  { id: 'a14', label: 'A14', icon: 'mdi-airplane-clock', termId: 'a14', group: false },
+  { id: 'cf', label: 'CF', icon: 'mdi-check-circle-outline', termId: 'completion-factor', group: false },
+  { id: 'ccf', label: 'CCF', icon: 'mdi-tune-check', termId: 'controllable-completion-factor', group: false },
+  { id: 'mbr', label: 'MBR', icon: 'mdi-bag-suitcase-outline', termId: 'mbr', group: false },
   { id: 'scheduling', label: 'Scheduling', icon: 'mdi-calendar-month', group: true },
   { id: 'pbs', label: 'PBS', icon: 'mdi-ballot', termId: 'pbs', group: false },
   { id: 'tts', label: 'TTS / UBL', icon: 'mdi-swap-horizontal', termId: 'tts', group: false },
   { id: 'etb', label: 'ETB', icon: 'mdi-view-dashboard-variant', termId: 'etb', group: false },
   { id: 'pairings', label: 'Pairings & Sequences', icon: 'mdi-route', termId: 'sequence', group: false },
+  { id: 'lineholder', label: 'Lineholder', icon: 'mdi-calendar-check', termId: 'lineholder', group: false },
   { id: 'reserve', label: 'Reserve', icon: 'mdi-phone-incoming', group: true },
   { id: 'rap', label: 'RAP', icon: 'mdi-clock-outline', termId: 'rap', group: false },
   { id: 'rota', label: 'ROTA', icon: 'mdi-calendar-clock', termId: 'rota', group: false },
@@ -27,6 +37,8 @@ const nodesData: MapNode[] = [
   { id: 'payroll', label: 'Payroll & Credit', icon: 'mdi-cash-multiple', group: true },
   { id: 'credit', label: 'Credited Hours', icon: 'mdi-counter', termId: 'credited-hours', group: false },
   { id: 'rig', label: 'Duty Rig', icon: 'mdi-trending-up', termId: 'duty-rig', group: false },
+  { id: 'triprig', label: 'Trip RIG', icon: 'mdi-shield-crown-outline', termId: 'rig', group: false },
+  { id: 'tafb', label: 'TAFB', icon: 'mdi-timer-sand', termId: 'tafb', group: false },
   { id: 'redflag', label: 'Red Flagging', icon: 'mdi-flag', termId: 'red-flagging', group: false },
   { id: 'training', label: 'Training', icon: 'mdi-school', group: true },
   { id: 'cq', label: 'CQ Training', icon: 'mdi-certificate-outline', termId: 'cq-training', group: false },
@@ -39,6 +51,15 @@ const nodesData: MapNode[] = [
 
 const positions: Record<string, { x: number; y: number }> = {
   fa: { x: 420, y: 0 },
+  fundamentals: { x: -180, y: 130 },
+  opschain: { x: -300, y: 260 },
+  phases: { x: -160, y: 260 },
+  crewclock: { x: -20, y: 260 },
+  d0: { x: -320, y: 390 },
+  a14: { x: -220, y: 390 },
+  cf: { x: -120, y: 390 },
+  ccf: { x: -20, y: 390 },
+  mbr: { x: 80, y: 390 },
   scheduling: { x: 120, y: 130 },
   reserve: { x: 470, y: 130 },
   payroll: { x: 800, y: 130 },
@@ -49,12 +70,15 @@ const positions: Record<string, { x: number; y: number }> = {
   tts: { x: 90, y: 260 },
   etb: { x: 230, y: 260 },
   pairings: { x: 370, y: 260 },
+  lineholder: { x: 300, y: 390 },
   rap: { x: 400, y: 460 },
   rota: { x: 520, y: 460 },
   rotd: { x: 640, y: 460 },
   standby: { x: 760, y: 460 },
   credit: { x: 830, y: 260 },
   rig: { x: 950, y: 260 },
+  triprig: { x: 930, y: 390 },
+  tafb: { x: 1050, y: 390 },
   redflag: { x: 1070, y: 260 },
   cq: { x: 1060, y: 260 },
   occ: { x: 150, y: 460 },
@@ -82,14 +106,20 @@ const nodes = ref<Node[]>(
 )
 
 const edges = ref<Edge[]>([
-  ...['scheduling', 'reserve', 'payroll', 'training', 'seniority', 'crewmgmt'].map((t) => ({
+  ...['fundamentals', 'scheduling', 'reserve', 'payroll', 'training', 'seniority', 'crewmgmt'].map((t) => ({
     id: `fa-${t}`,
     source: 'fa',
     target: t,
     animated: true,
     markerEnd: MarkerType.ArrowClosed,
   })),
-  ...['pbs', 'tts', 'etb', 'pairings'].map((t) => ({
+  ...['opschain', 'phases', 'crewclock', 'd0', 'a14', 'cf', 'ccf', 'mbr'].map((t) => ({
+    id: `fund-${t}`,
+    source: 'fundamentals',
+    target: t,
+    markerEnd: MarkerType.ArrowClosed,
+  })),
+  ...['pbs', 'tts', 'etb', 'pairings', 'lineholder'].map((t) => ({
     id: `sch-${t}`,
     source: 'scheduling',
     target: t,
@@ -101,7 +131,7 @@ const edges = ref<Edge[]>([
     target: t,
     markerEnd: MarkerType.ArrowClosed,
   })),
-  ...['credit', 'rig', 'redflag'].map((t) => ({
+  ...['credit', 'rig', 'triprig', 'tafb', 'redflag'].map((t) => ({
     id: `pay-${t}`,
     source: 'payroll',
     target: t,
@@ -127,7 +157,7 @@ function onNodeClick({ node }: NodeMouseEvent) {
 </script>
 
 <template>
-  <div style="height: 520px" class="rounded-lg overflow-hidden border-thin">
+  <div style="height: 640px" class="rounded-lg overflow-hidden border-thin">
     <VueFlow
       v-model:nodes="nodes"
       v-model:edges="edges"

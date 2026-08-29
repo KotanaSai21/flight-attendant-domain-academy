@@ -8,6 +8,8 @@ import MarkdownView from '../components/MarkdownView.vue'
 import QuizCard from '../components/QuizCard.vue'
 import SourceTag from '../components/SourceTag.vue'
 import BlockRenderer from '../components/blocks/BlockRenderer.vue'
+import RuleFactsPanel from '../components/sources/RuleFactsPanel.vue'
+import { ruleFactsForModule } from '../data/rules'
 import type { DictionaryTerm, ModuleSection } from '../data/types'
 
 const route = useRoute()
@@ -29,6 +31,9 @@ const sections = computed<ModuleSection[]>(() =>
 )
 const blocks = computed(() => mod.value?.blocks ?? [])
 const isInteractive = computed(() => blocks.value.length > 0)
+const sourceBackedFacts = computed(() =>
+  mod.value ? ruleFactsForModule(mod.value.id) : [],
+)
 const nextModule = computed(() => {
   if (!mod.value) return undefined
   return modules.find((m) => m.number === mod.value!.number + 1)
@@ -101,6 +106,8 @@ function relatedFor(id: string): DictionaryTerm[] {
         </v-card-text>
       </v-card>
     </template>
+
+    <RuleFactsPanel v-if="sourceBackedFacts.length" :facts="sourceBackedFacts" />
 
     <!-- Related dictionary terms -->
     <v-card v-if="mod.terms.length" class="mb-5" variant="outlined">

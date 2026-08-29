@@ -78,6 +78,10 @@ const toneColor = (tone?: string): 'info' | 'success' | 'warning' | 'error' =>
           <v-icon icon="mdi-book-alphabet" color="secondary" class="mr-2" />
           {{ b.title }}
         </div>
+        <div v-if="b.items?.some((item) => item.id)" class="text-caption text-medium-emphasis mb-3">
+          <v-icon icon="mdi-cursor-default-click-outline" size="15" class="mr-1" />
+          Select a linked key-term card to open its full definition in the Domain Dictionary.
+        </div>
         <v-row dense>
           <v-col v-for="(t, j) in b.items" :key="j" cols="12" sm="6" md="4">
             <component

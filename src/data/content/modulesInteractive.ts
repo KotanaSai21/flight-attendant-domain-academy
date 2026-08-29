@@ -9,15 +9,15 @@ const fundamentals: AcademyModule = {
   title: 'Airline Fundamentals',
   icon: 'mdi-airplane',
   color: '#0061AB',
-  tagline: 'Learn the words first — airports, aircraft, people, flight phases and the crew clock.',
+  tagline: 'Build a practical mental model of the operation, the aircraft, the people, flight phases, and the crew clock.',
   estimatedMinutes: 20,
-  terms: ['duty-period', 'sequence', 'crew-base'],
+  terms: ['operations-chain', 'flight-phases', 'duty-period', 'block-time', 'd0', 'a14', 'completion-factor', 'controllable-completion-factor', 'mbr'],
   blocks: [
     {
       kind: 'hero',
       icon: 'mdi-airplane',
       title: 'AIRLINE FUNDAMENTALS',
-      text: 'Everything starts with vocabulary. Before schedules, bidding or reserves, learn the words everyone uses: the airport, the aircraft, the people, the phases of a flight, and how the crew clock works. Safety first — always.',
+      text: 'Start with the operating environment around every Flight Attendant application: how an aircraft moves through an airport, who owns each handoff, how a flight progresses, and which clocks describe the crew’s work. The goal is a useful developer mental model—not contract mastery.',
     },
     {
       kind: 'callout',
@@ -81,7 +81,7 @@ const fundamentals: AcademyModule = {
       items: [
         { term: 'Captain', icon: 'mdi-account-tie-hat', definition: 'Overall authority on the flight — responsible for the aircraft, its crew and every operational decision.' },
         { term: 'First Officer', icon: 'mdi-account-tie', definition: 'Second in command — assists the captain and shares flying and operational duties.' },
-        { term: 'Lead Flight Attendant', icon: 'mdi-star-four-points', definition: 'The senior cabin crew member in position 1: manages the cabin crew and the cabin. (AA terminology — other airlines say “Purser”.)' },
+        { term: 'Lead Flight Attendant / Purser', icon: 'mdi-star-four-points', definition: 'The Flight Attendant assigned the lead cabin role. Depending on aircraft, operation, and product context, teams may say Lead Flight Attendant or Purser—use the term carried by the authoritative source.' },
         { term: 'Flight Attendants', icon: 'mdi-account-group', definition: 'Cabin crew responsible for emergency response, passenger safety and customer service in their assigned positions.' },
       ],
     },
@@ -90,7 +90,7 @@ const fundamentals: AcademyModule = {
       tone: 'info',
       icon: 'mdi-check-decagram',
       title: 'Vocabulary check',
-      text: 'Verified against the AA/APFA 2024 CBA: the contract defines “Lead Flight Attendant” as the FA awarded position 1 (§2.CC) — “Purser” is other-airline wording. Likewise, AA calls the monthly work schedule a “line” or “schedule”, not a “roster”.',
+      text: 'In AA-facing products you may encounter both “Lead Flight Attendant” and “Purser.” Do not automatically rewrite one into the other: preserve the terminology used by the current contract, source system, aircraft staffing record, or product workflow. AA commonly uses “line” or “schedule” for monthly work.',
     },
 
     // ---------- SECTION 3 ----------
@@ -99,33 +99,28 @@ const fundamentals: AcademyModule = {
       icon: 'mdi-timer-outline',
       color: '#0B6A0B',
       title: '3 · Flight phases & the crew clock',
-      text: 'The ten phases every flight passes through — and the time words that define a working day.',
+      text: 'Follow the operational arc from preparation to arrival, then place the wider crew-duty clock around it.',
     },
     {
       kind: 'steps',
-      title: 'The 10 phases of a flight',
+      title: 'Explore the flight as connected operating phases',
       items: [
-        { icon: 'mdi-account-multiple-check', title: '1 · Boarding', detail: 'Passengers board via the jet bridge; FAs manage the cabin, seat conflicts and headcounts while gate agents own the door.' },
-        { icon: 'mdi-truck-trailer', title: '2 · Pushback', detail: 'Doors closed, armed and cross-checked. Ground staff push the aircraft off the gate.' },
-        { icon: 'mdi-road-variant', title: '3 · Taxi', detail: 'Aircraft moves along taxiways to the runway; cabin secured, galleys stowed.' },
-        { icon: 'mdi-airplane-takeoff', title: '4 · Takeoff', detail: 'Engines to takeoff thrust — the phase where brace-position readiness matters most.' },
-        { icon: 'mdi-trending-up', title: '5 · Climb', detail: 'Climb to cruise altitude; service preparation can begin once the seat-belt sign allows.' },
-        { icon: 'mdi-weather-sunny', title: '6 · Cruise', detail: 'The service phase — meals, drinks, safety rounds, and watching for turbulence.' },
-        { icon: 'mdi-trending-down', title: '7 · Descent', detail: 'Cabin secured for landing: galleys stowed, seat belts checked, cabin verified.' },
-        { icon: 'mdi-airplane-landing', title: '8 · Landing', detail: 'Touchdown. FAs stay braced and alert until the aircraft decelerates on the runway.' },
-        { icon: 'mdi-taxi', title: '9 · Taxi to gate', detail: 'Taxi to the arrival gate; FAs confirm doors are disarmed only at the gate with the bridge in place.' },
-        { icon: 'mdi-account-multiple-minus', title: '10 · Deplaning', detail: 'Passengers off, cabin checked for left items, and the crew prepares for the next leg or release.' },
+        { icon: 'mdi-clipboard-check-outline', title: '1 · Preparation at the gate', detail: 'Crew reports, briefs, boards the aircraft, completes safety checks, and coordinates readiness with gate and ground teams.' },
+        { icon: 'mdi-account-multiple-check', title: '2 · Boarding', detail: 'Gate agents control customer processing; Flight Attendants manage the cabin, safety conditions, carry-ons, seating issues, and required passenger handoffs.' },
+        { icon: 'mdi-truck-trailer', title: '3 · Door closure, pushback & taxi-out', detail: 'Doors are prepared and cross-checked, the cabin is secured, and ground teams hand the aircraft to the operating crew.' },
+        { icon: 'mdi-airplane-takeoff', title: '4 · Takeoff & climb', detail: 'A safety-critical phase: Flight Attendants remain at assigned stations until conditions allow movement and service preparation.' },
+        { icon: 'mdi-weather-sunny', title: '5 · Cruise', detail: 'Cabin monitoring, safety duties, customer care, service, turbulence response, and coordination with the flight deck continue together.' },
+        { icon: 'mdi-airplane-landing', title: '6 · Descent & landing', detail: 'The cabin and galleys are secured, compliance checks are completed, and the crew remains ready through touchdown.' },
+        { icon: 'mdi-taxi', title: '7 · Taxi-in & gate arrival', detail: 'The aircraft reaches the arrival gate. Door status, jet-bridge readiness, connections, and operational updates must stay synchronized.' },
+        { icon: 'mdi-account-multiple-minus', title: '8 · Deplaning & turn or release', detail: 'Customers deplane, the cabin is checked, and the crew either prepares another segment, begins a layover, deadheads, or is released.' },
       ],
     },
     {
-      kind: 'diagram',
-      caption: 'The ten phases draw a clear arc from boarding to deplaning. The FA’s working day stretches wider than this arc — it starts at report (before boarding) and ends at release (after deplaning).',
-      code: `flowchart LR
-    B["1 · Boarding"] --> P["2 · Pushback"] --> T["3 · Taxi"] --> K["4 · Takeoff"]
-    K --> C["5 · Climb"] --> R["6 · Cruise"] --> D["7 · Descent"] --> L["8 · Landing"]
-    L --> TG["9 · Taxi to gate"] --> E["10 · Deplaning"]
-    style B fill:#0061ab,color:#fff
-    style E fill:#c01933,color:#fff`,
+      kind: 'callout',
+      tone: 'primary',
+      icon: 'mdi-timeline-clock-outline',
+      title: 'The crew clock is wider than the flight',
+      text: 'Report and briefing happen before boarding. Release happens after the last required post-arrival work. A sequence can contain several flight segments inside one duty period, and several duty periods separated by contractual rest.',
     },
     {
       kind: 'terms',
@@ -133,10 +128,35 @@ const fundamentals: AcademyModule = {
       items: [
         { id: 'report-time', term: 'Report time', icon: 'mdi-alarm', definition: 'When crew must check in before departure — the legal start of the working day.' },
         { id: 'duty-period', term: 'Duty time', icon: 'mdi-timer-outline', definition: 'From report until release from duty — capped by regulation and contract.' },
-        { term: 'Flight time', icon: 'mdi-airplane', definition: 'Actual time from aircraft departure to arrival (airborne time).' },
+        { term: 'Flight time', icon: 'mdi-airplane', definition: 'Time associated with operating the flight; confirm the exact regulatory or system definition before using it in calculations.' },
         { term: 'FDP', icon: 'mdi-clock-time-eight', definition: 'Flight Duty Period — the total duty period involving flight operations.' },
         { id: 'block-time', term: 'Block time', icon: 'mdi-timelapse', definition: 'Gate-out to gate-in — the basis for most pay calculations.' },
       ],
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-chart-timeline-variant',
+      color: '#B75C09',
+      title: '4 · Operating performance measures',
+      text: 'These measures describe different outcomes. They should never be collapsed into one “on-time” flag.',
+    },
+    {
+      kind: 'terms',
+      title: 'Measures developers will encounter',
+      items: [
+        { id: 'd0', term: 'D0', icon: 'mdi-clock-check-outline', definition: 'Departure performance at the scheduled minute: even a one-minute departure delay misses D0.' },
+        { id: 'a14', term: 'A14', icon: 'mdi-airplane-clock', definition: 'Arrival performance: the flight arrives no more than 14 minutes after its scheduled arrival time.' },
+        { id: 'completion-factor', term: 'CF', icon: 'mdi-check-circle-outline', definition: 'Completion Factor—the share of scheduled flights that are completed rather than cancelled.' },
+        { id: 'controllable-completion-factor', term: 'CCF', icon: 'mdi-tune-check', definition: 'Completion Controllable Factor—a completion view focused on cancellations attributed to controllable causes. Confirm AA’s current metric definition before implementing.' },
+        { id: 'mbr', term: 'MBR', icon: 'mdi-bag-suitcase-outline', definition: 'Mishandled Baggage Ratio—a baggage-performance measure, separate from crew and flight punctuality.' },
+      ],
+    },
+    {
+      kind: 'callout',
+      tone: 'info',
+      icon: 'mdi-code-json',
+      title: 'Why developers care',
+      text: 'D0, A14, CF, CCF, and MBR use different events, denominators, ownership, and exception logic. Store the source timestamps and reason codes; derive the measure from an authoritative definition instead of copying a dashboard label.',
     },
     {
       kind: 'prose',
@@ -198,7 +218,7 @@ These verify that every door is armed (slide connected) before takeoff and disar
 - **APFA Bidding Academy:** [apfa.org/bidding](https://www.apfa.org/bidding) — how FAs actually construct and submit bids.
 - **APFA Pay Guarantees (RIGs):** [apfa.org/resources/pay/pay-guarantees](https://www.apfa.org/resources/pay/pay-guarantees)
 
-Call-outs and reserve shift mechanics below are accurate to the 2024 CBA and APFA June-2026 shaping, but always defer to the live contract and APFA guidance.`,
+The examples here are intentionally high level. Always defer to the current agreement, APFA guidance, AA procedures, and governed system configuration for exact rules and effective dates.`,
     },
     {
       kind: 'callout',
@@ -222,10 +242,10 @@ Call-outs and reserve shift mechanics below are accurate to the 2024 CBA and APF
       explanation: 'Duty runs report→release: 08:30–14:00 = 5 h 30 min. Flight time (10:00–13:00) is only 3 h.',
     },
     {
-      question: 'AA’s term for the senior cabin crew member in position 1:',
-      options: ['Purser', 'Cabin Manager', 'Lead Flight Attendant', 'Chief Steward'],
-      answerIndex: 2,
-      explanation: 'The 2024 CBA defines “Lead Flight Attendant” (§2.CC); “Purser” is other-airline wording.',
+      question: 'Which terminology may identify the lead cabin role in AA-facing workflows?',
+      options: ['Lead Flight Attendant / Purser', 'Cabin Manager only', 'Chief Steward', 'Always the most senior person aboard'],
+      answerIndex: 0,
+      explanation: 'AA-facing products may use Lead Flight Attendant or Purser depending on the authoritative workflow and aircraft context.',
     },
     {
       question: 'Block time measures…',
@@ -249,6 +269,12 @@ Call-outs and reserve shift mechanics below are accurate to the 2024 CBA and APF
       answerIndex: 1,
       explanation: 'Doors are armed before takeoff (slide will deploy) and cross-checked by another crew member; disarmed at the gate.',
     },
+    {
+      question: 'A flight departs one minute late but arrives 10 minutes after schedule. Which statement is correct?',
+      options: ['It meets both D0 and A14', 'It misses both D0 and A14', 'It misses D0 but meets A14', 'Completion Factor decides both measures'],
+      answerIndex: 2,
+      explanation: 'D0 allows no departure delay; an arrival 10 minutes after schedule remains within A14.',
+    },
   ],
 }
 
@@ -263,7 +289,7 @@ const lifecycle: AcademyModule = {
   color: '#5A2D82',
   tagline: 'Who supports a flight, how flight attendants are organized, and how sequences are built.',
   estimatedMinutes: 25,
-  terms: ['sequence', 'crew-base', 'co-terminal', 'commuter', 'lineholder', 'seniority-occupational'],
+  terms: ['sequence', 'crew-base', 'co-terminal', 'commuter', 'lineholder', 'rap', 'seniority-occupational'],
   blocks: [
     {
       kind: 'hero',
@@ -273,13 +299,16 @@ const lifecycle: AcademyModule = {
     },
     {
       kind: 'flow',
-      title: 'Every departure is a four-way handoff',
+      title: 'Every departure is a connected handoff',
       text: 'Play the handoff',
       items: [
         { label: 'Gate agents', icon: 'mdi-door-sliding-open', color: '#C01933', detail: 'Board the flight, manage the door, reseat and clear standbys, process upgrades — and confirm the crew has reported before departure. They need accurate crew report status and headcounts.' },
         { label: 'Ground staff', icon: 'mdi-luggage', color: '#B75C09', detail: 'Bags, fueling, catering, cleaning, pushback. They work to the turn clock, not the passenger clock — reliable turn timing tied to the schedule is their lifeline.' },
         { label: 'Flight deck', icon: 'mdi-airplane-marker', color: '#243B53', detail: 'Captain and first officer. Qualified by aircraft fleet and seat, bidding by seniority within base and fleet, governed by flight-time and duty limits.' },
         { label: 'Cabin crew', icon: 'mdi-account-group', color: '#0061AB', detail: 'Flight attendants — safety first, service always. Qualified by aircraft door and language, bidding by seniority within base and position, governed by duty, rest and staffing minimums. Our primary user group.' },
+        { label: 'Dispatch & operations control', icon: 'mdi-monitor-dashboard', color: '#5A2D82', detail: 'Monitors the network and operating plan, coordinates disruptions, and shares flight status and recovery decisions across workgroups.' },
+        { label: 'Crew Scheduling', icon: 'mdi-calendar-clock', color: '#0B6A0B', detail: 'Protects crew coverage during day-of-operations changes, contacts reserves, and records assignment or reassignment events.' },
+        { label: 'Hotels & transportation', icon: 'mdi-hotel', color: '#7A4E00', detail: 'Supports layovers and disruption recovery. Hotel confirmation, transport timing, location, and notifications are operational data.' },
       ],
     },
     {
@@ -293,11 +322,11 @@ const lifecycle: AcademyModule = {
       kind: 'terms',
       title: 'How the system knows who you are',
       items: [
-        { id: 'crew-base', term: 'Base', icon: 'mdi-home-city', definition: 'Where sequences start and end — one of eleven crew bases.' },
+        { id: 'crew-base', term: 'Base', icon: 'mdi-home-city', definition: 'The assigned operating location around which schedules, reporting, and sequence construction are organized.' },
         { id: 'seniority-occupational', term: 'Seniority', icon: 'mdi-medal-outline', definition: 'Date-of-hire ranking that drives bidding order for lines, vacations and trades.' },
         { id: 'lineholder', term: 'Status', icon: 'mdi-toggle-switch', definition: 'Lineholder or Reserve for the bid month — the biggest fork in the domain.' },
         { term: 'Qualifications', icon: 'mdi-certificate', definition: 'Aircraft, aircraft door, language of destination, international documents.' },
-        { id: 'position', term: 'Position', icon: 'mdi-seat-passenger', definition: 'Purser / lead versus cabin position — awarded by bid, fixed for the sequence.' },
+        { id: 'position', term: 'Position', icon: 'mdi-seat-passenger', definition: 'Lead Flight Attendant / Purser or another numbered cabin position, with aircraft-specific responsibilities.' },
         { term: 'Availability', icon: 'mdi-calendar-remove', definition: 'Vacation, leave, training and sick status that gate what may be assigned.' },
       ],
     },
@@ -310,7 +339,7 @@ const lifecycle: AcademyModule = {
           icon: 'mdi-calendar-check',
           color: '#0061AB',
           points: [
-            'Awarded a full month of sequences by seniority bid',
+            'Awarded a monthly pattern of sequences and days off through the applicable bid process',
             'Knows the schedule in advance and plans life around it',
             'Trades, drops and picks up trips within contract rules',
             'System focus: bidding, trading, schedule integrity',
@@ -321,7 +350,7 @@ const lifecycle: AcademyModule = {
           icon: 'mdi-phone-incoming',
           color: '#C01933',
           points: [
-            'Assigned availability windows (RAPs), not fixed trips',
+            'Assigned reserve days and availability windows (RAPs), with flying added through reserve processes',
             'Called out to cover sick calls, delays and misconnects',
             'Protected Golden Days and flexible Flex Days off',
             'System focus: availability, notification, legality',
@@ -337,6 +366,56 @@ const lifecycle: AcademyModule = {
       text: 'Junior flight attendants typically sit on Reserve until their seniority lets them hold a line. That single fact shapes careers, bidding strategy and base staffing math.',
     },
     {
+      kind: 'header',
+      icon: 'mdi-calendar-check',
+      color: '#0061AB',
+      title: 'Lineholder fundamentals',
+      text: 'A Lineholder starts the month with awarded sequences and days off, then may reshape that schedule through permitted transactions.',
+    },
+    {
+      kind: 'prose',
+      title: 'How a Lineholder month works',
+      icon: 'mdi-calendar-edit',
+      body: `At a high level, a Lineholder:
+
+1. submits monthly preferences through the applicable bidding process;
+2. receives an award containing sequences and days off;
+3. may use tools such as TTS/UBL or ETB to trade, drop, or pick up flying under current rules;
+4. reports and operates the awarded or changed sequence; and
+5. may experience reassignment or recovery when the operating plan changes.
+
+For software, preserve the **original award**, later **transactions**, and the **current operating schedule**. They answer different questions.`,
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-phone-incoming',
+      color: '#C01933',
+      title: 'Reserve fundamentals: RAP A, B, C, and D',
+      text: 'A Reserve protects the operation by being available for assignment during a defined Reserve Availability Period (RAP).',
+    },
+    {
+      kind: 'prose',
+      title: 'How a RAP works at a high level',
+      icon: 'mdi-clock-alert-outline',
+      body: `RAP letters organize coverage across the day:
+
+- **RAP A** generally represents the earliest or morning coverage.
+- **RAP B** generally moves coverage later into the day.
+- **RAP C** generally supports afternoon or evening coverage.
+- **RAP D** generally supports late-evening or overnight coverage.
+
+A Reserve is available and contactable during the awarded or assigned RAP. Crew Scheduling can assign eligible flying or standby using the current reserve process, considering qualifications, availability, report timing, rest, and other contractual limits. The assignment may report during the RAP or within an allowed relationship to the RAP end, but the exact rule must come from the current CBA and base configuration.
+
+**Do not hardcode RAP clock times.** APFA guidance notes that bases may have different RAP counts and start/end times. Model the RAP letter, base, effective date, start/end, award source, notification, acknowledgement, and resulting assignment as separate facts.`,
+    },
+    {
+      kind: 'callout',
+      tone: 'warning',
+      icon: 'mdi-source-branch',
+      title: 'Reserve rules need a current source',
+      text: 'RAP preference and assignment mechanics involve contract rules, waivers, legality, and base-specific configuration. This module teaches the shape of the process; use the current AA/APFA agreement and APFA Reserve resources for implementation decisions.',
+    },
+    {
       kind: 'illustration',
       variant: 'network',
       caption:
@@ -344,12 +423,12 @@ const lifecycle: AcademyModule = {
     },
     {
       kind: 'steps',
-      title: "A commuter's morning",
+      title: "A commuter's report-day journey",
       items: [
-        { icon: 'mdi-bed', title: 'Lives elsewhere, based at DFW', detail: 'She is a commuter — the schedule must work for people who do not live in base. Commuting happens entirely on personal time: the commute never adds pay, duty time, or report-window flexibility.' },
-        { icon: 'mdi-ticket-account', title: '0430 — Nonrev on the 0545', detail: 'Standby (non-rev) on a company flight, jumpseat if needed. Report time at DFW still governs legality — no matter how early she left, the commute buys nothing against the clock.' },
-        { icon: 'mdi-alert-circle-check', title: 'Connection fails? Protections kick in', detail: 'Contracts add commuter protections when a failed positioning leg threatens a sequence — a defined remedy path our tooling must surface, distinct from a normal missed stdby. Co-terminal bases (e.g., DCA·IAD) broaden her options.' },
-        { icon: 'mdi-login-variant', title: '0700 — Report, legal and on time', detail: 'Crew-room check-in, sequence pulled up, position and legality confirmed. The closed loop starts here — and must end here too. If she were late, call-out, LMCO and missed-trip rules would all apply.' },
+        { icon: 'mdi-home-map-marker', title: 'Lives away from the assigned base', detail: 'A commuter must position to base before the sequence begins. Home location, crew base, report airport, and current physical location are separate data.' },
+        { icon: 'mdi-airplane-clock', title: 'Plans arrival with recovery options', detail: 'The commute is not the first working segment of the sequence. The Flight Attendant plans transportation to be present for report, with personal contingency choices.' },
+        { icon: 'mdi-alert-circle-check', title: 'A disruption follows a defined policy path', detail: 'A cancelled or delayed commute does not simply erase report requirements. Current contractual commuter provisions, notification steps, evidence, and eligibility determine what protection may apply.' },
+        { icon: 'mdi-login-variant', title: 'Reports at base and begins duty', detail: 'At report, the operating schedule, position, qualifications, acknowledgement state, and legality must agree. This event begins the crew-duty timeline represented in the application.' },
       ],
     },
     {
@@ -414,7 +493,7 @@ Two sequences can even **share the same middle legs** — Sequence A (base MIA):
           icon: 'mdi-certificate-outline',
           color: '#5A2D82',
           detail:
-            'Everyone lands in one of two schedules: a Lineholder holds a Line of Time (70–90 hrs of trips); a Reserve holds availability windows (RAPs) instead.',
+            'The award establishes the month’s status and schedule shape: a Lineholder receives sequences and days off; a Reserve receives reserve days, protected days off, and availability periods.',
         },
         {
           label: 'TTS · ETB',
@@ -428,7 +507,7 @@ Two sequences can even **share the same middle legs** — Sequence A (base MIA):
           icon: 'mdi-phone-incoming',
           color: '#0B6A0B',
           detail:
-            'Cancellations and sick calls create open time. Reserves cover it via ROTA (tomorrow) and ROTD (today). Crew Scheduling owns the clock at the gate: it reassigns, calls reserves out, brokers standbys, manages LMCO (less-than-minimum call-out) premium windows, and re-protects trips. If the crew cannot be re-covered, hotels, deadheads and reserve standby shifts absorb the disruption while pay protection kicks in. This is the highest-volume, highest-stakes node — every downstream payroll fact originates here.',
+            'Cancellations, delays, sick calls, misconnects, and aircraft changes create day-of-operations work. Crew Scheduling may reassign, contact reserves, arrange standby or deadhead positioning, and protect coverage. Hotel and ground-transport assignments may change; every notification and acknowledgement matters. Legality, rest, pay protection, and customer recovery consume the resulting event history, so systems must preserve who changed what, when, why, and from which source.',
         },
         {
           label: 'Payroll',
@@ -447,18 +526,6 @@ Two sequences can even **share the same middle legs** — Sequence A (base MIA):
       text: 'The monthly world gets its own deep dives: Scheduling (Module 4), PBS (Module 6), Bidding (Module 7) and TTS (Module 9). Reserves add the daily world — Reserve (Module 8). APFA’s public guides add the FA’s-eye view: apfa.org/bidding, apfa.org/reserve-resources.',
     },
     {
-      kind: 'prose',
-      title: 'Lineholder vs Reserve — the two-month shapes',
-      icon: 'mdi-scale-balance',
-      body: `These two statuses are the backbone of the whole domain. Most of what you will build splits cleanly on this axis:
-
-**Lineholder** — holds a Line of Time (70–90 credited hours of concrete trips). System touchpoints: PBS line, TTS/UBL, ETB trades, Credit Window, carry-over at month boundaries.
-
-**Reserve** — holds availability windows (RAPs) instead of trips. System touchpoints: RAP shifts A/B/C/D, Golden/Flex days, ROTA (future) and ROTD (daily), standbys, LMCO, RSVCOT (calling out of time).
-
-Which one an FA holds is decided by seniority and rotation — and it reshapes everything from guarantee math to trade rules. Keep the line separate in your data model.`,
-    },
-    {
       kind: 'header',
       icon: 'mdi-cog-outline',
       color: '#003057',
@@ -471,7 +538,7 @@ Which one an FA holds is decided by seniority and rotation — and it reshapes e
       items: [
         { id: 'sequence', term: 'The sequence is the atom', icon: 'mdi-puzzle', definition: 'Trips, trades, awards, and pay all hang off Sequence → DutyPeriods → Segments. Ask “what sequence?” before “what feature?”.' },
         { id: 'hbt', term: 'One clock: Home Base Time', icon: 'mdi-clock-outline', definition: 'Nearly every rule (deadlines, RAPs, rest, legality) resolves in HBT. Never store or compare naive local times across bases.' },
-        { id: 'credited-hours', term: 'Two ledgers: pay vs credit', icon: 'mdi-book-multiple', definition: 'Pay and credit are separate. Rigs, red flags and premiums move money, not credit. Mixing them breaks guarantees and maxima.' },
+        { id: 'credited-hours', term: 'Two related ledgers: pay vs credit', icon: 'mdi-book-multiple', definition: 'Pay and credit answer different questions. Some contractual items affect both; others are pay-no-credit. Preserve the category instead of assuming every premium behaves alike.' },
         { term: 'Pay ≠ flight hours', icon: 'mdi-cash-clock', definition: 'RIGs and TAFB guarantee floors so a trip pays a minimum regardless of block time. Always compute against the guarantee, not raw flying.' },
       ],
     },
@@ -480,7 +547,7 @@ Which one an FA holds is decided by seniority and rotation — and it reshapes e
       tone: 'primary',
       icon: 'mdi-alert-decagram',
       title: 'Where defects actually live',
-      text: 'In real FA systems the bugs cluster at four boundaries: timezone/rest math (15/30-min buffers, +45 separation, 11h between RAPs), pay-vs-credit confusion, month-boundary carry-over, and concurrency on the same open-time item (two “first” claims). Audit every rule at these seams.',
+      text: 'In FA systems, defects cluster at boundaries: scheduled versus actual time, local versus Home Base Time, duty versus rest, pay versus credit, month-boundary carry-over, and concurrent claims on the same open-time item. Preserve provenance and audit every rule at these seams.',
     },
   ],
   quiz: [
@@ -518,6 +585,12 @@ Which one an FA holds is decided by seniority and rotation — and it reshapes e
       answerIndex: 2,
       explanation: 'Commuting is personal time; protections exist but report time remains the legality anchor.',
     },
+    {
+      question: 'How should an application store RAP A–D clock times?',
+      options: ['As one permanent universal table', 'As base- and effective-date configuration', 'Only as morning/afternoon labels', 'Inside the Flight Attendant profile name'],
+      answerIndex: 1,
+      explanation: 'RAP availability periods can differ by base and bid period, so times need governed configuration rather than hardcoded constants.',
+    },
   ],
 }
 
@@ -532,7 +605,7 @@ const operations: AcademyModule = {
   color: '#0078D2',
   tagline: 'Positions, staffing, and what actually happens from report to release.',
   estimatedMinutes: 20,
-  terms: ['sequence', 'deadhead', 'position', 'layover'],
+  terms: ['sequence', 'duty-period', 'deadhead', 'position', 'layover', 'tafb', 'rig', 'duty-rig'],
   blocks: [
     {
       kind: 'hero',
@@ -550,37 +623,18 @@ const operations: AcademyModule = {
       kind: 'terms',
       title: 'Positioning vocabulary',
       items: [
-        { id: 'position', term: 'Position', icon: 'mdi-numeric-1-box-outline', definition: 'Numbered area of responsibility (1, 2, 3…). Position 1 is the Lead / purser when awarded.' },
+        { id: 'position', term: 'Position', icon: 'mdi-numeric-1-box-outline', definition: 'An assigned area of responsibility. The lead cabin role may be labeled Lead Flight Attendant or Purser in AA-facing workflows.' },
         { id: 'complement', term: 'Complement', icon: 'mdi-counter', definition: 'The required number of FAs for the aircraft — staffing below it is illegal to depart.' },
-        { term: 'Lead FA', icon: 'mdi-star-outline', definition: 'Whoever holds position 1 on the sequence — not simply the most senior person aboard.' },
+        { term: 'Lead Flight Attendant / Purser', icon: 'mdi-star-outline', definition: 'The assigned lead cabin role—not automatically the most senior person aboard. Preserve the source system’s role and position values.' },
         { id: 'deadhead', term: 'Deadhead', icon: 'mdi-seat-recline-extra', definition: 'Riding as a passenger to reposition — on duty, paid, but not working. Positive-space when covering an assignment.' },
       ],
-    },
-    {
-      kind: 'steps',
-      title: 'Report → release: the working sequence',
-      items: [
-        { icon: 'mdi-badge-account', title: 'Report & briefing', detail: 'Crew check in together. The lead runs the briefing: positions, service plan, safety duties, timing. One FA keeps one position number for the entire sequence — even across equipment changes.' },
-        { icon: 'mdi-airplane-check', title: 'Preflight the cabin', detail: 'Emergency equipment checks (doors, slides, extinguishers, oxygen), catering counts, cabin readiness. Each position verifies its own zone.' },
-        { icon: 'mdi-account-multiple-plus', title: 'Boarding', detail: 'Gate agents manage the door and headcount; FAs manage the cabin: seat disputes, standby seating, carry-on help. The lead confirms with the gate that crew are reported and the cabin is secure.' },
-        { icon: 'mdi-door-closed', title: 'Door close & demo', detail: 'Arming slides, cross-check, safety demo. From door close the cabin crew own everything inside the fuselage — the captain owns everything outside it.' },
-        { icon: 'mdi-airplane', title: 'In flight', detail: 'Service and safety rounds, galley work, turbulence procedures. Staffing minimums must hold for the entire flight — a crew member incapacitated mid-flight changes the legal picture instantly.' },
-        { icon: 'mdi-airplane-landing', title: 'Landing & release', detail: 'Disarm doors, cross-check, deplane. Duty time ends 15 minutes after arrival (Domestic) or 30 (International) — or at actual release, whichever is later.' },
-      ],
-    },
-    {
-      kind: 'callout',
-      tone: 'info',
-      icon: 'mdi-swap-horizontal-circle-outline',
-      title: 'The other side of the coin',
-      text: 'Module 1 followed the aircraft through its 10 flight phases. This is the same day from the FA’s side — it starts before boarding and ends after deplaning, because the duty day is longer than any single flight.',
     },
     {
       kind: 'steps',
       title: 'Typical flight attendant workflow — report to release',
       items: [
         { icon: 'mdi-badge-account-outline', title: '1 · Report for duty', detail: 'Crew room check-in at base: verify the trip, confirm legality, meet the crew. Report time is the legal start of everything.' },
-        { icon: 'mdi-clipboard-text-outline', title: '2 · Briefing', detail: 'The lead runs it: position assignments, service plan, safety and security duties, timing for each leg.' },
+        { icon: 'mdi-clipboard-text-outline', title: '2 · Briefing', detail: 'The Lead Flight Attendant or Purser coordinates position assignments, service plan, safety and security duties, and timing for each leg.' },
         { icon: 'mdi-airplane-check', title: '3 · Aircraft checks', detail: 'Each position preflights its zone: emergency equipment (doors, slides, extinguishers, oxygen), catering counts, cabin readiness.' },
         { icon: 'mdi-account-multiple-check', title: '4 · Passenger boarding', detail: 'Gate agents manage the door and headcount; FAs work the cabin — seat disputes, standby seating, carry-on help, UMNR handovers.' },
         { icon: 'mdi-presentation-play', title: '5 · Safety demonstration', detail: 'Doors armed and cross-checked, demo performed, cabin secure report given. From door close, the cabin crew own the interior.' },
@@ -589,15 +643,15 @@ const operations: AcademyModule = {
         { icon: 'mdi-airplane-landing', title: '8 · Landing', detail: 'FAs sit braced and alert through touchdown, watching the cabin until the aircraft decelerates clear of the runway.' },
         { icon: 'mdi-account-multiple-minus', title: '9 · Passenger deboarding', detail: 'Doors disarmed and cross-checked at the gate (so slides cannot deploy into the bridge), passengers off, cabin swept for left items.' },
         { icon: 'mdi-note-check-outline', title: '10 · Post-flight duties', detail: 'Paperwork and reports, connected-departure prep for the next leg — or closing duties if the sequence ends at base.' },
-        { icon: 'mdi-exit-run', title: '11 · Release', detail: 'Duty ends 15 minutes after arrival (Domestic) or 30 (International) — or at actual release, whichever is later. The clock stops; credit is already posted.' },
+        { icon: 'mdi-exit-run', title: '11 · Release', detail: 'After required post-arrival work, release closes the duty period. Scheduled arrival, actual arrival, and release are separate timestamps and should remain separate in software.' },
       ],
     },
     {
       kind: 'callout',
       tone: 'success',
       icon: 'mdi-lock-check',
-      title: 'One position, whole trip',
-      text: 'A sequence may mix aircraft types (say A321 and 787 legs), but an FA keeps the same position number throughout. Extra positions required on the bigger aircraft get staffed from other sequences.',
+      title: 'Never infer role from seniority',
+      text: 'Position and lead-role assignments must come from the operating assignment. Seniority influences many awards, but it is not a substitute for the actual position, aircraft complement, qualification, or assignment record.',
     },
     {
       kind: 'prose',
@@ -606,6 +660,29 @@ const operations: AcademyModule = {
       body: `**Deadheading** is Company-requested travel to protect a sequence, return to base, or position for business. It counts inside duty periods (report and release buffers wrap the segment), it pays and credits — and when it is positioning you to cover an assignment, you get a seat even on an oversold flight.
 
 **Layovers** structure multi-day trips: the overnight between duty days drives rest legality, hotels and per diem. A well-built sequence balances duty periods with workable layovers — which is exactly what the pairing builders optimize for.`,
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-cash-clock',
+      color: '#B75C09',
+      title: 'Time worked is not the same as pay credit',
+      text: 'Developers need the relationship between the clocks—not a payroll calculator in an introductory module.',
+    },
+    {
+      kind: 'terms',
+      title: 'High-level pay and time concepts',
+      items: [
+        { id: 'tafb', term: 'TAFB', icon: 'mdi-timer-sand', definition: 'Time Away From Base—the overall span from the sequence’s beginning at base through final release back at base.' },
+        { id: 'rig', term: 'RIG', icon: 'mdi-shield-crown-outline', definition: 'Ratio in Guarantee—a contractual pay floor that protects compensation when elapsed duty or time away from base is large relative to flight time.' },
+        { id: 'duty-rig', term: 'Duty Rig', icon: 'mdi-timer-outline', definition: 'A minimum pay-and-credit relationship based on actual on-duty time. Current calculations belong to the pay deep dive.' },
+        { id: 'block-time', term: 'Block time', icon: 'mdi-airplane-clock', definition: 'Gate departure to gate arrival for a segment; one input to pay, but not the whole paycheck.' },
+      ],
+    },
+    {
+      kind: 'prose',
+      title: 'APFA reference for pay guarantees',
+      icon: 'mdi-link-variant',
+      body: `APFA explains minimum-day guarantees, Duty Rig, Trip Rig, and related examples in [Pay Guarantees (RIGs)](https://www.apfa.org/resources/pay/pay-guarantees/?ss360SearchTerm=RIG). The current agreement and implementation guidance remain authoritative.`,
     },
   ],
   quiz: [
@@ -621,21 +698,16 @@ const operations: AcademyModule = {
       explanation: 'Lead = position 1 on that sequence.',
     },
     {
-      question: 'A sequence mixes A321 and 787 legs. The FA…',
-      options: [
-        'Changes position per aircraft',
-        'Keeps the same position number throughout',
-        'Chooses daily',
-        'Must deadhead between types',
-      ],
+      question: 'Which record should determine the cabin role a Flight Attendant is working?',
+      options: ['The person’s seniority alone', 'The current operating assignment and position', 'The aircraft tail number alone', 'The home address'],
       answerIndex: 1,
-      explanation: 'Same position across mixed fleet; extra positions on larger aircraft come from other sequences.',
+      explanation: 'Use the current operating assignment and position; do not infer the role from seniority.',
     },
     {
-      question: 'Post-flight buffer added to Domestic arrivals for duty computation:',
-      options: ['10 minutes', '15 minutes', '30 minutes', '45 minutes'],
+      question: 'TAFB means:',
+      options: ['Time After Flight Boarding', 'Time Away From Base', 'Total Aircraft Flight Block', 'Trip Award Final Bid'],
       answerIndex: 1,
-      explanation: 'Domestic 15, International 30 — or actual release, whichever is later.',
+      explanation: 'TAFB is Time Away From Base and is distinct from block time or a single duty period.',
     },
   ],
 }
