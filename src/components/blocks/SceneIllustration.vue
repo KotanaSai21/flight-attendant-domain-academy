@@ -254,36 +254,54 @@ defineProps<{ variant: 'airport' | 'cabin' | 'network' | 'aircraft' }>()
       <text x="430" y="406" text-anchor="middle" class="lbl">COMMON PARTS OF AN AIRCRAFT · SIDE VIEW</text>
     </svg>
 
-    <!-- ============ NETWORK SCENE ============ -->
-    <svg v-else viewBox="0 0 800 380" class="scene" role="img" aria-label="Stylized map of the eleven crew bases">
-      <rect width="800" height="380" fill="#eaf3fb" rx="14" />
-      <!-- stylized US landmass -->
-      <path d="M70 110 L140 62 L300 52 L470 46 L600 58 L688 78 L726 100 L706 132 L724 168 L690 208 L668 252 L636 300 L600 336 L556 300 L500 292 L444 306 L392 276 L332 286 L268 264 L206 276 L148 254 L92 226 L64 172 Z"
-            fill="#ffffff" stroke="#9fb3c8" stroke-width="3" />
-      <!-- co-terminal group rings -->
-      <circle cx="664" cy="120" r="26" fill="none" stroke="#c01933" stroke-width="2.5" stroke-dasharray="5 4" class="spin" />
-      <circle cx="612" cy="164" r="20" fill="none" stroke="#c01933" stroke-width="2.5" stroke-dasharray="5 4" class="spin" />
-      <circle cx="436" cy="122" r="20" fill="none" stroke="#c01933" stroke-width="2.5" stroke-dasharray="5 4" class="spin" />
-      <circle cx="336" cy="228" r="20" fill="none" stroke="#c01933" stroke-width="2.5" stroke-dasharray="5 4" class="spin" />
-      <!-- example route (3-day DFW anatomy) -->
-      <path class="route" d="M336 228 Q380 150 436 122" fill="none" stroke="#0061ab" stroke-width="3" />
-      <path class="route" d="M436 122 Q520 130 560 210" fill="none" stroke="#0061ab" stroke-width="3" />
-      <path class="route" d="M560 210 Q470 280 336 228" fill="none" stroke="#c01933" stroke-width="3" />
-      <!-- bases -->
-      <g>
-        <g v-for="b in bases" :key="b.code" class="base">
-          <circle :cx="b.x" :cy="b.y" r="9" fill="#0061ab" stroke="#ffffff" stroke-width="2.5" />
-          <text :x="b.x" :y="b.y - 13" text-anchor="middle" class="lbl" fill="#003057">{{ b.code }}</text>
-        </g>
+    <!-- ============ NETWORK / HUB SCENE ============ -->
+    <svg v-else viewBox="0 0 800 400" class="scene" role="img" aria-label="Hub-and-spoke map of the eleven crew bases with co-terminal metro pairs">
+      <defs>
+        <linearGradient id="netbg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#e7f1fb" />
+          <stop offset="1" stop-color="#f7fafc" />
+        </linearGradient>
+        <radialGradient id="hubglow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#0061ab" stop-opacity="0.35" />
+          <stop offset="1" stop-color="#0061ab" stop-opacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="800" height="400" fill="url(#netbg)" rx="14" />
+
+      <!-- stylized US landmass (smoother, editable city-frame) -->
+      <path d="M62 96 L120 52 L180 40 L286 30 L400 26 L520 34 L612 52 L682 62 L702 84 L692 104 L712 132 L726 166 L700 200 L678 232 L664 268 L642 300 L600 326 L566 300 L520 292 L470 304 L430 288 L392 282 L348 296 L306 286 L268 276 L240 282 L200 272 L160 258 L118 234 L92 204 L74 172 L56 140 Z"
+            fill="#ffffff" stroke="#b9cfe0" stroke-width="2.5" />
+
+      <!-- subtle hub glow behind DFW -->
+      <circle cx="352" cy="236" r="70" fill="url(#hubglow)" />
+
+      <!-- co-terminal pair rings (no text; base dots below carry the codes) -->
+      <g stroke="#c01933" stroke-width="2" stroke-dasharray="4 4">
+        <circle cx="672" cy="120" r="30" class="spin" />
+        <circle cx="446" cy="106" r="22" class="spin" />
+        <circle cx="352" cy="232" r="30" class="spin" />
+        <circle cx="612" cy="162" r="22" class="spin" />
       </g>
+
+      <!-- hub-and-spoke demo: 3-day DFW loop (animated) -->
+      <path class="route" d="M352 232 Q416 150 446 106" fill="none" stroke="#0061ab" stroke-width="3" />
+      <path class="route" d="M446 106 Q562 128 578 204" fill="none" stroke="#0061ab" stroke-width="3" />
+      <path class="route" d="M578 204 Q480 300 352 232" fill="none" stroke="#c01933" stroke-width="3" />
+
+      <!-- base dots -->
+      <g v-for="b in bases" :key="b.code" class="base">
+        <circle :cx="b.x" :cy="b.y" r="8" fill="#0061ab" stroke="#ffffff" stroke-width="2.5" />
+        <text :x="b.x" :y="b.y + (b.labelBelow ? 20 : -14)" text-anchor="middle" class="lbl" :fill="b.hub ? '#003057' : '#627d98'">{{ b.code }}</text>
+      </g>
+
       <!-- legend -->
       <g class="lbl">
-        <circle cx="60" cy="352" r="7" fill="#0061ab" stroke="#fff" stroke-width="2" />
-        <text x="74" y="356">Crew base (11)</text>
-        <line x1="196" y1="348" x2="236" y2="348" stroke="#c01933" stroke-width="2.5" stroke-dasharray="5 4" />
-        <text x="244" y="356">Co-terminal metro</text>
-        <line x1="392" y1="348" x2="432" y2="348" stroke="#0061ab" stroke-width="3" />
-        <text x="440" y="356">Example 3-day DFW loop</text>
+        <circle cx="52" cy="368" r="7" fill="#0061ab" stroke="#fff" stroke-width="2" />
+        <text x="66" y="372">Crew base</text>
+        <line x1="150" y1="364" x2="184" y2="364" stroke="#c01933" stroke-width="2" stroke-dasharray="4 4" />
+        <text x="192" y="368">Co-terminal metro pair</text>
+        <line x1="360" y1="364" x2="394" y2="364" stroke="#0061ab" stroke-width="3" />
+        <text x="402" y="368">Example DFW 3-day loop</text>
       </g>
     </svg>
 
@@ -301,14 +319,14 @@ export default {
         { code: 'SFO', x: 96, y: 158 },
         { code: 'LAX', x: 132, y: 226 },
         { code: 'PHX', x: 196, y: 240 },
-        { code: 'DFW', x: 336, y: 228 },
-        { code: 'ORD', x: 436, y: 122 },
+        { code: 'DFW', x: 352, y: 232, hub: true },
+        { code: 'ORD', x: 446, y: 106 },
         { code: 'MIA', x: 596, y: 300 },
-        { code: 'CLT', x: 560, y: 210 },
+        { code: 'CLT', x: 578, y: 204 },
         { code: 'PHL', x: 636, y: 146 },
-        { code: 'DCA', x: 612, y: 164 },
-        { code: 'JFK', x: 664, y: 110 },
-        { code: 'LGA', x: 656, y: 128 },
+        { code: 'DCA', x: 612, y: 162, labelBelow: true },
+        { code: 'JFK', x: 672, y: 120 },
+        { code: 'LGA', x: 662, y: 138, labelBelow: true },
       ],
     }
   },

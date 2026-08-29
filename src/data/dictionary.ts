@@ -45,6 +45,44 @@ export const dictionary: DictionaryTerm[] = [
     source: cba('2024 CBA §2.EE, §12.A.1'),
   },
   {
+    id: 'lrd',
+    term: 'Lineholder/Reserve Designator',
+    shortName: 'LRD',
+    category: 'Scheduling',
+    definition:
+      'The designation a Flight Attendant selects on their PBS bid that determines which of the two line types they will be awarded: Lineholder (a Line of Time) or Reserve (availability days).',
+    businessPurpose:
+      'Every Flight Attendant must bid PBS as either a Lineholder or a Reserve; the LRD choice routes the whole month into the correct scheduling machinery.',
+    whyItMatters:
+      'The LRD is the first fork in a month: it decides whether a Flight Attendant flies concrete trips (TTS/UBL/ETB reshaping) or holds availability windows (ROTA/ROTD, RAPs), and whether guarantee math or RAP rules apply.',
+    whereUsed: ['PBS bid package', 'Monthly line construction', 'Reserve staffing plans'],
+    example:
+      'A well-senioritied FA bids LRD = Lineholder and is awarded an 84-hour Line of Time; a junior FA in the same bid month bids LRD = Reserve and is awarded RSV days plus RAPs.',
+    related: ['pbs', 'lineholder', 'reserve-line', 'line-of-time'],
+    developerRelevance:
+      'One enum on the PBS preference record (LINE | RESERVE). It picks which award path a bid takes and which subsystems print the result.',
+    source: cba('2024 CBA §12.A.1'),
+  },
+  {
+    id: 'tbs',
+    term: 'Training Bidding System',
+    shortName: 'TBS',
+    category: 'Training',
+    definition:
+      'The system that lets Flight Attendants express preferences when bidding for Continuing Qualification (CQ) training slots; it awards CQ training in seniority order based on status (early, base, or grace) and the priority of the preferences selected.',
+    businessPurpose:
+      'Allocates limited annual training seats fairly (by seniority) while letting Flight Attendants tell the company when they would prefer to train.',
+    whyItMatters:
+      'TBS awards are a hard gate on scheduling: CQ dates set unschedulable days, and an expired qualification removes flying eligibility entirely.',
+    whereUsed: ['Annual CQ bidding', 'Training window planning', 'Qualification validity'],
+    example:
+      'In the training bid window, an FA ranks several CQ class dates; TBS assigns the earliest-ranked seat seniority order allows, anchored to their early/base/grace status.',
+    related: ['cq-training', 'seniority-occupational', 'pbs'],
+    developerRelevance:
+      'A seniority-ordered award engine over dated seats, with status buckets (early/base/grace) and validity intervals that downstream scheduling reads as hard constraints.',
+    source: cba('2024 CBA §20.A, TBS Guide'),
+  },
+  {
     id: 'tts',
     term: 'Trip Trade System',
     shortName: 'TTS',
@@ -88,15 +126,15 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'ETB',
     category: 'Scheduling',
     definition:
-      'A real-time electronic method for picking up, dropping, and trading sequences between Flight Attendants on a first-come/first-served basis.',
+      'A real-time electronic method for picking up, dropping, and trading sequences between Flight Attendants on a first-come/first-served basis — the live, always-on sibling of the batch-run TTS.',
     businessPurpose:
-      'Provides instant, self-service trades outside the scheduled TTS processing windows.',
+      'Provides instant, self-service trades outside the scheduled TTS processing windows, so flying keeps moving all day.',
     whyItMatters:
-      'ETB is the fastest way flying moves between crew members; first-come/first-served means timing matters, not seniority.',
+      'Where TTS is scheduled and seniority-blind but batch-driven, ETB is immediate and explicitly first-come/first-served: the fastest way flying moves between crew, and timing beats seniority.',
     whereUsed: ['Real-time trades', 'Last-minute pickups', 'Drop/pickup between TTS runs'],
     example:
       'Two LGA Flight Attendants swap single duty periods directly on ETB; legality is validated instantly and both schedules update immediately.',
-    related: ['tts', 'pbs', 'credit-window'],
+    related: ['tts', 'pbs', 'credit-window', 'red-flagging'],
     developerRelevance:
       'Interactive, low-latency service: optimistic concurrency (first come wins), real-time legality validation, immediate schedule publication.',
     source: cba('2024 CBA §2.Q, §10'),
@@ -202,10 +240,48 @@ export const dictionary: DictionaryTerm[] = [
       'When raw segment credit < half the duty period, the rig silently raises pay — important for payroll testing.',
     whereUsed: ['Per-duty-period pay calculation'],
     example: 'A 14-hour duty period with only 5:40 credit triggers rig pay up to 7:00 credit.',
-    related: ['duty-period', 'credited-hours'],
+    related: ['duty-period', 'credited-hours', 'rig', 'tafb'],
     developerRelevance:
-      'Pure function: rig(creditMinutes, dutyMinutes) = max(credit, duty/2). Classic payroll edge-case generator.',
-    source: cba('2024 CBA §2.P'),
+      'Pure function: rig(creditMinutes, dutyMinutes) = max(credit, duty/2). One of the RIG family — the Duty RIG. Classic payroll edge-case generator.',
+    source: cba('2024 CBA §2.P, §11.D.5'),
+  },
+  {
+    id: 'rig',
+    term: 'RIG — Ratio in Guarantee',
+    shortName: 'RIG',
+    category: 'Payroll & Credit',
+    definition:
+      'The family of pay guarantees that ensure a Flight Attendant earns a contractual minimum even when actual flying (block time) is low. RIGs top flight-time pay up to a floor based on duty time, time away from base, or minimum day values.',
+    businessPurpose:
+      'Protects income against inefficient trips, long sits, delays, and short flying days so pay is not purely flight-hour driven.',
+    whyItMatters:
+      'RIGs are the silent math behind most “why is my credit higher than my block time?” questions — and the most common payroll audit/edge-case area.',
+    whereUsed: ['Per-duty-period pay', 'Trip/sequence pay', 'Payroll ledger G/E/F/D time'],
+    example:
+      'A 12-hour duty day that only flew 5:00 gets paid at least 6:00 (Duty RIG, 1-for-2). A 35-hour trip away from base that flew 8:00 gets paid at least 10:00 (Trip RIG, 1-for-3.5).',
+    related: ['duty-rig', 'tafb', 'credited-hours', 'pay-no-credit'],
+    developerRelevance:
+      'Each RIG is a pure function (max(credit, floor)) computed per duty period or per trip. Differing inputs: Duty RIG uses on-duty minutes; Trip RIG uses TAFB; Minimum Day uses duty-period floor (3 or 5h). HI-3 paycode letters: G=minimum day, E=duty rig, F=trip rig, D=deadhead.',
+    source: cba('2024 CBA §11.D.1, §11.D.4–.6 (APFA Pay Guarantees guide)'),
+  },
+  {
+    id: 'tafb',
+    term: 'Time Away From Base',
+    shortName: 'TAFB',
+    category: 'Payroll & Credit',
+    definition:
+      'Total elapsed time a Flight Attendant is away from their crew base on a trip — from the report time of the first duty period to the release time of the last duty period (the sequence span).',
+    businessPurpose:
+      'TAFB is the basis for the Trip Rig (1 hour pay per 3.5 hours away) and the per-diem/expenses clock; it captures the full cost of a trip to a crew member’s life.',
+    whyItMatters:
+      'Two trips can have identical block time but very different TAFB — driving both Trip Rig pay and per-diem differences. It is distinct from on-duty time.',
+    whereUsed: ['Trip Rig pay', 'Per diem', 'Sequence comparison', 'Payroll'],
+    example:
+      'A DFW 3-day sequence reports Monday 0700 and releases Thursday 1600 → TAFB ≈ 57 hours. If it only flew 12:00, Trip Rig pays ≥ 57 ÷ 3.5 = 16:17.',
+    related: ['rig', 'duty-rig', 'duty-period', 'layover', 'credited-hours'],
+    developerRelevance:
+      'Derived measure = release(last day) − report(first day). Distinct from duty minutes; used as input to Trip Rig and per-diem accrual.',
+    source: { kind: 'apfa', label: 'APFA Website', reference: 'Resources → Pay → Pay Guarantees (RIGs)' },
   },
   {
     id: 'rap',
@@ -213,18 +289,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'RAP',
     category: 'Reserve',
     definition:
-      'A published window during which a Reserve must be available for assignment. Reserve lines are built from lists of RAPs plus Golden Days and Flex Days.',
+      'A published window during which a Reserve must be available for assignment. RAPs come in up to four named shifts — A, B, C, and D — that map roughly to morning, mid-day, evening, and night coverage. Reserve lines are built from lists of RAPs plus Golden Days and Flex Days.',
     businessPurpose:
-      'Converts uncertain demand into predictable coverage blocks the Company can staff base-by-base.',
+      'Converts uncertain demand into predictable coverage blocks the Company can staff base-by-base, named so a Reserve line reads like a typed day-of coverage schedule.',
     whyItMatters:
-      'RAP start/end drive call-out rules, rest, and pay; Modified/Extended RAPs change windows operationally.',
-    whereUsed: ['Reserve line construction', 'Crew Scheduling call-out', 'Reserve pay'],
+      'RAP start/end drive call-out rules, rest, and pay. Start times are Company-determined and published in the PBS cover sheet each month (fixed once published). RAP D is the night window — scheduled 1400–0200 HBT regardless of base, and it may be ended early once all departures are airborne with no known diversions (release with no reduction in the reserve guarantee).',
+    whereUsed: ['Reserve line construction', 'Crew Scheduling call-out', 'PBS cover sheet', 'ROTA/D award'],
     example:
-      'A Reserve holds a 0400–1600 RAP; Crew Scheduling may contact them any time inside it for a sequence, standby, or LMCO.',
-    related: ['reserve-line', 'modified-rap', 'extended-rap', 'golden-day', 'flex-day'],
+      'A Reserve holds a RAP B 0600–1600 HBT. After Crew Scheduling’s call (or after acknowledging via Crew Portal), the 2-hour report clock starts — 3 hours in a co-terminal base. Generally ~11 hours of rest separates consecutive RAPs, though ROTD waivers can shorten it.',
+    related: ['reserve-line', 'modified-rap', 'extended-rap', 'golden-day', 'flex-day', 'rota', 'rotd', 'hbt'],
     developerRelevance:
-      'Time-interval entity with mutation events (Modified/Extended). Call-out legality = interval math + rest rules.',
-    source: cba('2024 CBA §2.R, §12.G'),
+      'Time-interval entity that recurs four ways (shift A/B/C/D) with mutation events (Modified/Extended). Call-out legality = interval math + rest rules (2h/3h report, 11h between RAPs, 15-min return-call window, RAP-before-0500 must be phoned not just portaled).',
+    source: cba('2024 CBA §2.R, §12.G–K; APFA Reserve Resources'),
   },
   {
     id: 'modified-rap',
@@ -530,6 +606,38 @@ export const dictionary: DictionaryTerm[] = [
     related: ['sequence', 'crew-accommodations'],
     developerRelevance: 'Segment-pair derived entity linking hotels/per diem records.',
     source: cba('2024 CBA §2.BB'),
+  },
+  {
+    id: 'position',
+    term: 'Position',
+    category: 'Operations',
+    definition:
+      'The numbered area of responsibility an FA holds for a sequence (Position 1, 2, 3…). Position 1 is the Lead FA when awarded. An FA keeps the same position number for the entire sequence — even across mixed aircraft types.',
+    businessPurpose:
+      'Positioning is safety architecture: each position owns specific doors, equipment, and emergency duties so staffing and evacuation are deterministic.',
+    whyItMatters:
+      'Extra positions required on a larger aircraft are staffed from other sequences; qualifications (door, galley, language, lead) attach to positions.',
+    whereUsed: ['Staffing tables', 'Sequence construction', 'Assignment engines', 'Training qualifications'],
+    example:
+      'An A321 sequence requires N positions; an FA holding Position 2 works Position 2 on every leg of the trip regardless of cabin configuration.',
+    related: ['sequence', 'deadhead', 'complement'],
+    developerRelevance:
+      'Ordinal slot with qualification constraints; the “same position across mixed fleet” rule is a cross-segment validation invariant.',
+    source: cba('2024 CBA §2.CC'),
+  },
+  {
+    id: 'complement',
+    term: 'Complement',
+    category: 'Operations',
+    definition:
+      'The legally required number of Flight Attendants for an aircraft on a given service, split into numbered positions. Staffing below complement is illegal to depart.',
+    businessPurpose: 'Deterministic, regulation-backed staffing per aircraft type and configuration.',
+    whyItMatters: 'Department below complement is an operational–safety event that can cancel or re-cater a departure.',
+    whereUsed: ['Staffing tables', 'Assignment validators', 'Sequence construction'],
+    example: 'A widebody service calls for a larger complement than a narrowbody; each position maps to real doors and galleys.',
+    related: ['position', 'sequence'],
+    developerRelevance: 'AircraftType→Complement lookup feeding staffing and legality checks.',
+    source: cba('2024 CBA §10'),
   },
   {
     id: 'ipd',

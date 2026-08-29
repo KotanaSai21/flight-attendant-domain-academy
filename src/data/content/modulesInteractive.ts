@@ -118,6 +118,16 @@ const fundamentals: AcademyModule = {
       ],
     },
     {
+      kind: 'diagram',
+      caption: 'The ten phases draw a clear arc from boarding to deplaning. The FA’s working day stretches wider than this arc — it starts at report (before boarding) and ends at release (after deplaning).',
+      code: `flowchart LR
+    B["1 · Boarding"] --> P["2 · Pushback"] --> T["3 · Taxi"] --> K["4 · Takeoff"]
+    K --> C["5 · Climb"] --> R["6 · Cruise"] --> D["7 · Descent"] --> L["8 · Landing"]
+    L --> TG["9 · Taxi to gate"] --> E["10 · Deplaning"]
+    style B fill:#0061ab,color:#fff
+    style E fill:#c01933,color:#fff`,
+    },
+    {
       kind: 'terms',
       title: 'The crew clock — five time words',
       items: [
@@ -177,6 +187,18 @@ Same trip, three different clocks — requirements that say “5.5 hours” and 
 - **“Cabin secure.”**
 
 These verify that every door is armed (slide connected) before takeoff and disarmed at the gate so the slide will not deploy into the bridge. Exact AA scripts are internal — the *concept* is universal.`,
+    },
+    {
+      kind: 'prose',
+      title: 'Official sources & plain-language guides',
+      icon: 'mdi-link-variant',
+      body: `This academy distills the contract into learnable building blocks, but the authoritative source is always the **2024 CBA** and **APFA**.
+
+- **APFA (the Flight Attendant union):** [apfa.org](https://www.apfa.org) — contract education, reserve resources, bidding guides.
+- **APFA Bidding Academy:** [apfa.org/bidding](https://www.apfa.org/bidding) — how FAs actually construct and submit bids.
+- **APFA Pay Guarantees (RIGs):** [apfa.org/resources/pay/pay-guarantees](https://www.apfa.org/resources/pay/pay-guarantees)
+
+Call-outs and reserve shift mechanics below are accurate to the 2024 CBA and APFA June-2026 shaping, but always defer to the live contract and APFA guidance.`,
     },
     {
       kind: 'callout',
@@ -275,7 +297,7 @@ const lifecycle: AcademyModule = {
         { id: 'seniority-occupational', term: 'Seniority', icon: 'mdi-medal-outline', definition: 'Date-of-hire ranking that drives bidding order for lines, vacations and trades.' },
         { id: 'lineholder', term: 'Status', icon: 'mdi-toggle-switch', definition: 'Lineholder or Reserve for the bid month — the biggest fork in the domain.' },
         { term: 'Qualifications', icon: 'mdi-certificate', definition: 'Aircraft, aircraft door, language of destination, international documents.' },
-        { term: 'Position', icon: 'mdi-seat-passenger', definition: 'Purser / lead versus cabin position — awarded by bid, fixed for the sequence.' },
+        { id: 'position', term: 'Position', icon: 'mdi-seat-passenger', definition: 'Purser / lead versus cabin position — awarded by bid, fixed for the sequence.' },
         { term: 'Availability', icon: 'mdi-calendar-remove', definition: 'Vacation, leave, training and sick status that gate what may be assigned.' },
       ],
     },
@@ -324,10 +346,10 @@ const lifecycle: AcademyModule = {
       kind: 'steps',
       title: "A commuter's morning",
       items: [
-        { icon: 'mdi-bed', title: 'Lives in Tampa, based at DFW', detail: 'She is a commuter — the schedule has to work for people who do not live in base. Commuting happens on personal time.' },
-        { icon: 'mdi-ticket-account', title: '0430 — Nonrev on the 0545', detail: 'Standby on a company flight, jumpseat if needed. Report time at DFW still governs legality — the commute never buys extra duty time.' },
-        { icon: 'mdi-alert-circle-check', title: 'Connection fails? Protections kick in', detail: 'Contracts typically add commuter protections when a failed connection threatens a sequence — a classic edge case our tooling must handle.' },
-        { icon: 'mdi-login-variant', title: '0700 — Report, legal and on time', detail: 'Crew room check-in, sequence pulled up, position confirmed. The closed loop starts here — and must end here too.' },
+        { icon: 'mdi-bed', title: 'Lives elsewhere, based at DFW', detail: 'She is a commuter — the schedule must work for people who do not live in base. Commuting happens entirely on personal time: the commute never adds pay, duty time, or report-window flexibility.' },
+        { icon: 'mdi-ticket-account', title: '0430 — Nonrev on the 0545', detail: 'Standby (non-rev) on a company flight, jumpseat if needed. Report time at DFW still governs legality — no matter how early she left, the commute buys nothing against the clock.' },
+        { icon: 'mdi-alert-circle-check', title: 'Connection fails? Protections kick in', detail: 'Contracts add commuter protections when a failed positioning leg threatens a sequence — a defined remedy path our tooling must surface, distinct from a normal missed stdby. Co-terminal bases (e.g., DCA·IAD) broaden her options.' },
+        { icon: 'mdi-login-variant', title: '0700 — Report, legal and on time', detail: 'Crew-room check-in, sequence pulled up, position and legality confirmed. The closed loop starts here — and must end here too. If she were late, call-out, LMCO and missed-trip rules would all apply.' },
       ],
     },
     {
@@ -406,7 +428,7 @@ Two sequences can even **share the same middle legs** — Sequence A (base MIA):
           icon: 'mdi-phone-incoming',
           color: '#0B6A0B',
           detail:
-            'Cancellations and sick calls create open time. Reserves cover it via ROTA (tomorrow) and ROTD (today); Crew Scheduling owns the clock at the gate.',
+            'Cancellations and sick calls create open time. Reserves cover it via ROTA (tomorrow) and ROTD (today). Crew Scheduling owns the clock at the gate: it reassigns, calls reserves out, brokers standbys, manages LMCO (less-than-minimum call-out) premium windows, and re-protects trips. If the crew cannot be re-covered, hotels, deadheads and reserve standby shifts absorb the disruption while pay protection kicks in. This is the highest-volume, highest-stakes node — every downstream payroll fact originates here.',
         },
         {
           label: 'Payroll',
@@ -422,7 +444,43 @@ Two sequences can even **share the same middle legs** — Sequence A (base MIA):
       tone: 'info',
       icon: 'mdi-map-marker-right',
       title: 'Where to go deeper',
-      text: 'The monthly world gets its own deep dives: Scheduling (Module 4), PBS (Module 6), Bidding (Module 7) and TTS (Module 9). Reserves add the daily world — Reserve (Module 8).',
+      text: 'The monthly world gets its own deep dives: Scheduling (Module 4), PBS (Module 6), Bidding (Module 7) and TTS (Module 9). Reserves add the daily world — Reserve (Module 8). APFA’s public guides add the FA’s-eye view: apfa.org/bidding, apfa.org/reserve-resources.',
+    },
+    {
+      kind: 'prose',
+      title: 'Lineholder vs Reserve — the two-month shapes',
+      icon: 'mdi-scale-balance',
+      body: `These two statuses are the backbone of the whole domain. Most of what you will build splits cleanly on this axis:
+
+**Lineholder** — holds a Line of Time (70–90 credited hours of concrete trips). System touchpoints: PBS line, TTS/UBL, ETB trades, Credit Window, carry-over at month boundaries.
+
+**Reserve** — holds availability windows (RAPs) instead of trips. System touchpoints: RAP shifts A/B/C/D, Golden/Flex days, ROTA (future) and ROTD (daily), standbys, LMCO, RSVCOT (calling out of time).
+
+Which one an FA holds is decided by seniority and rotation — and it reshapes everything from guarantee math to trade rules. Keep the line separate in your data model.`,
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-cog-outline',
+      color: '#003057',
+      title: 'For developers building an FA application',
+      text: 'High-level orientation before the deep-dives: the mental model that keeps requirements coherent.',
+    },
+    {
+      kind: 'terms',
+      title: 'Four ideas that anchor every FA system',
+      items: [
+        { id: 'sequence', term: 'The sequence is the atom', icon: 'mdi-puzzle', definition: 'Trips, trades, awards, and pay all hang off Sequence → DutyPeriods → Segments. Ask “what sequence?” before “what feature?”.' },
+        { id: 'hbt', term: 'One clock: Home Base Time', icon: 'mdi-clock-outline', definition: 'Nearly every rule (deadlines, RAPs, rest, legality) resolves in HBT. Never store or compare naive local times across bases.' },
+        { id: 'credited-hours', term: 'Two ledgers: pay vs credit', icon: 'mdi-book-multiple', definition: 'Pay and credit are separate. Rigs, red flags and premiums move money, not credit. Mixing them breaks guarantees and maxima.' },
+        { term: 'Pay ≠ flight hours', icon: 'mdi-cash-clock', definition: 'RIGs and TAFB guarantee floors so a trip pays a minimum regardless of block time. Always compute against the guarantee, not raw flying.' },
+      ],
+    },
+    {
+      kind: 'callout',
+      tone: 'primary',
+      icon: 'mdi-alert-decagram',
+      title: 'Where defects actually live',
+      text: 'In real FA systems the bugs cluster at four boundaries: timezone/rest math (15/30-min buffers, +45 separation, 11h between RAPs), pay-vs-credit confusion, month-boundary carry-over, and concurrency on the same open-time item (two “first” claims). Audit every rule at these seams.',
     },
   ],
   quiz: [
@@ -492,8 +550,8 @@ const operations: AcademyModule = {
       kind: 'terms',
       title: 'Positioning vocabulary',
       items: [
-        { term: 'Position', icon: 'mdi-numeric-1-box-outline', definition: 'Numbered area of responsibility (1, 2, 3…). Position 1 is the Lead / purser when awarded.' },
-        { term: 'Complement', icon: 'mdi-counter', definition: 'The required number of FAs for the aircraft — staffing below it is illegal to depart.' },
+        { id: 'position', term: 'Position', icon: 'mdi-numeric-1-box-outline', definition: 'Numbered area of responsibility (1, 2, 3…). Position 1 is the Lead / purser when awarded.' },
+        { id: 'complement', term: 'Complement', icon: 'mdi-counter', definition: 'The required number of FAs for the aircraft — staffing below it is illegal to depart.' },
         { term: 'Lead FA', icon: 'mdi-star-outline', definition: 'Whoever holds position 1 on the sequence — not simply the most senior person aboard.' },
         { id: 'deadhead', term: 'Deadhead', icon: 'mdi-seat-recline-extra', definition: 'Riding as a passenger to reposition — on duty, paid, but not working. Positive-space when covering an assignment.' },
       ],
