@@ -109,6 +109,44 @@ const toneColor = (tone?: string): 'info' | 'success' | 'warning' | 'error' =>
         </v-row>
       </div>
 
+      <!-- TABLE -->
+      <div v-else-if="b.kind === 'table'" v-reveal class="mb-8">
+        <div v-if="b.title" class="text-h6 font-weight-bold mb-3 d-flex align-center">
+          <v-icon icon="mdi-table-large" color="secondary" class="mr-2" />
+          {{ b.title }}
+        </div>
+        <div v-if="b.termIds?.some(Boolean)" class="text-caption text-medium-emphasis mb-3">
+          <v-icon icon="mdi-cursor-default-click-outline" size="15" class="mr-1" />
+          Select a linked term to open its full definition in the Domain Dictionary.
+        </div>
+        <v-card variant="outlined" class="overflow-hidden">
+          <div class="table-scroll">
+            <v-table density="comfortable" hover>
+              <thead>
+                <tr>
+                  <th v-for="(column, j) in b.columns" :key="j" class="font-weight-bold text-primary">{{ column }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(row, j) in b.rows" :key="j">
+                  <td v-for="(cell, k) in row" :key="k" :class="{ 'font-weight-medium': k === 0 }">
+                    <router-link
+                      v-if="k === 0 && b.termIds?.[j]"
+                      :to="{ name: 'dictionary', query: { term: b.termIds[j] } }"
+                      class="term-link"
+                    >
+                      {{ cell }}
+                      <v-icon icon="mdi-arrow-top-right" size="14" class="ml-1" />
+                    </router-link>
+                    <template v-else>{{ cell }}</template>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+          </div>
+        </v-card>
+      </div>
+
       <!-- FLOW -->
       <div v-else-if="b.kind === 'flow'" v-reveal class="mb-8">
         <div v-if="b.title" class="text-h6 font-weight-bold mb-3 d-flex align-center">
@@ -165,5 +203,26 @@ const toneColor = (tone?: string): 'info' | 'success' | 'warning' | 'error' =>
 }
 .term-card:hover {
   transform: translateY(-2px);
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.table-scroll table {
+  min-width: 680px;
+}
+.table-scroll th {
+  background: rgba(var(--v-theme-primary), 0.06);
+  white-space: nowrap;
+}
+.table-scroll td {
+  line-height: 1.45;
+  min-width: 150px;
+}
+.term-link {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: none;
+}
+.term-link:hover {
+  text-decoration: underline;
 }
 </style>

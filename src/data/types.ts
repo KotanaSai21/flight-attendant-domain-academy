@@ -77,7 +77,7 @@ export interface ModuleSection {
 
 /** Loose-typed content block for free-form, interactive modules */
 export interface ContentBlock {
-  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'flow' | 'steps' | 'compare' | 'illustration'
+  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'table' | 'flow' | 'steps' | 'compare' | 'illustration'
   title?: string
   text?: string
   body?: string // markdown
@@ -87,6 +87,9 @@ export interface ContentBlock {
   icon?: string
   color?: string
   variant?: 'airport' | 'cabin' | 'network' | 'aircraft'
+  columns?: string[]
+  rows?: string[][]
+  termIds?: Array<string | undefined>
   items?: Array<{
     term?: string
     definition?: string
