@@ -9,7 +9,7 @@ const progress = useProgressStore()
   <v-container fluid class="pa-8">
     <h1 class="text-h4 font-weight-bold mb-2">Learning Center</h1>
     <p class="text-body-1 text-medium-emphasis mb-6">
-      Work through modules in order — each ends with a knowledge check. Progress is saved locally.
+      Work through the modules in order. The curriculum focuses on clear explanations, timelines, terminology, and connected operational scenarios; progress is saved locally.
     </p>
 
     <v-row>
