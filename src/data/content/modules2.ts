@@ -6,26 +6,26 @@ import type { AcademyModule } from '../types'
 const etb: AcademyModule = {
   id: 'etb',
   number: 10,
-  title: 'ETB — Electronic Trade Board',
+  title: 'ETB — Real-Time Trading',
   icon: 'mdi-view-dashboard-variant',
   color: '#0078D2',
-  tagline: 'The real-time, first-come/first-served trading floor.',
-  estimatedMinutes: 15,
+  tagline: 'Post, claim, or trade eligible trips in a real-time marketplace after the monthly award.',
+  estimatedMinutes: 10,
   terms: ['etb', 'tts', 'open-time', 'credit-window', 'red-flagging'],
   blocks: [
     {
       kind: 'hero',
       icon: 'mdi-view-dashboard-variant',
       title: 'ELECTRONIC TRADE BOARD',
-      text: 'TTS runs on a schedule — batch jobs that process requests in windows. But opportunities do not wait for a batch. ETB is the always-on marketplace where a flight attendant can drop, pick up, or trade a trip in seconds, first come first served.',
+      text: 'ETB is the real-time trading path used after the monthly award. Unlike TTS, which waits for a scheduled processing run, an eligible ETB transaction is decided when a posting is claimed and validated.',
     },
     {
       kind: 'prose',
-      title: 'The instant marketplace',
+      title: 'Where ETB fits in the month',
       icon: 'mdi-store-outline',
-      body: `Think of ETB as the trading floor that never closes. Someone posts a trip, someone else claims it, legality is checked instantly, and both schedules update immediately. No waiting for a scheduled run, no seniority gate — the person who acts first, wins.
+      body: `PBS creates the starting monthly award. TTS and UBL provide a scheduled batch path for eligible Lineholder changes. **ETB provides the real-time path**.
 
-That “first come, first served” rule is the entire personality of ETB. It is what makes it feel so different from PBS, which is all about seniority, and from TTS, which is all about batch windows.`,
+A Flight Attendant may post eligible flying, another eligible participant may claim it, and the system validates the transaction before updating the affected schedules. Availability, legality, qualification, and current rules still apply.`,
     },
     {
       kind: 'compare',
@@ -36,10 +36,9 @@ That “first come, first served” rule is the entire personality of ETB. It is
           icon: 'mdi-swap-horizontal-bold',
           color: '#003057',
           points: [
-            'Scheduled and **batch-processed** — ballots open on dates, runs happen routinely.',
-            'Suits **planning ahead**: drop/pick up/trade ballots built days before flying.',
-            'A denied request can **pass to UBL** and retry on a later daily run.',
-            'Credit Window math applied per entire ballot.',
+            'Scheduled and batch-processed after requests are submitted.',
+            'Supports planned drops, pickups, trades, or improvements.',
+            'An eligible unsuccessful preference can pass to UBL for later consideration.',
           ],
         },
         {
@@ -47,10 +46,9 @@ That “first come, first served” rule is the entire personality of ETB. It is
           icon: 'mdi-view-dashboard-variant',
           color: '#0078D2',
           points: [
-            '**Real-time and first-come/first-served** — a claim commits the instant it lands.',
-            'Suits **last-minute action**: grab the opportunity the moment it posts.',
-            'No UBL retry — win now or it is gone.',
-            'Credit Window checked per trade, paid/credited instantly (red flags 150%/100%).',
+            'Real-time rather than a scheduled batch run.',
+            'Supports posting or claiming eligible trip opportunities.',
+            'The transaction validates against the current schedules when claimed.',
           ],
         },
       ],
@@ -59,8 +57,8 @@ That “first come, first served” rule is the entire personality of ETB. It is
       kind: 'callout',
       tone: 'info',
       icon: 'mdi-store-clock-outline',
-      title: 'ETB pauses during the batch runs',
-      text: 'ETB is “real-time” — except during TTS processing and PBS processing windows, when batch engines hold the same open-time items and ETB transactions pause to avoid clobbering them. Same pool, shared locks, clearly separated run phases.',
+      title: 'Real time still needs processing windows',
+      text: 'ETB availability can be affected by scheduled PBS or TTS processing because the tools may touch the same schedules and open flying. The current portal state and published calendar determine when transactions are available.',
     },
     {
       kind: 'diagram',
@@ -75,21 +73,33 @@ That “first come, first served” rule is the entire personality of ETB. It is
       kind: 'callout',
       tone: 'error',
       icon: 'mdi-ray-start-vertex',
-      title: 'The race condition that pays your mortgage',
-      text: 'Two flight attendants can hit “pick up” on the same trip at the same instant. ETB must serialize those claims so exactly one wins. This is optimistic concurrency in its purest form: first write wins, everyone else sees a stale-listing error.',
+      title: 'One opportunity can have only one successful claim',
+      text: 'Two people may try to claim the same posting. The system must accept one eligible transaction and clearly tell the other participant that the opportunity is no longer available.',
     },
     {
       kind: 'prose',
-      title: 'The red-flag special case',
+      title: 'Some postings can carry special attributes',
       icon: 'mdi-flag-variant',
-      body: `Some open-time trips are **red-flagged** because they are hard to cover. Picking one up pays a **150% premium — but credits only 100%** of the hours. This pay-vs-credit gap is a recurring source of confusion and a great test case: money rises, credit does not, and the Credit Window sees only the credited side.`,
+      body: `Open-time postings may carry labels such as premium or red-flag status. At this level, remember that the label can affect eligibility, pay, or credit treatment. Exact values and exceptions belong in the later pay and contractual modules.`,
+    },
+    {
+      kind: 'table',
+      title: 'ETB terminology',
+      columns: ['Term', 'Meaning', 'Simple example'],
+      rows: [
+        ['ETB', 'Electronic Trade Board', 'A Flight Attendant posts or claims an eligible trip opportunity in real time.'],
+        ['Posting', 'An offered trip or transaction opportunity', 'A trip becomes visible to eligible participants.'],
+        ['Claim', 'A request to accept the posted opportunity', 'The system validates the claimant before committing.'],
+        ['Open time', 'Flying currently needing coverage', 'An available sequence may appear for pickup.'],
+      ],
+      termIds: ['etb', 'etb', 'etb', 'open-time'],
     },
     {
       kind: 'callout',
       tone: 'info',
       icon: 'mdi-code-braces',
-      title: 'For developers',
-      text: 'Design for latency and staleness. Use idempotency keys so a double-tap cannot double-sell one trip, server-side claim arbitration with serialized commits, and an optimistic UI that reconciles cleanly when a claim loses.',
+      title: 'The simple distinction',
+      text: 'PBS builds the month. TTS/UBL reshapes it through scheduled processing. ETB reshapes it through real-time eligible transactions. ROTA and ROTD serve the Reserve assignment path instead.',
     },
   ],
   quiz: [
@@ -119,67 +129,97 @@ That “first come, first served” rule is the entire personality of ETB. It is
  * ================================================================== */
 const crewManagement: AcademyModule = {
   id: 'crew-management',
-  number: 11,
-  title: 'Crew Management',
-  icon: 'mdi-sitemap',
+  number: 12,
+  title: 'Operational Changes & Scenarios',
+  icon: 'mdi-transit-connection-variant',
   color: '#0061AB',
-  tagline: 'Transfers, leaves, co-terminals, TDY, and day-of control.',
-  estimatedMinutes: 20,
-  terms: ['vacancy-transfer', 'relocation-days', 'crew-base', 'hbt'],
+  tagline: 'See how workforce changes and disruptions ripple through scheduling, assignments, and payroll.',
+  estimatedMinutes: 15,
+  terms: ['vacancy-transfer', 'relocation-days', 'crew-base', 'availability', 'rotd', 'credited-hours'],
   blocks: [
     {
       kind: 'hero',
-      icon: 'mdi-sitemap',
-      title: 'CREW MANAGEMENT',
-      text: 'Scheduling decides who flies what. Crew Management governs the people side: who moves between bases, who is on leave, who is temporarily assigned elsewhere, and who controls the operation in the moment. It is the layer that keeps an ever-moving workforce orderly and contractual.',
+      icon: 'mdi-transit-connection-variant',
+      title: 'OPERATIONAL CHANGES & SCENARIOS',
+      text: 'A published schedule is only the starting point. People transfer bases, take leave, attend training, become unavailable, and respond to disruptions. This final module shows how one change travels across the domain.',
     },
     {
       kind: 'prose',
-      title: 'The big pieces',
+      title: 'Workforce changes that affect every scheduling tool',
       icon: 'mdi-puzzle-outline',
-      body: `Four levers make up most of Crew Management:
+      body: `Four changes appear repeatedly across Flight Attendant systems:
 
-- **Base transfers** — a flight attendant moves to a new crew base, seniority-based, through a vacancy process.
-- **Leaves** — medical, VLOA (voluntary), military, and more. Each changes what can be scheduled.
-- **Temporary Duty (TDY)** — being sent to work out of a different base for a while.
-- **Co-terminal rules** — how paired airports (JFK·LGA, DCA·IAD, ORD·MDW, DFW·DAL) behave as a single base for reporting and pay.`,
+- **Base transfer** — changes the Flight Attendant’s home-base context and future schedule eligibility.
+- **Leave or absence** — changes availability and can affect awards, assignments, and pay treatment.
+- **Temporary assignment** — changes where the person works without permanently changing their base.
+- **Co-terminal or satellite context** — changes how reporting locations and base relationships are interpreted.
+
+The important pattern is the same: update the person’s effective-dated assignment identity, then let each downstream system evaluate the effect.`,
     },
     {
       kind: 'prose',
-      title: 'The transfer lifecycle',
+      title: 'A base change is a workflow, not a profile edit',
       icon: 'mdi-home-switch-outline',
-      body: `A transfer follows a clear arc: a **vacancy posts** → eligible flight attendants **bid** → it is **awarded in seniority order** → it takes effect. Two side-effects matter enormously:
+      body: `A transfer generally moves through **posted → requested → awarded → effective**. Until the effective date, the current base remains authoritative. When the transfer becomes effective, related schedule blocks, relocation time, Reserve treatment, qualifications, and reporting context must be evaluated under the applicable rules.
 
-1. **Relocation Days** — up to **five consecutive days free of all duty** so the person can physically move. They must be blocked from every assignment engine once granted.
-2. **Reserve reset** — a transferring flight attendant lands in the reserve group at the new base and serves reserve for the **first full scheduling month there**, regardless of what they did at their old base.
-
-Both are “effect” events that ripple through scheduling, payroll, and reserve rotation.`,
+Preserve the old and new values with their effective dates. Replacing the base field without history makes earlier awards and payroll records impossible to explain.`,
     },
     {
       kind: 'callout',
       tone: 'warning',
       icon: 'mdi-alpha-s-box-outline',
-      title: 'Satellite bases follow their own process',
-      text: 'Opening or closing a satellite base follows a contractual notice process (§10.U). These are not just configuration toggles — there is a governance procedure with notifications you must honor in the system.',
+      title: 'Location relationships are governed configuration',
+      text: 'A satellite, co-terminal, or base relationship may affect reporting and schedule interpretation. Treat those relationships as effective-dated configuration rather than assumptions embedded in application code.',
     },
     {
       kind: 'prose',
       title: 'Leaves are a cross-cutting concern',
       icon: 'mdi-calendar-remove-outline',
-      body: `A leave is not a simple “user is busy.” It changes everything around it:
+      body: `A leave or absence changes more than a calendar color. It can affect PBS eligibility, Reserve availability, training, trades, assignments, seniority treatment, guarantees, and payroll.
 
-- **PBS**: a full-month leave often triggers **PPO** bidding (phantom awards to protect pay).
-- **Rotation**: a **VLOA month earns no reserve-rotation credit**.
-- **Seniority**: some leaves pause or protect accrual.
-
-Because so many engines depend on it, model leaves as a **shared absence service that emits effect events** — not a per-engine hack.`,
+Store the absence category, interval, approval state, source, and effective time. Downstream systems can then apply their own current rules without inventing separate versions of the same absence.`,
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-weather-lightning',
+      color: '#C01933',
+      title: 'Two scenarios that connect the whole curriculum',
+      text: 'These examples show why the original award, later events, and current schedule must remain traceable.',
+    },
+    {
+      kind: 'steps',
+      title: 'Scenario 1 · A Lineholder’s trip changes',
+      items: [
+        { icon: 'mdi-calendar-check', title: 'PBS creates the starting line', detail: 'The Flight Attendant receives sequences and days off through the monthly award.' },
+        { icon: 'mdi-swap-horizontal', title: 'A post-award transaction changes it', detail: 'TTS/UBL or ETB produces an eligible drop, pickup, or trade.' },
+        { icon: 'mdi-airplane-alert', title: 'The operation changes again', detail: 'A delay, cancellation, reassignment, or positioning need changes the current operating view.' },
+        { icon: 'mdi-cash-check', title: 'Payroll consumes the history', detail: 'Credit, guarantees, premiums, or protection are calculated from the resulting event chain.' },
+      ],
+    },
+    {
+      kind: 'steps',
+      title: 'Scenario 2 · A Reserve covers a disruption',
+      items: [
+        { icon: 'mdi-weather-lightning', title: 'A coverage gap appears', detail: 'A sick call, cancellation, delay, or misconnect creates open flying.' },
+        { icon: 'mdi-account-clock', title: 'Eligibility is evaluated', detail: 'Base, status, RAP, qualifications, availability, position, and legality determine who can work.' },
+        { icon: 'mdi-cog-transfer-outline', title: 'ROTA or ROTD processes the need', detail: 'The planning horizon determines whether future or daily Reserve processing applies.' },
+        { icon: 'mdi-check-circle-outline', title: 'The assignment is acknowledged and operated', detail: 'The current schedule, notification history, and operational events remain linked.' },
+        { icon: 'mdi-cash-multiple', title: 'Pay and credit settle afterward', detail: 'Payroll follows the assignment and actual operation rather than guessing from the final calendar alone.' },
+      ],
     },
     {
       kind: 'callout',
-      tone: 'info',
-      icon: 'mdi-code-braces',
-      title: 'For developers',
-      text: 'Crew Management is the governance layer. Model vacancies and leaves as workflows with states (posted → bid → awarded → effective) that emit side-effect events (blocked intervals, rotation resets, PPO flags) to a bus every other service consumes.',
+      tone: 'primary',
+      icon: 'mdi-database-sync-outline',
+      title: 'The final mental model: preserve the lineage',
+      text: 'A payroll line should lead back to the pay or credit event, assignment, schedule transaction, original award, and operational cause. That traceability is what makes the domain explainable and supportable.',
+    },
+    {
+      kind: 'callout',
+      tone: 'success',
+      icon: 'mdi-test-tube',
+      title: 'Practice belongs in the Scenario Simulator',
+      text: 'This lesson provides the mental model. Use the separate Scenario Simulator for interactive journeys such as a first schedule, a cancelled trip, a Reserve call-out, or a disputed pay result.',
     },
   ],
   quiz: [
@@ -214,13 +254,13 @@ Because so many engines depend on it, model leaves as a **shared absence service
  * ================================================================== */
 const payroll: AcademyModule = {
   id: 'payroll',
-  number: 12,
+  number: 11,
   title: 'Payroll & Credit',
   icon: 'mdi-cash-multiple',
   color: '#C01933',
   tagline: 'Credited hours, rigs, premiums, guarantees, and the pay-vs-credit ledgers.',
   estimatedMinutes: 24,
-  terms: ['credited-hours', 'duty-rig', 'rig', 'tafb', 'pay-no-credit', 'red-flagging', 'carry-over'],
+  terms: ['credited-hours', 'duty-rig', 'rig', 'tafb', 'pay-no-credit', 'red-flagging', 'carry-over', 'ipd', 'layover', 'deadhead'],
   blocks: [
     {
       kind: 'hero',
@@ -276,6 +316,33 @@ A worked example makes it concrete: a 12-hour duty day that only flew 5:00 is pa
         { id: 'credited-hours', term: 'Credited hours', icon: 'mdi-counter', definition: 'The unified total counting toward monthly maximum: flights + absences + rigs + more.' },
         { id: 'red-flagging', term: 'Red flag', icon: 'mdi-flag-variant', definition: 'Hard-to-cover open time paying 150% but crediting 100%.' },
       ],
+    },
+    {
+      kind: 'header',
+      icon: 'mdi-earth',
+      color: '#003057',
+      title: 'Where international flying affects pay and credit',
+      text: 'International flying still uses the same pay-versus-credit model, but the trip can carry additional attributes and elapsed-time effects.',
+    },
+    {
+      kind: 'table',
+      title: 'International factors at a high level',
+      columns: ['Factor', 'Operational meaning', 'Possible pay or credit connection'],
+      rows: [
+        ['IPD', 'International Premium Destination flying', 'Can affect trip construction and applicable premium treatment.'],
+        ['Language or destination qualification', 'A route or assignment may require a qualified speaker or current documents', 'Qualification determines eligibility; applicable position or premium rules determine compensation.'],
+        ['Longer time away', 'International trips can create longer duty periods, layovers, and TAFB', 'Elapsed time can interact with guarantees, per diem, and other governed pay rules.'],
+        ['International deadhead', 'Company-directed travel used to position or return crew', 'It remains part of the duty, credit, and travel-authority picture under applicable rules.'],
+        ['Layover and per diem', 'Time and accommodations away from base', 'Per diem and trip guarantees are separate from raw block time.'],
+      ],
+      termIds: ['ipd', 'qualification', 'tafb', 'deadhead', 'layover'],
+    },
+    {
+      kind: 'callout',
+      tone: 'info',
+      icon: 'mdi-book-open-page-variant-outline',
+      title: 'Keep international detail in the right place',
+      text: 'This module covers the pay and credit impact. Aircraft staffing, language qualification, international documents, rest, and safety requirements remain operational eligibility inputs—not payroll formulas.',
     },
     {
       kind: 'prose',
@@ -620,7 +687,7 @@ Seniority is not a background detail — it is the comparator behind nearly ever
  * ================================================================== */
 const scenarios: AcademyModule = {
   id: 'scenarios',
-  number: 16,
+  number: 13,
   title: 'Business Scenarios Capstone',
   icon: 'mdi-lightbulb-on-outline',
   color: '#0061AB',
@@ -725,10 +792,6 @@ Notice how each handoff is a **system boundary** with its own ordering rules (wh
 
 export const modulesPart2: AcademyModule[] = [
   etb,
-  crewManagement,
   payroll,
-  trainingModule,
-  international,
-  seniority,
-  scenarios,
+  crewManagement,
 ]

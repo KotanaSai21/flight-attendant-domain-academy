@@ -10,7 +10,7 @@ const features = [
   {
     icon: 'mdi-school-outline',
     title: 'Learning Center',
-    text: `${modules.length} structured modules: plain-domain explanations, flow diagrams, real examples and quizzes.`,
+    text: `${modules.length} structured modules with plain-domain explanations, flow diagrams, timelines and real examples.`,
     to: '/learn',
     color: '#0061AB',
   },

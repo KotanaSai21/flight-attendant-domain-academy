@@ -1,5 +1,39 @@
 export type SourceKind = 'contract' | 'apfa' | 'loa' | 'system'
 
+/** Identifies which authority owns a learning claim. */
+export type AuthorityKind =
+  | 'general-airline'
+  | 'faa'
+  | 'aa-process'
+  | 'aa-apfa-cba'
+  | 'implementation'
+  | 'illustrative'
+
+/** Separates stable concepts from rules whose rollout or currency must be checked. */
+export type RuleStatus =
+  | 'concept'
+  | 'implemented'
+  | 'scheduled'
+  | 'verify-current'
+
+/**
+ * A source-backed fact that can be reused by lessons, scenarios, quizzes, and tools.
+ * Exact values belong here rather than in presentation components.
+ */
+export interface RuleFact {
+  id: string
+  label: string
+  value: string | number
+  unit?: string
+  authority: AuthorityKind
+  sourceLabel: string
+  sourceReference?: string
+  sourceUrl?: string
+  asOf: string
+  status: RuleStatus
+  notes?: string
+}
+
 export interface KnowledgeSource {
   kind: SourceKind
   label: string
@@ -43,7 +77,7 @@ export interface ModuleSection {
 
 /** Loose-typed content block for free-form, interactive modules */
 export interface ContentBlock {
-  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'flow' | 'steps' | 'compare' | 'illustration'
+  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'table' | 'flow' | 'steps' | 'compare' | 'illustration'
   title?: string
   text?: string
   body?: string // markdown
@@ -53,6 +87,9 @@ export interface ContentBlock {
   icon?: string
   color?: string
   variant?: 'airport' | 'cabin' | 'network' | 'aircraft'
+  columns?: string[]
+  rows?: string[][]
+  termIds?: Array<string | undefined>
   items?: Array<{
     term?: string
     definition?: string
