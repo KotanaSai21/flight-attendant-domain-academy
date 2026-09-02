@@ -4,6 +4,10 @@ import { VueFlow, MarkerType, type Edge, type Node, type NodeMouseEvent } from '
 import { dictionary } from '../data/dictionary'
 import type { DictionaryTerm } from '../data/types'
 
+const props = withDefaults(defineProps<{ highlightedIds?: string[] }>(), {
+  highlightedIds: () => [],
+})
+
 interface MapNode {
   id: string
   label: string
@@ -154,6 +158,10 @@ function onNodeClick({ node }: NodeMouseEvent) {
   const term = dictionary.find((t) => t.id === termId) ?? null
   emit('select', term)
 }
+
+function isHighlighted(id: string) {
+  return props.highlightedIds.length === 0 || props.highlightedIds.includes(id)
+}
 </script>
 
 <template>
@@ -168,7 +176,7 @@ function onNodeClick({ node }: NodeMouseEvent) {
       @node-click="onNodeClick"
     >
       <template #node-domain="nodeProps">
-        <div class="map-node" :class="{ 'map-node--group': nodeProps.data.isGroup }">
+        <div class="map-node" :class="{ 'map-node--group': nodeProps.data.isGroup, 'map-node--highlighted': highlightedIds.length && isHighlighted(nodeProps.id), 'map-node--dimmed': highlightedIds.length && !isHighlighted(nodeProps.id) }">
           <v-icon :icon="nodeProps.data.icon" size="18" class="mr-1" />
           {{ nodeProps.data.label }}
         </div>
@@ -194,6 +202,14 @@ function onNodeClick({ node }: NodeMouseEvent) {
   border-color: #c01933;
   background: #fff5f6;
   font-weight: 700;
+}
+.map-node--highlighted {
+  border-width: 3px;
+  box-shadow: 0 0 0 5px rgba(0, 97, 171, .12), 0 6px 16px rgba(0, 48, 87, .22);
+}
+.map-node--dimmed {
+  opacity: .26;
+  filter: grayscale(.75);
 }
 .term-flash {
   animation: flash 1.5s ease;

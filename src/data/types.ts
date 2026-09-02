@@ -141,4 +141,10 @@ export interface Scenario {
   outcome: string
   relatedTerms: string[]
   source: KnowledgeSource
+  decision?: {
+    prompt: string
+    options: Array<{ label: string; detail: string }>
+    answerIndex: number
+    explanation: string
+  }
 }

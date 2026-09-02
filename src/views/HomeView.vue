@@ -65,10 +65,10 @@ const audience = [
           FLIGHT ATTENDANT DOMAIN ACADEMY
         </v-chip>
         <h1 class="text-h3 font-weight-bold mb-3" style="letter-spacing: -0.5px">
-          Zero airline experience → domain-ready in days.
+          A guided introduction to the Flight Attendant domain.
         </h1>
         <p class="text-body-1 mb-6" style="max-width: 720px; opacity: 0.92">
-          An interactive platform for developers, analysts, QA and product owners to master the
+          An interactive platform for developers, analysts, QA and product owners to explore the
           American Airlines Flight Attendant domain — PBS, TTS/UBL, ETB, Reserve (RAP/ROTA/ROTD),
           Seniority, Payroll and more — grounded in the 2024 CBA and Implementation LOAs.
         </p>
@@ -137,7 +137,7 @@ const audience = [
               icon="mdi-timer-sand"
               class="mt-4 mb-0"
             >
-              <strong>Become domain-ready within 3–5 days</strong> using the platform alone.
+              Follow the guided path at your own pace and build confidence with the core concepts and workflows.
             </v-alert>
           </v-card-text>
         </v-card>

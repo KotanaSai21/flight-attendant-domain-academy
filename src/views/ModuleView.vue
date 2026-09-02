@@ -37,8 +37,19 @@ const sourceBackedFacts = computed(() =>
 )
 const nextModule = computed(() => {
   if (!mod.value) return undefined
-  return modules.find((m) => m.number === mod.value!.number + 1)
+  const index = modules.findIndex((m) => m.id === mod.value!.id)
+  return index >= 0 ? modules[index + 1] : undefined
 })
+const previousModule = computed(() => {
+  if (!mod.value) return undefined
+  const index = modules.findIndex((m) => m.id === mod.value!.id)
+  return index > 0 ? modules[index - 1] : undefined
+})
+const coursePosition = computed(() => {
+  const index = modules.findIndex((m) => m.id === mod.value?.id)
+  return index < 0 ? 0 : Math.round(((index + 1) / modules.length) * 100)
+})
+const courseStep = computed(() => modules.findIndex((m) => m.id === mod.value?.id) + 1)
 
 function onQuizComplete(percent: number) {
   if (mod.value) progress.setQuizScore(mod.value.id, percent)
@@ -51,6 +62,11 @@ function relatedFor(id: string): DictionaryTerm[] {
 
 <template>
   <v-container v-if="mod" fluid class="pa-8" style="max-width: 1100px">
+    <div class="d-flex align-center ga-3 mb-5">
+      <v-btn to="/learn" variant="text" size="small" prepend-icon="mdi-arrow-left">Learning path</v-btn>
+      <v-progress-linear :model-value="coursePosition" color="primary" height="5" rounded />
+      <span class="text-caption text-no-wrap">{{ courseStep }} / {{ modules.length }}</span>
+    </div>
     <div class="d-flex align-center flex-wrap mb-4 ga-3">
       <v-avatar :color="mod.color" size="56">
         <v-icon :icon="mod.icon" color="white" size="30" />
@@ -140,11 +156,13 @@ function relatedFor(id: string): DictionaryTerm[] {
       />
     </div>
 
-    <div class="mt-8 d-flex justify-space-between align-center">
-      <v-btn to="/learn" variant="text" prepend-icon="mdi-arrow-left">All modules</v-btn>
+    <div class="mt-8 d-flex justify-space-between align-center ga-3">
+      <v-btn v-if="previousModule" :to="`/learn/${previousModule.id}`" variant="text" prepend-icon="mdi-arrow-left">Previous</v-btn>
+      <v-btn v-else to="/learn" variant="text" prepend-icon="mdi-arrow-left">Learning path</v-btn>
       <v-btn v-if="nextModule" :to="`/learn/${nextModule.id}`" color="primary" append-icon="mdi-arrow-right">
         Next: {{ nextModule.title }}
       </v-btn>
+      <v-btn v-else to="/learn" color="success" append-icon="mdi-check-circle-outline">Finish course</v-btn>
     </div>
   </v-container>
 
