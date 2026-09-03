@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate:dictionary": "node scripts/validate-dictionary.mjs",
+    "validate:content": "node scripts/validate-dictionary.mjs",
+    "validate": "npm run build && npm run validate:content"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",

@@ -134,7 +134,7 @@ const crewManagement: AcademyModule = {
   icon: 'mdi-transit-connection-variant',
   color: '#0061AB',
   tagline: 'See how workforce changes and disruptions ripple through scheduling, assignments, and payroll.',
-  estimatedMinutes: 15,
+  estimatedMinutes: 20,
   terms: ['vacancy-transfer', 'relocation-days', 'crew-base', 'availability', 'rotd', 'credited-hours'],
   blocks: [
     {
@@ -208,6 +208,49 @@ Store the absence category, interval, approval state, source, and effective time
       ],
     },
     {
+      kind: 'flow',
+      title: 'The operational-change control loop',
+      text: 'Play the change',
+      items: [
+        { label: 'Cause recorded', icon: 'mdi-alert-circle-outline', color: '#C01933', detail: 'A transfer, absence, sick call, delay, cancellation, or other source event is recorded without overwriting the prior state.' },
+        { label: 'Identity refreshed', icon: 'mdi-account-sync-outline', color: '#5A2D82', detail: 'Base, status, qualifications, availability, and effective dates establish the Flight Attendant’s current assignment identity.' },
+        { label: 'Eligibility checked', icon: 'mdi-shield-search-outline', color: '#0061AB', detail: 'Conflict, legality, rest, position, location, and applicable credit checks determine the valid choices.' },
+        { label: 'Decision committed', icon: 'mdi-check-decagram-outline', color: '#0078D2', detail: 'The award, assignment, trade, or schedule change commits once with a reason and timestamp.' },
+        { label: 'Operation updated', icon: 'mdi-airplane-sync', color: '#B75C09', detail: 'The current operating schedule and notification state reflect the decision while preserving the earlier versions.' },
+        { label: 'Ledgers settled', icon: 'mdi-cash-sync', color: '#177245', detail: 'Credit, pay, premiums, guarantees, and protection trace back to the committed change and its cause.' },
+      ],
+    },
+    {
+      kind: 'compare',
+      title: 'Three schedule views must coexist',
+      items: [
+        {
+          title: 'Original and awarded view',
+          icon: 'mdi-calendar-check-outline',
+          color: '#0061AB',
+          points: ['What PBS or a later transaction originally committed', 'The baseline for disputes and protection', 'Never overwritten by later operational events'],
+        },
+        {
+          title: 'Current and actual view',
+          icon: 'mdi-airplane-clock',
+          color: '#C01933',
+          points: ['What the Flight Attendant is expected to do now', 'What actually happened during operation', 'Linked back to every cause and decision'],
+        },
+      ],
+    },
+    {
+      kind: 'table',
+      title: 'Ask these questions whenever something changes',
+      columns: ['Question', 'Record to inspect', 'Why it matters'],
+      rows: [
+        ['What caused the change?', 'Source event and reason', 'Separates a cancellation, trade, absence, transfer, and assignment.'],
+        ['When did it become effective?', 'Effective interval and timestamp', 'Prevents future state from rewriting earlier decisions.'],
+        ['Who or what decided?', 'Actor, engine, rule, and result', 'Makes awards and assignments explainable.'],
+        ['What changed downstream?', 'Schedule, notification, operation, pay, and credit events', 'Proves that every consumer received the same change.'],
+        ['Can we reconstruct it?', 'Correlation ID and immutable history', 'Turns a support complaint into a traceable event chain.'],
+      ],
+    },
+    {
       kind: 'callout',
       tone: 'primary',
       icon: 'mdi-database-sync-outline',
@@ -224,27 +267,27 @@ Store the absence category, interval, approval state, source, and effective time
   ],
   quiz: [
     {
-      question: 'Relocation Days maximum after a transfer:',
-      options: ['3', '5', '7', '10'],
+      question: 'A base transfer is awarded today but becomes effective next month. Which base should current-month systems use?',
+      options: ['The new base immediately', 'The current base until the effective date', 'Both bases without dates', 'Whichever system updates first'],
       answerIndex: 1,
-      explanation: 'Up to five consecutive calendar days free of all duty.',
+      explanation: 'Effective dating preserves the current base for earlier decisions and activates the new base at the correct boundary.',
     },
     {
-      question: 'A transferring FA landing in the reserve group at the new base:',
+      question: 'A cancellation removes a trip from the current calendar. What should be preserved?',
       options: [
-        'Continues old rotation',
-        'Serves reserve the first full scheduling month at new base',
-        'Exempt forever',
-        'Chooses',
+        'Only the empty calendar slot',
+        'The original trip, cancellation event, and resulting changes',
+        'Only the payroll total',
+        'A manually edited final schedule',
       ],
       answerIndex: 1,
-      explanation: '§12.A.3.d resets irrespective of prior-base service.',
+      explanation: 'The original state and change event are required for coverage, pay protection, and audit.',
     },
     {
-      question: 'A VLOA month earns the reserve rotation:',
-      options: ['Full credit', 'Half credit', 'No credit', 'Double credit'],
-      answerIndex: 2,
-      explanation: 'VLOA months grant no reserve-rotation credit — track it or rotation math drifts.',
+      question: 'Which sequence best represents a safe operational change?',
+      options: ['Overwrite → notify → guess pay', 'Cause → eligibility → commit → operate → settle', 'Pay → assignment → cancellation', 'Calendar color → payroll'],
+      answerIndex: 1,
+      explanation: 'A source event drives eligibility and a committed decision; operation and financial consequences follow with traceability.',
     },
   ],
 }

@@ -49,6 +49,16 @@ export const scenarios: Scenario[] = [
     outcome:
       'Within one cycle you understand: seniority → PBS → ROTA/D → operations → payroll. That chain IS the domain.',
     relatedTerms: ['seniority-occupational', 'reserve-line', 'rap', 'rota', 'rotd'],
+    decision: {
+      prompt: 'The new hire has a Reserve line, but no specific trip for tomorrow. What should they expect next?',
+      options: [
+        { label: 'Wait for ETB only', detail: 'ETB is not the primary Reserve assignment path.' },
+        { label: 'ROTA/ROTD processing', detail: 'Known future and day-of needs flow through Reserve processing.' },
+        { label: 'Submit a new PBS bid', detail: 'PBS already created the monthly Reserve line.' },
+      ],
+      answerIndex: 1,
+      explanation: 'PBS establishes the Reserve month; ROTA and ROTD later award or assign specific coverage needs.',
+    },
   },
   {
     id: 'bid-journey',
@@ -92,6 +102,16 @@ export const scenarios: Scenario[] = [
     outcome:
       'Bids are deterministic given frozen inputs — support can replay any award decision against its snapshot.',
     relatedTerms: ['pbs', 'misaward', 'ubl', 'tts', 'credit-window'],
+    decision: {
+      prompt: 'The award is posted, but the Flight Attendant wants a different trip. Which action belongs next?',
+      options: [
+        { label: 'Edit the closed PBS bid', detail: 'The monthly award has already been produced.' },
+        { label: 'Use TTS or ETB', detail: 'Post-award tools reshape an awarded Lineholder schedule.' },
+        { label: 'Ask ROTD for the trip', detail: 'ROTD serves the Reserve coverage path.' },
+      ],
+      answerIndex: 1,
+      explanation: 'After PBS, eligible Lineholders use scheduled TTS processing or real-time ETB transactions.',
+    },
   },
   {
     id: 'cancelled-trip',
@@ -130,6 +150,16 @@ export const scenarios: Scenario[] = [
     outcome:
       'Pay protection is rule-driven, not goodwill: every dollar traces to a clause + event pair.',
     relatedTerms: ['credited-hours', 'pay-no-credit', 'open-time', 'carry-over', 'misaward'],
+    decision: {
+      prompt: 'The trip disappears from the working calendar. What must the system preserve?',
+      options: [
+        { label: 'Only the final calendar', detail: 'That erases the cause and prevents reconciliation.' },
+        { label: 'Original trip and cancellation event', detail: 'Both are needed for coverage, protection, and audit.' },
+        { label: 'Only the payroll result', detail: 'Payroll is a downstream consequence, not the source event.' },
+      ],
+      answerIndex: 1,
+      explanation: 'The original schedule and later cancellation must remain linked so open-time and pay-protection decisions are explainable.',
+    },
   },
   {
     id: 'reserve-day',
@@ -167,6 +197,16 @@ export const scenarios: Scenario[] = [
     ],
     outcome: 'Reserve tooling = interval math + precedence rules + consent records, all under HBT time discipline.',
     relatedTerms: ['rotd', 'lmco', 'standby', 'golden-day', 'modified-rap'],
+    decision: {
+      prompt: 'Before offering the open trip, what must ROTD verify?',
+      options: [
+        { label: 'Seniority only', detail: 'Ranking never replaces eligibility and legality.' },
+        { label: 'Availability, qualification, and legality', detail: 'The person must be eligible before ordering rules apply.' },
+        { label: 'Payroll balance only', detail: 'Payroll follows the assignment rather than authorizing it alone.' },
+      ],
+      answerIndex: 1,
+      explanation: 'Assignment processing first establishes who can legally cover the work, then applies the relevant ordering rules.',
+    },
   },
   {
     id: 'pickup-premium',
@@ -200,6 +240,16 @@ export const scenarios: Scenario[] = [
     ],
     outcome: 'Premium-aware pickup strategy = windows + flags + channels, all auditable.',
     relatedTerms: ['credit-window', 'red-flagging', 'etb', 'ubl', 'pay-no-credit'],
+    decision: {
+      prompt: 'A Red Flag pickup pays 150% but credits 100%. Which records should change?',
+      options: [
+        { label: 'Credit only', detail: 'This would lose the premium pay.' },
+        { label: 'Pay and credit separately', detail: 'Base credit and premium pay have different ledger effects.' },
+        { label: 'Neither until month-end', detail: 'The transaction should create traceable events when committed.' },
+      ],
+      answerIndex: 1,
+      explanation: 'The pickup changes credited hours and creates a separate premium-pay consequence without inflating credit to 150%.',
+    },
   },
   {
     id: 'base-transfer',
@@ -233,5 +283,15 @@ export const scenarios: Scenario[] = [
     ],
     outcome: 'Transfers look administrative but ripple through every engine — effective-date events drive it all.',
     relatedTerms: ['vacancy-transfer', 'relocation-days', 'reserve-line', 'hbt'],
+    decision: {
+      prompt: 'When should downstream systems start using BOS as the Flight Attendant’s base?',
+      options: [
+        { label: 'When requested', detail: 'A request is not an awarded or effective transfer.' },
+        { label: 'On the effective date', detail: 'The current base remains authoritative until the change takes effect.' },
+        { label: 'Immediately after posting', detail: 'A posted vacancy has not yet been awarded.' },
+      ],
+      answerIndex: 1,
+      explanation: 'Effective dating preserves the old context for earlier records and activates the new base at the correct boundary.',
+    },
   },
 ]

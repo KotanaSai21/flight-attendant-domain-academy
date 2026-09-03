@@ -1,9 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import MermaidDiagram from '../components/MermaidDiagram.vue'
 import SourceTag from '../components/SourceTag.vue'
 
 const tab = ref('overview')
+const contractReferenceUrl = new URL('../../knowledge-sources/2024-CBA_121724.txt', import.meta.url).href
+
+const biddingSteps = [
+  { value: 'overview', title: 'Choose your path', short: 'Lineholder or Reserve' },
+  { value: 'monthly', title: 'Build the month', short: 'Submit PBS preferences' },
+  { value: 'daily', title: 'Adjust the award', short: 'TTS, UBL, and ETB' },
+  { value: 'redflag', title: 'Check premium trips', short: 'Red Flag rules' },
+  { value: 'reserve', title: 'Cover open flying', short: 'ROTA and ROTD' },
+  { value: 'calendar', title: 'Read the calendars', short: 'Lineholder and Reserve' },
+  { value: 'timeline', title: 'See the full month', short: 'Dates and handoffs' },
+]
+
+const currentStepIndex = computed(() => Math.max(0, biddingSteps.findIndex((step) => step.value === tab.value)))
+const currentStep = computed(() => biddingSteps[currentStepIndex.value])
+
+function goToStep(index: number) {
+  const safeIndex = Math.min(Math.max(index, 0), biddingSteps.length - 1)
+  tab.value = biddingSteps[safeIndex].value
+  nextTick(() => document.getElementById('bidding-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+}
 
 const apfa = { kind: 'apfa' as const, label: 'APFA Website' }
 const cba = (reference: string) => ({ kind: 'contract' as const, label: 'AA/APFA Contract', reference })
@@ -103,29 +123,47 @@ const reserveCalendarRows = [
 
 <template>
   <v-container fluid class="pa-8" style="max-width: 1150px">
-    <h1 class="text-h4 font-weight-bold mb-2">Bidding Academy</h1>
+    <div class="text-overline text-primary font-weight-bold">APFA-informed guided flow</div>
+    <h1 class="text-h4 font-weight-bold mb-2">Bidding, one step at a time</h1>
     <p class="text-body-1 text-medium-emphasis mb-6">
-      How Flight Attendants get, change, and protect their flying — structured the same way APFA
-      teaches it: Monthly Bidding, Daily Bidding (TTS · UBL · ETB), Red Flag, Reserve, and Calendars.
+      Follow the recommended order to understand how a schedule is chosen, awarded, changed, and operated. Detailed rules stay inside each step so the main path remains clear.
     </p>
 
-    <v-tabs
-      v-model="tab"
-      color="primary"
-      density="comfortable"
-      class="mb-6"
-      show-arrows
-    >
-      <v-tab value="overview" prepend-icon="mdi-sitemap">Overview</v-tab>
-      <v-tab value="monthly" prepend-icon="mdi-calendar-month">Monthly Bidding</v-tab>
-      <v-tab value="daily" prepend-icon="mdi-rotate-360">Daily Bidding</v-tab>
-      <v-tab value="redflag" prepend-icon="mdi-flag">Red Flag</v-tab>
-      <v-tab value="reserve" prepend-icon="mdi-phone-incoming">Reserve (ROTA/ROTD)</v-tab>
-      <v-tab value="calendar" prepend-icon="mdi-calendar-blank">Calendars</v-tab>
-      <v-tab value="timeline" prepend-icon="mdi-timeline-text">Bid Month Timeline</v-tab>
-    </v-tabs>
+    <v-alert color="warning" variant="tonal" icon="mdi-shield-check-outline" class="mb-6">
+      <strong>Before you act:</strong> this is an educational guide based on APFA materials and the AA/APFA 2024 CBA. Always confirm the live bid calendar and current APFA guidance.
+      <div class="d-flex flex-wrap ga-2 mt-3">
+        <v-btn href="https://www.apfa.org/bidding/" target="_blank" rel="noopener noreferrer" size="small" variant="outlined" prepend-icon="mdi-open-in-new">APFA bidding guidance</v-btn>
+        <v-btn :href="contractReferenceUrl" download="AA-APFA-2024-CBA.txt" size="small" variant="outlined" prepend-icon="mdi-file-download-outline">Download reference CBA</v-btn>
+      </div>
+    </v-alert>
 
-    <v-window v-model="tab">
+    <v-card variant="outlined" class="bidding-path mb-6">
+      <v-card-text class="pa-3 pa-sm-5">
+        <div class="d-flex justify-space-between align-center mb-4">
+          <div>
+            <div class="text-caption text-medium-emphasis">Step {{ currentStepIndex + 1 }} of {{ biddingSteps.length }}</div>
+            <div class="text-h6 font-weight-bold">{{ currentStep.title }}</div>
+          </div>
+          <v-chip color="primary" variant="tonal">{{ currentStep.short }}</v-chip>
+        </div>
+        <div class="step-rail" role="navigation" aria-label="Bidding lesson steps">
+          <button
+            v-for="(step, index) in biddingSteps"
+            :key="step.value"
+            type="button"
+            class="step-button"
+            :class="{ active: index === currentStepIndex, passed: index < currentStepIndex }"
+            :aria-current="index === currentStepIndex ? 'step' : undefined"
+            @click="goToStep(index)"
+          >
+            <span class="step-dot">{{ index < currentStepIndex ? '✓' : index + 1 }}</span>
+            <span class="step-copy"><strong>{{ step.title }}</strong><small>{{ step.short }}</small></span>
+          </button>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <v-window id="bidding-content" v-model="tab">
       <!-- ================= OVERVIEW ================= -->
       <v-window-item value="overview">
         <v-alert type="info" variant="tonal" class="mb-6" icon="mdi-account-split-horizontal">
@@ -512,6 +550,13 @@ const reserveCalendarRows = [
       </v-window-item>
     </v-window>
 
+    <div class="d-flex justify-space-between align-center ga-3 mt-7">
+      <v-btn :disabled="currentStepIndex === 0" variant="text" prepend-icon="mdi-arrow-left" @click="goToStep(currentStepIndex - 1)">Previous step</v-btn>
+      <div class="text-caption text-medium-emphasis d-none d-sm-block">Step {{ currentStepIndex + 1 }} of {{ biddingSteps.length }}</div>
+      <v-btn v-if="currentStepIndex < biddingSteps.length - 1" color="primary" append-icon="mdi-arrow-right" @click="goToStep(currentStepIndex + 1)">Next: {{ biddingSteps[currentStepIndex + 1].title }}</v-btn>
+      <v-btn v-else to="/learn/scheduling" color="success" append-icon="mdi-check-circle-outline">Continue course</v-btn>
+    </div>
+
     <v-card variant="outlined" class="mt-8 pa-5 d-flex align-center ga-3 flex-wrap">
       <SourceTag :source="{ kind: 'loa', label: 'Implementation Timeline LOA', reference: 'App. A' }" />
       <SourceTag :source="{ kind: 'contract', label: 'AA/APFA Contract', reference: '§10, §12' }" />
@@ -522,3 +567,21 @@ const reserveCalendarRows = [
     </v-card>
   </v-container>
 </template>
+
+<style scoped>
+.bidding-path { background: linear-gradient(135deg, #f7fbfe 0%, #fff 65%); border-color: #cbdde9; }
+.step-rail { display: grid; grid-template-columns: repeat(7, minmax(105px, 1fr)); overflow-x: auto; padding: 4px 2px 10px; }
+.step-button { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 105px; padding: 0 8px; color: #617586; text-align: left; background: transparent; border: 0; cursor: pointer; }
+.step-button::before { content: ''; position: absolute; left: 32px; right: -8px; top: 15px; height: 2px; background: #d8e3eb; }
+.step-button:last-child::before { display: none; }
+.step-dot { position: relative; z-index: 1; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: white; border: 2px solid #b7c8d4; font-size: .78rem; font-weight: 800; }
+.step-copy { display: flex; flex-direction: column; line-height: 1.2; }
+.step-copy strong { font-size: .76rem; color: #385066; }
+.step-copy small { margin-top: 3px; font-size: .67rem; }
+.step-button.active .step-dot { color: white; background: #0061ab; border-color: #0061ab; box-shadow: 0 0 0 4px #dbeefa; }
+.step-button.active .step-copy strong { color: #0061ab; }
+.step-button.passed .step-dot { color: white; background: #177245; border-color: #177245; }
+.step-button.passed::before { background: #7dbb9a; }
+.step-button:focus-visible { outline: 3px solid #70a8d2; outline-offset: 4px; border-radius: 6px; }
+@media (max-width: 700px) { .step-rail { grid-template-columns: repeat(7, 128px); } }
+</style>
