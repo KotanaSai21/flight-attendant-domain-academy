@@ -2,6 +2,10 @@
 import type { ContentBlock } from '../../data/types'
 import MarkdownView from '../MarkdownView.vue'
 import MermaidDiagram from '../MermaidDiagram.vue'
+import BiddingRoadmap from '../BiddingRoadmap.vue'
+import MonthCalendar from '../MonthCalendar.vue'
+import DayClock from '../DayClock.vue'
+import { biddingJourney } from '../../data/content/biddingJourney'
 import FlowChain from './FlowChain.vue'
 import InteractiveSteps from './InteractiveSteps.vue'
 import SceneIllustration from './SceneIllustration.vue'
@@ -191,6 +195,47 @@ const toneColor = (tone?: string): 'info' | 'success' | 'warning' | 'error' =>
         <div v-if="b.caption" class="text-caption text-center text-medium-emphasis mt-2">
           {{ b.caption }}
         </div>
+      </div>
+
+      <!-- ROADMAP -->
+      <div v-else-if="b.kind === 'roadmap'" v-reveal class="mb-8">
+        <div v-if="b.title" class="text-h6 font-weight-bold mb-1 d-flex align-center">
+          <v-icon icon="mdi-map-marker-path" color="primary" class="mr-2" />
+          {{ b.title }}
+        </div>
+        <p v-if="b.text" class="text-body-2 text-medium-emphasis mb-3" style="max-width: 760px">{{ b.text }}</p>
+        <BiddingRoadmap :stages="biddingJourney" :highlight="b.stageIds" />
+        <div v-if="b.caption" class="text-caption text-center text-medium-emphasis mt-2">
+          {{ b.caption }}
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div v-else-if="b.kind === 'calendar'" v-reveal class="mb-8">
+        <div v-if="b.title" class="text-h6 font-weight-bold mb-1 d-flex align-center">
+          <v-icon icon="mdi-calendar-month-outline" color="primary" class="mr-2" />
+          {{ b.title }}
+        </div>
+        <p v-if="b.text" class="text-body-2 text-medium-emphasis mb-3" style="max-width: 760px">{{ b.text }}</p>
+        <MonthCalendar
+          :days="b.days ?? []"
+          :days-in-month="b.daysInMonth ?? 30"
+          :start-weekday="b.startWeekday ?? 0"
+          :legend="b.legend ?? []"
+        />
+        <div v-if="b.caption" class="text-caption text-center text-medium-emphasis mt-2">
+          {{ b.caption }}
+        </div>
+      </div>
+
+      <!-- DAY CLOCK -->
+      <div v-else-if="b.kind === 'dayclock'" v-reveal class="mb-8">
+        <div v-if="b.title" class="text-h6 font-weight-bold mb-1 d-flex align-center">
+          <v-icon icon="mdi-clock-time-four-outline" color="primary" class="mr-2" />
+          {{ b.title }}
+        </div>
+        <p v-if="b.text" class="text-body-2 text-medium-emphasis mb-3" style="max-width: 760px">{{ b.text }}</p>
+        <DayClock :markers="b.markers ?? []" :bands="b.bands ?? []" :note="b.caption" />
       </div>
     </template>
   </div>

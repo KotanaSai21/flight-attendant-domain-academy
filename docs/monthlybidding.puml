@@ -1,0 +1,34 @@
+@startuml
+title American Airlines Monthly Bidding Lifecycle & Daily Timelines
+
+actor "Flight Attendant" as FA
+participant "TBS / LRD Systems" as Phase1
+participant "PBS Bidding Engine" as Phase2
+participant "TTS / UBL / ROTA" as Phase3
+
+== Phase 1: Training & Status Preference ==
+FA -> Phase1 : Day 1 (12:00 CT): TBS opens for Training/CQ bids
+FA -> Phase1 : Day 3 (12:00 CT): LRD opens for Lineholder/Reserve toggles
+FA -> Phase1 : Day 6 (12:00 CT): TBS closes and locks preferences
+Phase1 -> FA : Day 7 (12:00 CT): TBS awards visible & LRD closes
+
+== Phase 2: Monthly Preferential Bidding ==
+Phase1 -> Phase2 : Day 9 (12:00 CT): Prior-month schedule feed cutoff
+FA -> Phase2 : Day 10 (12:00 CT): PBS monthly bidding window opens
+FA -> Phase2 : Day 15 (12:00 CT): PBS monthly bidding window closes & locks
+Phase2 -> FA : Day 18 (12:00 CT): PBS awards posted (Monthly schedules visible)
+
+== Phase 3: Post-Award Workflows & Daily ROTA ==
+Phase2 -> Phase3 : Day 19 (12:00 CT): Awards visible in operational schedule
+FA -> Phase3 : Day 20 (06:00 CT): TTS & Reserve day-off workflows open
+Phase3 -> FA : Day 21 (06:00 CT): First TTS batch processing results shown
+FA -> Phase3 : Day 22 (06:00 CT): ETB opens for real-time trip trades
+FA -> Phase3 : Day 27 (12:00 CT): Golden/Flex day designation cutoff
+
+== Note: The Daily Live Engine (Days 20 - End of Month) ==
+... The following system loops every single day ...
+FA -> Phase3 : 04:00 - 14:45 HBT: Continuous next-day UBL auto-awards run
+FA -> Phase3 : 15:00 HBT: ROTA Automated Run locks bids (Standby & RAP processing)
+Phase3 -> FA : 15:01+ HBT: ROTD Live Assignment takes over for late trips
+FA -> Phase3 : 22:30 HBT: Deadline to acknowledge assigned sequences/standbys
+@enduml

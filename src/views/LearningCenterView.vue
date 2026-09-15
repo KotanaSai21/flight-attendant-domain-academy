@@ -11,9 +11,9 @@ const overallPercent = computed(() => modules.length ? Math.round((completedCoun
 
 function phaseFor(position: number) {
   if (position <= 3) return 'Foundation'
-  if (position <= 8) return 'Build the monthly schedule'
-  if (position <= 12) return 'Change and operate the schedule'
-  return 'Disruption, pay, and recovery'
+  if (position <= 4) return 'The big picture'
+  if (position <= 8) return 'The bidding month, step by step'
+  return 'Pay and disruption'
 }
 function isPhaseStart(index: number) {
   return index === 0 || phaseFor(index) !== phaseFor(index + 1)
@@ -25,8 +25,8 @@ function isPhaseStart(index: number) {
     <div class="journey-heading mb-6">
       <div>
         <div class="text-overline text-primary font-weight-bold">Guided learning path</div>
-        <h1 class="text-h4 font-weight-bold mb-2">Learn the operation in order</h1>
-        <p class="text-body-1 text-medium-emphasis mb-0">Each lesson builds on the one before it—from airline basics to monthly bidding, daily schedule changes, Reserve, and pay.</p>
+        <h1 class="text-h4 font-weight-bold mb-2">Learn Scheduling</h1>
+        <p class="text-body-1 text-medium-emphasis mb-0">One path, in order, assuming you know nothing about Flight Attendant scheduling. Start with how an airline works, then walk a full bidding month — TBS, LRD, PBS, TTS, ETB, UBL, ROTA, ROTD and Aggressive Reserve — and finish with pay and disruption.</p>
       </div>
       <v-card class="progress-summary" color="primary" variant="tonal">
         <v-card-text>
@@ -80,7 +80,7 @@ function isPhaseStart(index: number) {
       </template>
     </div>
 
-    <v-alert color="secondary" variant="tonal" icon="mdi-compass-outline" class="mt-8">Need a topic quickly? The Dictionary and Bidding Academy remain available as reference tools, but this path is the recommended learning order.</v-alert>
+    <v-alert color="secondary" variant="tonal" icon="mdi-compass-outline" class="mt-8">New to all of this? Module 4 is the animated roadmap of the whole month — it is the fastest way to see how every system fits together before the detail arrives.</v-alert>
   </v-container>
 </template>
 

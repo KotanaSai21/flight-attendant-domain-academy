@@ -9,8 +9,8 @@ const progress = useProgressStore()
 const features = [
   {
     icon: 'mdi-school-outline',
-    title: 'Learning Center',
-    text: `${modules.length} structured modules with plain-domain explanations, flow diagrams, timelines and real examples.`,
+    title: 'Learn Scheduling',
+    text: `${modules.length} modules in one guided order — airline basics, then the whole bidding month: TBS, LRD, PBS, TTS, ETB, UBL, ROTA, ROTD and Aggressive Reserve.`,
     to: '/learn',
     color: '#0061AB',
   },
@@ -22,10 +22,10 @@ const features = [
     color: '#0078D2',
   },
   {
-    icon: 'mdi-timeline-clock-outline',
-    title: 'Bidding Academy',
-    text: 'Interactive bid-cycle timeline with contract references at every step.',
-    to: '/bidding',
+    icon: 'mdi-map-marker-path',
+    title: 'The Bidding Roadmap',
+    text: 'An animated walk through the nine stops of a Flight Attendant month — when each system opens, who can use it, and what it changes.',
+    to: '/learn/bid-month-overview',
     color: '#003057',
   },
   {

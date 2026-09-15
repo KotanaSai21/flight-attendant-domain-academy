@@ -6,7 +6,6 @@ import { useKnowledgeStore } from '../stores/knowledge'
 import { useProgressStore } from '../stores/progress'
 import MarkdownView from '../components/MarkdownView.vue'
 import QuizCard from '../components/QuizCard.vue'
-import SourceTag from '../components/SourceTag.vue'
 import BlockRenderer from '../components/blocks/BlockRenderer.vue'
 import RuleFactsPanel from '../components/sources/RuleFactsPanel.vue'
 import { ruleFactsForModule } from '../data/rules'
@@ -31,7 +30,6 @@ const sections = computed<ModuleSection[]>(() =>
 )
 const blocks = computed(() => mod.value?.blocks ?? [])
 const isInteractive = computed(() => blocks.value.length > 0)
-const isRefactoredPage = computed(() => (mod.value?.number ?? 99) <= 12)
 const sourceBackedFacts = computed(() =>
   mod.value ? ruleFactsForModule(mod.value.id) : [],
 )
@@ -75,7 +73,7 @@ function relatedFor(id: string): DictionaryTerm[] {
         <div class="text-caption text-medium-emphasis">Module {{ mod.number }} of {{ modules.length }} · ~{{ mod.estimatedMinutes }} min</div>
         <h1 class="text-h4 font-weight-bold">{{ mod.title }}</h1>
       </div>
-      <v-chip v-if="!isRefactoredPage" variant="tonal" color="primary">{{ Math.round((progress.quizScores[mod.id] ?? 0)) }}% quiz best</v-chip>
+      <v-chip v-if="mod.quiz.length" variant="tonal" color="primary">{{ Math.round((progress.quizScores[mod.id] ?? 0)) }}% quiz best</v-chip>
     </div>
 
     <v-alert type="info" variant="tonal" density="compact" class="mb-6">
@@ -124,10 +122,10 @@ function relatedFor(id: string): DictionaryTerm[] {
       </v-card>
     </template>
 
-    <RuleFactsPanel v-if="!isRefactoredPage && sourceBackedFacts.length" :facts="sourceBackedFacts" />
+    <!-- <RuleFactsPanel v-if="sourceBackedFacts.length" :facts="sourceBackedFacts" /> -->
 
     <!-- Related dictionary terms -->
-    <v-card v-if="!isRefactoredPage && mod.terms.length" class="mb-5" variant="outlined">
+    <v-card v-if="mod.terms.length" class="mb-5" variant="outlined">
       <v-card-text class="pa-6">
         <div class="text-subtitle-1 font-weight-bold mb-2">Key terms in this module</div>
         <div class="d-flex flex-wrap ga-2">
@@ -144,17 +142,9 @@ function relatedFor(id: string): DictionaryTerm[] {
     </v-card>
 
     <!-- Quiz -->
-    <QuizCard v-if="!isRefactoredPage && mod.quiz.length" :module-id="mod.id" :questions="mod.quiz" @completed="onQuizComplete" />
+    <QuizCard v-if="mod.quiz.length" :module-id="mod.id" :questions="mod.quiz" @completed="onQuizComplete" />
 
     <!-- Sources footer for the module -->
-    <div v-if="!isRefactoredPage" class="mt-6 d-flex flex-wrap align-center ga-2">
-      <span class="text-caption text-medium-emphasis">Primary sources:</span>
-      <SourceTag
-        v-for="t in mod.terms.map((id) => knowledge.termById(id)?.source).filter(Boolean).slice(0, 4)"
-        :key="(t as any).reference ?? (t as any).label"
-        :source="(t as DictionaryTerm['source'])!"
-      />
-    </div>
 
     <div class="mt-8 d-flex justify-space-between align-center ga-3">
       <v-btn v-if="previousModule" :to="`/learn/${previousModule.id}`" variant="text" prepend-icon="mdi-arrow-left">Previous</v-btn>
