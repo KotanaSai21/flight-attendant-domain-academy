@@ -1,10 +1,10 @@
 import type { AcademyModule } from './types'
-import { modulesPart1 } from './content/modules1'
+import { biddingModules } from './content/modulesBidding'
 import { modulesPart2 } from './content/modules2'
 import { interactiveModules } from './content/modulesInteractive'
 
 const byId = new Map<string, AcademyModule>()
-for (const m of [...interactiveModules, ...modulesPart1, ...modulesPart2]) {
+for (const m of [...interactiveModules, ...biddingModules, ...modulesPart2]) {
   if (!byId.has(m.id)) byId.set(m.id, m)
 }
 

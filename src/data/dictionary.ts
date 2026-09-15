@@ -12,6 +12,7 @@ const academyTerm = (
   category: string,
   definition: string,
   related: string[] = [],
+  example?: string,
 ): DictionaryTerm => ({
   id,
   term,
@@ -20,43 +21,73 @@ const academyTerm = (
   businessPurpose: `Creates a shared operational meaning for “${term}” across training, requirements, and airline systems.`,
   whyItMatters: `Using this term consistently prevents different workgroups or applications from interpreting the same event or object differently.`,
   whereUsed: [`${category} training`, 'Operational requirements', 'Application data'],
-  example: definition,
+  example: example ?? definition,
   related,
   developerRelevance: 'Use the governed definition and preserve the source, effective date, and operational context when the meaning can vary.',
   source: { kind: 'system', label: 'Flight Attendant Domain Academy fundamentals' },
 })
 
 const foundationTerms: DictionaryTerm[] = [
-  academyTerm('terminal', 'Terminal', 'Airport', 'The passenger building containing check-in, security, gates, and customer services.', ['gate']),
-  academyTerm('gate', 'Gate', 'Airport', 'The assigned airport location where a specific flight boards and deplanes.', ['terminal', 'jet-bridge']),
-  academyTerm('jet-bridge', 'Jet Bridge', 'Airport', 'The enclosed movable walkway connecting a terminal gate with an aircraft door.', ['gate']),
-  academyTerm('ramp', 'Ramp / Apron', 'Airport', 'The controlled area where aircraft park and receive baggage, fuel, catering, cleaning, and other ground service.'),
-  academyTerm('taxiway', 'Taxiway', 'Airport', 'A marked route used by aircraft moving between a runway and the ramp or gate area.', ['runway', 'ramp']),
-  academyTerm('runway', 'Runway', 'Airport', 'The prepared surface used by aircraft for takeoff and landing.', ['taxiway']),
-  academyTerm('station', 'Station', 'Network', 'Any airport location at which the airline operates.', ['hub', 'crew-base']),
-  academyTerm('hub', 'Hub', 'Network', 'A major connecting station where banks of flights exchange passengers and aircraft.', ['station', 'crew-base']),
-  academyTerm('focus-city', 'Focus City', 'Network', 'A station with meaningful airline service that is smaller or less connection-oriented than a primary hub.', ['station', 'hub']),
-  academyTerm('atc', 'Air Traffic Control', 'Fundamentals', 'The service that clears, separates, and sequences aircraft movement in controlled airspace and at airports.'),
-  academyTerm('eta-etd', 'ETA / ETD', 'Fundamentals', 'Estimated Time of Arrival and Estimated Time of Departure: changing forecasts distinct from scheduled and actual times.'),
-  academyTerm('utc', 'Coordinated Universal Time', 'Fundamentals', 'The common global time reference used to coordinate aviation activity across time zones.', ['hbt']),
-  academyTerm('faa', 'Federal Aviation Administration', 'Fundamentals', 'The primary United States civil aviation regulator.', []),
-  academyTerm('mel', 'Minimum Equipment List', 'Fundamentals', 'The approved list and conditions under which specified inoperative aircraft equipment may be deferred for flight.'),
-  academyTerm('pnr', 'Passenger Name Record', 'Customer', 'The booking record that connects a traveler with itinerary, contact, ticket, and service information.'),
-  academyTerm('sop', 'Standard Operating Procedure', 'Operations', 'The approved and repeatable method for performing an operational task.'),
-  academyTerm('irops', 'Irregular Operations', 'Operations', 'Delays, cancellations, diversions, aircraft changes, and other disruptions to the published operating plan.', ['operations-chain']),
-  academyTerm('occ', 'Operations Control Center', 'Operations', 'The airline function that monitors and coordinates the day of operation and network recovery.', ['operations-chain']),
-  academyTerm('um-passenger', 'Unaccompanied Minor', 'Passenger Categories', 'A child traveling without an accompanying adult under a controlled airline handoff process.'),
-  academyTerm('prm-passenger', 'Passenger with Reduced Mobility', 'Passenger Categories', 'A traveler who may require mobility assistance or additional boarding and deplaning coordination.'),
-  academyTerm('infant-passenger', 'Infant', 'Passenger Categories', 'A very young traveler whose age, seating, restraint, and documentation require specific handling.'),
-  academyTerm('meda-passenger', 'Medical Assistance Passenger', 'Passenger Categories', 'A traveler whose journey involves medical assistance, clearance, equipment, or other documented support.'),
-  academyTerm('non-revenue-traveler', 'Non-Revenue Traveler', 'Passenger Categories', 'An eligible traveler using employee or pass travel rather than a revenue ticket.'),
-  academyTerm('standby-passenger', 'Standby Passenger', 'Passenger Categories', 'A traveler awaiting seat clearance rather than holding a final confirmed seat assignment.', ['standby']),
-  academyTerm('flight-segment', 'Flight Segment / Leg', 'Operations', 'One movement from an origin airport to a destination airport inside a duty period.', ['sequence', 'duty-period']),
-  academyTerm('ground-turn', 'Ground Turn Time', 'Operations', 'The gate interval between an arriving segment’s block-in and the next departing segment’s block-out.', ['block-time']),
-  academyTerm('release', 'Release', 'Operations', 'The time at which required work ends and a crew member is released from a duty period.', ['report-time', 'duty-period']),
-  academyTerm('qualification', 'Qualification', 'Flight Attendant Identity', 'A current authorization or eligibility required for particular work, such as aircraft, position, language, destination documents, or training.', ['position', 'cq-training']),
-  academyTerm('availability', 'Availability', 'Flight Attendant Identity', 'The time-specific state created by vacation, leave, training, sickness, rest, days off, and other conditions that determines whether work may be assigned.', ['qualification']),
-  academyTerm('assignment', 'Assignment', 'Scheduling', 'Work, standby, training, or another activity placed on a Flight Attendant’s schedule with an effective time and source.', ['sequence', 'standby']),
+  academyTerm('terminal', 'Terminal', 'Airport', 'The passenger building containing check-in, security, gates, and customer services.', ['gate'],
+    'A crew reports to a gate inside a terminal — never to the airfield itself. At a large hub the walk between terminals can eat into the report window.'),
+  academyTerm('gate', 'Gate', 'Airport', 'The assigned airport location where a specific flight boards and deplanes.', ['terminal', 'jet-bridge'],
+    'Flight 1234 boards at C31. An hour later the same gate serves a different flight, which is why a gate change can cascade through a bank of departures.'),
+  academyTerm('jet-bridge', 'Jet Bridge', 'Airport', 'The enclosed movable walkway connecting a terminal gate with an aircraft door.', ['gate'],
+    'Once the jet bridge pulls back from the aircraft door, boarding is over — a late passenger cannot be added without moving it back.'),
+  academyTerm('ramp', 'Ramp / Apron', 'Airport', 'The controlled area where aircraft park and receive baggage, fuel, catering, cleaning, and other ground service.', [],
+    'While passengers board through the jet bridge, the ramp crew is loading bags, fuelling, and connecting catering on the apron below.'),
+  academyTerm('taxiway', 'Taxiway', 'Airport', 'A marked route used by aircraft moving between a runway and the ramp or gate area.', ['runway', 'ramp'],
+    'After pushback the aircraft follows taxiway routing to the departure runway; the cabin crew are seated for the whole taxi.'),
+  academyTerm('runway', 'Runway', 'Airport', 'The prepared surface used by aircraft for takeoff and landing.', ['taxiway'],
+    'A last-minute runway change can add twenty minutes of taxi time — and that time still counts inside the crew duty period.'),
+  academyTerm('station', 'Station', 'Network', 'Any airport location at which the airline operates.', ['hub', 'crew-base'],
+    'The airline serves many stations it does not base crew at; a sequence can overnight at a station without anyone being assigned there.'),
+  academyTerm('hub', 'Hub', 'Network', 'A major connecting station where banks of flights exchange passengers and aircraft.', ['station', 'crew-base'],
+    'At a hub, arrivals and departures are scheduled in banks — so one late inbound aircraft can ripple across dozens of connections at once.'),
+  academyTerm('focus-city', 'Focus City', 'Network', 'A station with meaningful airline service that is smaller or less connection-oriented than a primary hub.', ['station', 'hub'],
+    'A focus city carries substantial point-to-point flying without the large connecting banks that define a hub.'),
+  academyTerm('atc', 'Air Traffic Control', 'Fundamentals', 'The service that clears, separates, and sequences aircraft movement in controlled airspace and at airports.', [],
+    'An ATC ground stop holds the flight at the gate. The crew stays on duty the whole time, so the duty clock runs even though nothing has moved.'),
+  academyTerm('eta-etd', 'ETA / ETD', 'Fundamentals', 'Estimated Time of Arrival and Estimated Time of Departure: changing forecasts distinct from scheduled and actual times.', [],
+    'A 09:00 scheduled departure can carry an ETD of 09:35 after a late inbound. The schedule did not change — only the forecast did.'),
+  academyTerm('utc', 'Coordinated Universal Time', 'Fundamentals', 'The common global time reference used to coordinate aviation activity across time zones.', ['hbt'],
+    'Dispatch and flight-plan records use UTC so a crew crossing three time zones reads one unambiguous clock. Crew scheduling deadlines, by contrast, use Home Base Time.'),
+  academyTerm('faa', 'Federal Aviation Administration', 'Fundamentals', 'The primary United States civil aviation regulator.', [],
+    'FAA rules set the minimum cabin crew complement and recurrent-training requirements. The contract can add protections on top, but never subtract from them.'),
+  academyTerm('mel', 'Minimum Equipment List', 'Fundamentals', 'The approved list and conditions under which specified inoperative aircraft equipment may be deferred for flight.', [],
+    'An inoperative cabin item can be deferred under the MEL with a placard and a repair deadline, letting the flight depart legally instead of cancelling.'),
+  academyTerm('pnr', 'Passenger Name Record', 'Customer', 'The booking record that connects a traveler with itinerary, contact, ticket, and service information.', [],
+    'One PNR can hold a family of four, their seats, their bags, and a wheelchair request across three connecting flights.'),
+  academyTerm('sop', 'Standard Operating Procedure', 'Operations', 'The approved and repeatable method for performing an operational task.', [],
+    'Arming and disarming doors follows an SOP with a cross-check, so the step is performed identically on every aircraft by every crew.'),
+  academyTerm('irops', 'Irregular Operations', 'Operations', 'Delays, cancellations, diversions, aircraft changes, and other disruptions to the published operating plan.', ['operations-chain', 'open-time'],
+    'A line of thunderstorms over a hub cancels hundreds of flights. Trips break apart, open time spikes, and Reserve coverage becomes the limiting factor.'),
+  academyTerm('occ', 'Operations Control Center', 'Operations', 'The airline function that monitors and coordinates the day of operation and network recovery.', ['operations-chain'],
+    'When an aircraft goes out of service, the OCC decides whether to swap aircraft, delay, or cancel — and Crew Scheduling reacts to that decision.'),
+  academyTerm('um-passenger', 'Unaccompanied Minor', 'Passenger Categories', 'A child traveling without an accompanying adult under a controlled airline handoff process.', [],
+    'A nine-year-old travelling alone is handed from the gate agent to the crew, and released at the destination only to the named adult on the paperwork.'),
+  academyTerm('prm-passenger', 'Passenger with Reduced Mobility', 'Passenger Categories', 'A traveler who may require mobility assistance or additional boarding and deplaning coordination.', [],
+    'A passenger using a wheelchair pre-boards so the transfer is complete before the general boarding rush begins.'),
+  academyTerm('infant-passenger', 'Infant', 'Passenger Categories', 'A very young traveler whose age, seating, restraint, and documentation require specific handling.', [],
+    'A lap infant is not a seat, but still appears on the crew paperwork as a person on board — which changes the count the crew verifies before departure.'),
+  academyTerm('meda-passenger', 'Medical Assistance Passenger', 'Passenger Categories', 'A traveler whose journey involves medical assistance, clearance, equipment, or other documented support.', [],
+    'A passenger travelling with a portable oxygen concentrator needs prior clearance on file, and the crew receives a briefing about it before boarding.'),
+  academyTerm('non-revenue-traveler', 'Non-Revenue Traveler', 'Passenger Categories', 'An eligible traveler using employee or pass travel rather than a revenue ticket.', ['standby-passenger'],
+    'An off-duty employee flying on a pass is cleared only after every revenue passenger is seated — which is why commuting on a pass is never guaranteed.'),
+  academyTerm('standby-passenger', 'Standby Passenger', 'Passenger Categories', 'A traveler awaiting seat clearance rather than holding a final confirmed seat assignment.', ['standby', 'non-revenue-traveler'],
+    'Do not confuse this with crew Standby: a standby passenger is waiting for a seat, while a Standby Flight Attendant is on a paid availability shift at the airport.'),
+  academyTerm('flight-segment', 'Flight Segment / Leg', 'Operations', 'One movement from an origin airport to a destination airport inside a duty period.', ['sequence', 'duty-period'],
+    'DFW→MIA is one segment. DFW→MIA→DFW flown the same day is two segments inside a single duty period.'),
+  academyTerm('ground-turn', 'Ground Turn Time', 'Operations', 'The gate interval between an arriving segment’s block-in and the next departing segment’s block-out.', ['block-time'],
+    'The aircraft blocks in at 1310 and blocks out again at 1355 — a 45-minute ground turn, with the crew staying aboard and on duty throughout.'),
+  academyTerm('release', 'Release', 'Operations', 'The time at which required work ends and a crew member is released from a duty period.', ['report-time', 'duty-period'],
+    'Report 0700, final flight arrives 1900, release 1915. The duty period ends at release — not at the moment the aircraft parked.'),
+  academyTerm('qualification', 'Qualification', 'Flight Attendant Identity', 'A current authorization or eligibility required for particular work, such as aircraft, position, language, destination documents, or training.', ['position', 'cq-training'],
+    'A Flight Attendant whose CQ record has lapsed cannot be assigned any flying at all, regardless of seniority. Qualification is a hard gate, not a preference.'),
+  academyTerm('availability', 'Availability', 'Flight Attendant Identity', 'The time-specific state created by vacation, leave, training, sickness, rest, days off, and other conditions that determines whether work may be assigned.', ['qualification', 'rap'],
+    'Vacation, a training class, and the rest period after a red-eye all make the same person unavailable — for three entirely different reasons, with different rules.'),
+  academyTerm('assignment', 'Assignment', 'Scheduling', 'Work, standby, training, or another activity placed on a Flight Attendant’s schedule with an effective time and source.', ['sequence', 'standby', 'rotd'],
+    'A ROTD call-out places a sequence on a Reserve’s schedule. That is an assignment — distinct from an award, which is flying the Flight Attendant bid for and won.'),
 ]
 
 export const dictionary: DictionaryTerm[] = [
@@ -67,17 +98,17 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'PBS',
     category: 'Scheduling',
     definition:
-      'The electronic system used to create Lineholder and Reserve lines of flying each month. Flight Attendants submit ranked bid preferences, and PBS awards schedules in seniority order while honoring legalities and staffing constraints.',
+      'The electronic system used to create Lineholder and Reserve lines of flying each month. Flight Attendants submit bids across up to 7 sequential preference layers (Layer 1 top priority, Layers 2–6 sequential refinement, Layer 7 catch-all fallback), and PBS awards schedules in seniority order while honoring legalities and staffing constraints.',
     businessPurpose:
-      'Gives Flight Attendants maximum control over their monthly schedules while letting the Company cover all published flying with the right number of crew at each base.',
+      'Gives Flight Attendants maximum control over their monthly schedules through layered preference bidding while letting the Company cover all published flying with the right number of crew at each base.',
     whyItMatters:
       'PBS output is THE monthly schedule. Every downstream process — trip trading, reserve assignment, payroll — starts from the PBS award.',
     whereUsed: ['Monthly bidding', 'Line construction', 'Reserve line construction', 'Vacation integration'],
     example:
-      'A DFW-based Flight Attendant bids early sign-ons, no ODANs, and weekends off. PBS tries to honor those preferences in seniority order after covering all sequences in the bid package.',
+      'A Flight Attendant places must-have days off in Layer 1, preferred 3-day sequences in Layers 2–4, turns in Layers 5–6, and a broad domestic catch-all in Layer 7. PBS solves down the layers in seniority order to construct a complete legal line.',
     related: ['tts', 'etb', 'seniority-occupational', 'line-of-time', 'reserve-line'],
     developerRelevance:
-      'Core scheduling engine consumed by multiple applications. Key entities: Bid Package, Preference, Award, Line of Time, Misaward.',
+      'Core scheduling solver consumed by multiple applications. Key entities: Bid Package, 7 Preference Layers (Layer 1 critical, Layers 2–6 progressive relaxation, Layer 7 catch-all), Award, Line of Time, Misaward.',
     source: cba('2024 CBA §2.PP, §10.D'),
   },
   {
@@ -96,7 +127,7 @@ export const dictionary: DictionaryTerm[] = [
     related: ['pbs', 'reserve-line', 'line-of-time', 'credit-window', 'tts'],
     developerRelevance:
       'Top-level discriminator on schedule records (lineType: LINE | RESERVE); drives which engines and rules apply.',
-    source: cba('2024 CBA §2.EE, §12.A.1'),
+    source: cba('2024 CBA §2.DD–EE, §10.D'),
   },
   {
     id: 'lrd',
@@ -104,18 +135,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'LRD',
     category: 'Scheduling',
     definition:
-      'The designation a Flight Attendant selects on their PBS bid that determines which of the two line types they will be awarded: Lineholder (a Line of Time) or Reserve (availability days).',
+      'The election that sets which of the two line types a Flight Attendant will be awarded for the month — Lineholder (a Line of Time) or Reserve (availability days). It is made in its own window before PBS opens, and the result carries into the PBS bid.',
     businessPurpose:
-      'Every Flight Attendant must bid PBS as either a Lineholder or a Reserve; the LRD choice routes the whole month into the correct scheduling machinery.',
+      'Every Flight Attendant is awarded as either a Lineholder or a Reserve; the LRD result routes the whole month into the correct scheduling machinery before bidding starts.',
     whyItMatters:
       'The LRD is the first fork in a month: it decides whether a Flight Attendant flies concrete trips (TTS/UBL/ETB reshaping) or holds availability windows (ROTA/ROTD, RAPs), and whether guarantee math or RAP rules apply.',
-    whereUsed: ['PBS bid package', 'Monthly line construction', 'Reserve staffing plans'],
+    whereUsed: ['Pre-PBS status election', 'Monthly line construction', 'Reserve staffing plans'],
     example:
-      'A well-senioritied FA bids LRD = Lineholder and is awarded an 84-hour Line of Time; a junior FA in the same bid month bids LRD = Reserve and is awarded RSV days plus RAPs.',
-    related: ['pbs', 'lineholder', 'reserve-line', 'line-of-time'],
+      'A senior Flight Attendant elects Lineholder and is later awarded an 84-hour Line of Time; a junior Flight Attendant in the same month is designated Reserve and is awarded RSV days plus RAPs. Both elections close before the PBS bid window opens.',
+    related: ['pbs', 'lineholder', 'reserve-line', 'line-of-time', 'senior-bump'],
     developerRelevance:
-      'One enum on the PBS preference record (LINE | RESERVE). It picks which award path a bid takes and which subsystems print the result.',
-    source: cba('2024 CBA §12.A.1'),
+      'A status value (LINE | RESERVE) resolved upstream of PBS and read as an input by the award engine — not a preference layer inside the bid itself.',
+    source: cba('2024 CBA §12.A.1, §12.A.3.c (election made prior to the opening of PBS)'),
   },
   {
     id: 'tbs',
@@ -123,18 +154,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'TBS',
     category: 'Training',
     definition:
-      'The system that lets Flight Attendants express preferences when bidding for Continuing Qualification (CQ) training slots; it awards CQ training in seniority order based on status (early, base, or grace) and the priority of the preferences selected.',
+      'The electronic bidding system used to schedule training, including Continuing Qualification (CQ). Flight Attendants submit ranked date preferences and bids are processed in seniority order, with priority given to completing training during the assigned base month.',
     businessPurpose:
-      'Allocates limited annual training seats fairly (by seniority) while letting Flight Attendants tell the company when they would prefer to train.',
+      'Allocates limited training seats fairly by seniority while letting Flight Attendants tell the Company when they would prefer to train.',
     whyItMatters:
-      'TBS awards are a hard gate on scheduling: CQ dates set unschedulable days, and an expired qualification removes flying eligibility entirely.',
-    whereUsed: ['Annual CQ bidding', 'Training window planning', 'Qualification validity'],
+      'TBS awards are a hard gate on scheduling: an awarded class date sets unschedulable days that PBS must build around, and an expired qualification removes flying eligibility entirely.',
+    whereUsed: ['Training bidding and awards', 'Training window planning', 'Qualification validity'],
     example:
-      'In the training bid window, an FA ranks several CQ class dates; TBS assigns the earliest-ranked seat seniority order allows, anchored to their early/base/grace status.',
+      'In the training bid window a Flight Attendant ranks several CQ class dates; TBS awards the highest-ranked seat that seniority order allows, weighed against whether they are training early, in their base month, or in grace.',
     related: ['cq-training', 'seniority-occupational', 'pbs'],
     developerRelevance:
-      'A seniority-ordered award engine over dated seats, with status buckets (early/base/grace) and validity intervals that downstream scheduling reads as hard constraints.',
-    source: cba('2024 CBA §20.A, TBS Guide'),
+      'A seniority-ordered award engine over dated seats, producing validity intervals that downstream scheduling reads as hard constraints.',
+    source: cba('2024 CBA §29.D'),
   },
   {
     id: 'tts',
@@ -142,18 +173,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'TTS',
     category: 'Scheduling',
     definition:
-      'The automated system that processes Flight Attendant requests to drop, pick up, or trade sequences after the PBS award, including daily processing runs against open time.',
+      'A seniority-based, automated daily bidding system that lets Flight Attendants adjust their monthly schedule after the PBS award — dropping, picking up, and trading sequences against open time through a nightly processing run.',
     businessPurpose:
       'Lets Flight Attendants reshape their awarded schedule (drop trips, pick up better ones) while the Company keeps every trip covered and legal.',
     whyItMatters:
-      'TTS is where the awarded schedule becomes the flown schedule. Cancellations, pickups, and trades all flow through it before day-of operations.',
+      'TTS is where the awarded schedule becomes the flown schedule — and it resolves competition by seniority, not by who submitted first. That is the exact opposite of the ETB, and mixing the two up is the most common misunderstanding in post-award trading.',
     whereUsed: ['Post-award schedule changes', 'Daily open time processing', 'Reserve transactions on days off'],
     example:
-      'A Lineholder drops a 3-day trip into open time via TTS; another Flight Attendant picks up a 4-day within their Credit Window; TTS validates legality for both.',
+      'A Lineholder drops a 3-day trip into open time via TTS; another Flight Attendant picks up a 4-day within their Credit Window. Submitting first does not help — when the nightly run processes the ballots, the more senior bidder wins.',
     related: ['pbs', 'ubl', 'etb', 'credit-window', 'open-time'],
     developerRelevance:
-      'Transaction engine with batch (daily) and interactive components. Watch for run-time constraints called out in the Implementation LOA.',
-    source: cba('2024 CBA §10.E–K'),
+      'Batch award engine ordered by seniority, plus interactive submission. Watch for run-window constraints called out in the Implementation LOA.',
+    source: cba('2024 CBA §2.DDD, §10.E–K'),
   },
   {
     id: 'ubl',
@@ -161,18 +192,23 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'UBL',
     category: 'Scheduling',
     definition:
-      'A list of Lineholders who elect to be passed to Daily processing so they can be considered for open time pickup when their TTS preferences were not fully awarded.',
+      'A list of Lineholders who elect to be passed to Daily Scheduling because their TTS bid was not awarded, so they remain in line for matching open time. It runs immediately after TTS and only processes requests for sequences originating today or tomorrow. A Reserve trading on days off may also use the UBL, and is treated as a Lineholder for these purposes.',
     businessPurpose:
-      'Gives Lineholders a second chance at improving their month without re-submitting manual requests every day.',
+      'Gives an unsuccessful bidder a second chance at near-term flying without re-submitting a manual request every day.',
     whyItMatters:
-      'UBL participation directly affects how much open time gets redistributed to Lineholders versus Reserves during daily processing.',
-    whereUsed: ['Daily TTS processing', 'Open time distribution'],
+      'There are two kinds of UBL run and the difference is how the award reaches you. A next-day sequence awarded before 1900 HBT is an Auto Award — it appears in your schedule with no phone call. Any same-day sequence, or a next-day sequence after 1900 HBT, is a Manual Award requiring a call from Crew Scheduling unless you opted out, are on legal rest, or are out flying.',
+    whereUsed: ['Daily TTS processing', 'Open time distribution', 'Near-term coverage'],
     example:
-      'A Flight Attendant whose drop request was denied checks “pass to UBL”; if matching open time appears later, Daily processing can still award it.',
-    related: ['tts', 'open-time', 'rotd'],
+      'After the Monday night TTS run, the UBL processes only Tuesday and Wednesday operations. A Wednesday sequence that opens at 1100 HBT Tuesday is an Auto Award; the same sequence opening at 2000 HBT Tuesday is a Manual Award and the phone rings.',
+    related: ['tts', 'etb', 'open-time', 'rota', 'rotd'],
     developerRelevance:
-      'Flag on the Flight Attendant/schedule record consumed by the daily TTS run; drives eligibility rules in open-time matching.',
-    source: cba('2024 CBA §2.GGG, §10'),
+      'Election flag on the schedule record consumed by daily processing. Matching is keyed to the sequence origination date, and the award path (auto vs manual, with or without notification) depends on origination day plus the 1900 HBT boundary.',
+    source: {
+      kind: 'apfa',
+      label: 'APFA Website',
+      reference: 'Bidding → Daily Bidding → UBL (with 2024 CBA §2.GGG, §10.F)',
+      url: 'https://www.apfa.org/bidding/daily-bidding/ubl/',
+    },
   },
   {
     id: 'etb',
@@ -184,10 +220,10 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose:
       'Provides instant, self-service trades outside the scheduled TTS processing windows, so flying keeps moving all day.',
     whyItMatters:
-      'Where TTS is scheduled and seniority-blind but batch-driven, ETB is immediate and explicitly first-come/first-served: the fastest way flying moves between crew, and timing beats seniority.',
+      'ETB and TTS resolve competition in opposite ways. TTS waits for its nightly run and awards by seniority; ETB commits on the click and is explicitly first-come/first-served, so timing beats seniority.',
     whereUsed: ['Real-time trades', 'Last-minute pickups', 'Drop/pickup between TTS runs'],
     example:
-      'Two LGA Flight Attendants swap single duty periods directly on ETB; legality is validated instantly and both schedules update immediately.',
+      'Two LGA Flight Attendants swap single duty periods directly on ETB. Legality and Credit Window are validated instantly and both schedules update immediately — seniority never enters into it.',
     related: ['tts', 'pbs', 'credit-window', 'red-flagging'],
     developerRelevance:
       'Interactive, low-latency service: optimistic concurrency (first come wins), real-time legality validation, immediate schedule publication.',
@@ -205,8 +241,8 @@ export const dictionary: DictionaryTerm[] = [
       'Open time is how staffing gaps surface. Its volume signals over/under-staffing and drives overtime economics.',
     whereUsed: ['ROTA/D reserve awards', 'TTS daily processing', 'ETB pickups'],
     example:
-      'After a cancellation, the returned sequence posts to open time and appears in the next ROTD run and on ETB simultaneously.',
-    related: ['tts', 'rota', 'rotd', 'red-flagging'],
+      'After a cancellation, the returned sequence posts to open time and becomes visible to the UBL, the next Reserve run, and ETB at the same time.',
+    related: ['tts', 'etb', 'ubl', 'rota', 'rotd', 'red-flagging'],
     developerRelevance:
       'Central queue entity: OpenTime { sequenceId, reportDate, flags[] }. Consumers: ROTA, ROTD, TTS daily, ETB.',
     source: cba('2024 CBA §2.JJ'),
@@ -220,7 +256,7 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose:
       'Defines the shape and value of a Lineholder’s month so coverage, pay guarantees, and days off stay predictable.',
     whyItMatters:
-      'Line value drives monthly guarantee, Credit Window math, and vacation/prooration calculations.',
+      'Line value drives the monthly guarantee, Credit Window math, and vacation proration calculations.',
     whereUsed: ['PBS award', 'Payroll guarantee', 'Credit window calculation'],
     example: 'An 85-hour line means roughly 85 credited hours are owed even if trips cancel (pay protection applies).',
     related: ['pbs', 'credit-window', 'credited-hours'],
@@ -343,17 +379,17 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'RAP',
     category: 'Reserve',
     definition:
-      'A published window during which a Reserve must be available for assignment. RAPs come in up to four named shifts — A, B, C, and D — that map roughly to morning, mid-day, evening, and night coverage. Reserve lines are built from lists of RAPs plus Golden Days and Flex Days.',
+      'A published window during which a Reserve must be available for assignment. The availability window for each RAP is twelve (12) hours. RAPs come in up to four named shifts — A, B, C, and D; start times for A, B, and C are set by the Company and published per base and bid period, while RAP D is scheduled 1400–0200 HBT. Reserve lines are built from lists of RAPs plus Golden Days and Flex Days.',
     businessPurpose:
       'Converts uncertain demand into predictable coverage blocks the Company can staff base-by-base, named so a Reserve line reads like a typed day-of coverage schedule.',
     whyItMatters:
-      'RAP start/end drive call-out rules, rest, and pay. Start times are Company-determined and published in the PBS cover sheet each month (fixed once published). RAP D is the night window — scheduled 1400–0200 HBT regardless of base, and it may be ended early once all departures are airborne with no known diversions (release with no reduction in the reserve guarantee).',
+      'RAP start/end drive call-out rules, rest, and pay. Because A/B/C start times are configuration published each month rather than fixed constants, never hard-code them. A Reserve is automatically released at the end of their RAP if no assignment is given; RAP D may also be ended early once all departures are airborne with no known diversions, with no reduction in the Reserve guarantee.',
     whereUsed: ['Reserve line construction', 'Crew Scheduling call-out', 'PBS cover sheet', 'ROTA/D award'],
     example:
-      'A Reserve holds a RAP B 0600–1600 HBT. After Crew Scheduling’s call (or after acknowledging via Crew Portal), the 2-hour report clock starts — 3 hours in a co-terminal base. Generally ~11 hours of rest separates consecutive RAPs, though ROTD waivers can shorten it.',
+      'A Reserve holds a 12-hour RAP running 0600–1800 HBT. After Crew Scheduling’s call (or after acknowledging via Crew Portal), the 2-hour report clock starts — 3 hours in a co-terminal base. If no assignment comes by 1800, they are released automatically.',
     related: ['reserve-line', 'modified-rap', 'extended-rap', 'golden-day', 'flex-day', 'rota', 'rotd', 'hbt'],
     developerRelevance:
-      'Time-interval entity that recurs four ways (shift A/B/C/D) with mutation events (Modified/Extended). Call-out legality = interval math + rest rules (2h/3h report, 11h between RAPs, 15-min return-call window, RAP-before-0500 must be phoned not just portaled).',
+      'Fixed 12-hour interval entity recurring four ways (shift A/B/C/D) with mutation events (Modified/Extended). A/B/C start times are per-base, per-bid-period configuration. Call-out legality = interval math + rest rules (2h/3h report, 15-min return-call window).',
     source: cba('2024 CBA §2.R, §12.G–K; APFA Reserve Resources'),
   },
   {
@@ -403,7 +439,45 @@ export const dictionary: DictionaryTerm[] = [
       'A Reserve elects in ROTD to work a sequence returning on their Golden Sunday; the day is then deemed waived.',
     related: ['rap', 'flex-day', 'rota', 'rotd'],
     developerRelevance: 'Protected-flag on days off; waiver requires explicit election records (pre-1500 HBT for ROTA).',
-    source: cba('2024 CBA §2.W, §12.B.2'),
+    source: cba('2024 CBA §2.V, §12.B.2'),
+  },
+  {
+    id: 'gdfd',
+    term: 'Golden Day / Flex Day Designation Tool (GDFD)',
+    shortName: 'GDFD',
+    category: 'Reserve',
+    definition:
+      'The electronic application used by Reserves immediately following PBS monthly awards to view and customize the designation of their awarded days off as either Golden Days (GD) or Flex Days (FD).',
+    businessPurpose:
+      'Allows Reserves to customize which of their awarded days off are protected (Golden) vs. assignable (Flex), conforming to contract rules such as Flex Days preceding Golden Days in grouped blocks.',
+    whyItMatters:
+      'PBS awards days off as a raw total (e.g. 12 days off). The GDFD system gives the Reserve control over where their 8 inviolable Golden Days and 4 assignable Flex Days sit before trading opens.',
+    whereUsed: ['Post-PBS award processing', 'Crew Portal', 'CrewHub monthly schedule'],
+    example:
+      'A Reserve is awarded a 4-day block of days off (12th–15th). In GDFD, they designate the 12th–13th as Flex Days and the 14th–15th as Golden Days to protect their weekend.',
+    related: ['golden-day', 'flex-day', 'pbs', 'rtdo', 'reserve-line'],
+    developerRelevance:
+      'Window-driven configuration tool opening ~Day 18/19 after PBS and closing ~Day 21 at 1200 CT. Enforces 8 GD / 4 FD counts and placement constraints (Flex must precede Golden in grouped blocks).',
+    source: cba('2024 CBA §10.D.16.b, §12.B, Implementation LOA'),
+  },
+  {
+    id: 'rtdo',
+    term: 'Reserve Trade Days Off (RTDO)',
+    shortName: 'RTDO',
+    category: 'Reserve',
+    definition:
+      'The automated ballot system that allows Reserve Flight Attendants to request trading their scheduled days off directly with the Company.',
+    businessPurpose:
+      'Enables Reserves to adjust day-off placement with Company open days-off inventory after PBS awards and GDFD designations are locked.',
+    whyItMatters:
+      'Provides a contractual mechanism to swap days off with the Company (processed in seniority order) separate from peer-to-peer day-off trading via ETB.',
+    whereUsed: ['Reserve day-off adjustments', 'Crew Portal', 'Monthly schedule maintenance'],
+    example:
+      'A Reserve submits an RTDO ballot starting on the 24th to trade an off day on the 10th for an off day on the 14th; the system awards the trade in seniority order by 1200 HBT the next day.',
+    related: ['gdfd', 'golden-day', 'flex-day', 'etb', 'reserve-line'],
+    developerRelevance:
+      'Automated ballot system opening on the 24th of the prior month at 1200 HBT; requests submitted at least 2 days prior to traded date and processed daily in seniority order per CBA §12.C.2.',
+    source: cba('2024 CBA §12.C.2'),
   },
   {
     id: 'flex-day',
@@ -430,7 +504,7 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose:
       'Standing buffer capacity absorbing irregular operations, training overlaps, and vacation coverage.',
     whyItMatters:
-      'Most junior pilots— sorry, Flight Attendants live here first; rotation rules determine months on/off for years.',
+      'Most junior Flight Attendants start their careers here, and the rotation rules determine which months are on and off for years afterward.',
     whereUsed: ['PBS awards', 'Base staffing plans', 'Rotation tracking'],
     example:
       'A 2025 new hire at CLT: straight Reserve years 1–2, alternating months years 3–5, one-in-four thereafter if required.',
@@ -445,16 +519,16 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'ROTA',
     category: 'Reserve',
     definition:
-      'The system that awards and assigns sequences, standbys, and RAPs for future operations — i.e., future-dated reserve processing.',
+      'The system that awards and assigns sequences, standbys, and RAPs for future operations — i.e., future-dated reserve processing. Reserves submit ranked Future Reserve Bidding preferences (including aggressive and waiver-based bids); ROTA runs once daily at 1500 HBT and awards in seniority order among bidders, with processing complete by 1930 HBT.',
     businessPurpose:
       'Fills known future gaps with Reserves ahead of the operational day, in seniority order among bidders.',
     whyItMatters:
       'ROTA outcomes appear on schedules days/weeks ahead; elections (e.g., working into Golden Days) lock in here.',
-    whereUsed: ['Future reserve processing', 'Known open time redistribution'],
+    whereUsed: ['Future reserve processing', 'Known open time redistribution', 'Future Reserve Bidding'],
     example: 'A known Thanksgiving gap posts to ROTA; Reserves bid it, awarded in seniority order before the month begins.',
-    related: ['rotd', 'open-time', 'reserve-line'],
+    related: ['rotd', 'open-time', 'reserve-line', 'aggressive-reserve', 'roc'],
     developerRelevance: 'Batch award engine keyed by future dates; election deadlines enforced (1500 HBT rule).',
-    source: cba('2024 CBA §2.UU'),
+    source: cba('2024 CBA §12.I, §2.UU'),
   },
   {
     id: 'rotd',
@@ -505,6 +579,44 @@ export const dictionary: DictionaryTerm[] = [
     source: cba('2024 CBA §10.C.2.j, §12.F'),
   },
   {
+    id: 'roc',
+    term: 'Remain on Call',
+    shortName: 'ROC',
+    category: 'Reserve',
+    definition:
+      'A status a Reserve may elect during Future Reserve Processing (ROTA) to stay available for a possible same-day sequence or standby assignment, rather than being released once ROTA processing ends for that day.',
+    businessPurpose:
+      'Gives the operation a pool of Reserves who have proactively agreed to stay available beyond the standard ROTA cutoff, reducing day-of coverage gaps without an involuntary assignment.',
+    whyItMatters:
+      'Reserves who do not understand ROC may not realize they can still be assigned after ROTA completes, or may not know how to elect out of it once flying is no longer needed.',
+    whereUsed: ['Future Reserve Processing (ROTA)', 'Day-of Reserve coverage'],
+    example:
+      'After the 1500 HBT ROTA run, a Reserve with no award elects ROC rather than being fully released, remaining eligible for a same-day ROTD assignment.',
+    related: ['rota', 'rotd', 'standby', 'aggressive-reserve'],
+    developerRelevance:
+      'Distinct availability state from a released Reserve or an awarded RAP; award engines must track ROC election separately from RAP/standby assignment.',
+    source: cba('2024 CBA §12.J'),
+  },
+  {
+    id: 'aggressive-reserve',
+    term: 'Aggressive Reserve Status',
+    shortName: 'Aggressive Reserve',
+    category: 'Reserve',
+    definition:
+      'A bidding election that lets a Reserve volunteer for earlier or less-than-standard-notice assignments than the default RAP or call-out rules would otherwise allow, by attaching waivers (for example, a reduced LMCO call-out window, or working during a Golden/Flex Day) to a ROTA or ROTD bid.',
+    businessPurpose:
+      'Creates a voluntary pool of Reserves willing to accept faster assignment, which the operation can use before turning to standby coverage or an involuntary assignment.',
+    whyItMatters:
+      'Choosing Aggressive Reserve trades faster/earlier assignment likelihood for less predictability; Reserves should understand exactly which waivers they are attaching before bidding aggressively.',
+    whereUsed: ['ROTA future bids', 'ROTD day-of bids', 'LMCO coverage'],
+    example:
+      'A Reserve attaches an LMCO waiver of :45 minutes to an aggressive ROTD bid, making them eligible for a departure 45 minutes out instead of the standard call-out window.',
+    related: ['rotd', 'rota', 'lmco', 'roc'],
+    developerRelevance:
+      'Aggressive bids carry waiver flags that change award precedence (aggressive Reserve is awarded before standby for LMCO coverage per the Implementation LOA).',
+    source: cba('2024 CBA §12.K.4'),
+  },
+  {
     id: 'senior-bump',
     term: 'Senior Bump',
     category: 'Seniority',
@@ -526,14 +638,14 @@ export const dictionary: DictionaryTerm[] = [
     term: 'Occupational Seniority',
     category: 'Seniority',
     definition:
-      'Seniority based on length of service as a Flight Attendant (first day of initial training for post-Aug-2014 hires; ties broken by birth date, then SSN last four). Governs bidding rights, furlough/recall, vacation preferences, and vacancy filling. The System Seniority List reposts January 1 and July 1.',
+      'Seniority based on length of service as a Flight Attendant (first day of initial training for post-Aug-2014 hires). Where hire dates tie, date of birth applies; where hire date and birth date both tie, the ascending last four digits of the Social Security Number break it. Governs bidding rights, furlough/recall, vacation preferences, and vacancy filling. The System Seniority List is revised as of January 1 and July 1 each year.',
     businessPurpose:
       'The universal ranking key for nearly every award process in the contract.',
     whyItMatters:
       'PBS awards, reserve rotations, transfers, vacations — seniority order is the comparator everywhere.',
     whereUsed: ['PBS', 'Vacation bidding', 'Vacancies/transfers', 'ROTA awards'],
     example:
-      'Two FAs in the same training class: older birth date ranks higher; identical birthdays fall back to SSN digits.',
+      'Two Flight Attendants share a company hire date and a birth date; the ascending last four digits of the Social Security Number settle the order.',
     related: ['senior-bump', 'pbs', 'vacancy-transfer'],
     developerRelevance:
       'Canonical sort key exposed alongside employee records; snapshot twice yearly with protest windows (30 days).',
@@ -597,7 +709,7 @@ export const dictionary: DictionaryTerm[] = [
       'Single currency reconciling flying, absences, and guarantees into one monthly total.',
     whyItMatters: 'Everything — maxima, windows, guarantees — sums credited hours, not just flight time.',
     whereUsed: ['Monthly maximum enforcement', 'Payroll', 'PBS line values'],
-    example: 'Vacation days credit X hours daily, counting toward the 70–90 line band like flying would.',
+    example: 'A vacation day credits toward the month at its contractual daily value, counting against the 70–90 line band exactly as flown hours would.',
     related: ['line-of-time', 'duty-rig', 'pay-no-credit'],
     developerRelevance: 'Unified accrual pipeline aggregating many source types into one balance.',
     source: cba('2024 CBA §2.H'),
@@ -686,7 +798,7 @@ export const dictionary: DictionaryTerm[] = [
     definition:
       'The legally required number of Flight Attendants for an aircraft on a given service, split into numbered positions. Staffing below complement is illegal to depart.',
     businessPurpose: 'Deterministic, regulation-backed staffing per aircraft type and configuration.',
-    whyItMatters: 'Department below complement is an operational–safety event that can cancel or re-cater a departure.',
+    whyItMatters: 'Dispatching below complement is an operational–safety event that can cancel or re-cater a departure.',
     whereUsed: ['Staffing tables', 'Assignment validators', 'Sequence construction'],
     example: 'A widebody service calls for a larger complement than a narrowbody; each position maps to real doors and galleys.',
     related: ['position', 'sequence'],
@@ -702,7 +814,7 @@ export const dictionary: DictionaryTerm[] = [
       'Designated premium international destinations; sequences containing IPD duty periods may extend to six duty periods/six calendar days under specific construction limits.',
     businessPurpose:
       'Tags high-value international flying eligible for extended trip shapes and premiums.',
-    whyItMatters: 'IPD presence relaxes the 4-day cap but imposes its own duty-pattern constraints.',
+    whyItMatters: 'IPD presence relaxes the four-duty-period cap but imposes its own duty-pattern constraints.',
     whereUsed: ['Sequence construction', 'International premiums'],
     example: 'A 5-day DFW–LGW pairing is legal because it contains qualifying IPD duty periods.',
     related: ['sequence', 'duty-period'],
@@ -732,7 +844,7 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose: 'Organizes staffing, lines, and commutability around geographic hubs.',
     whyItMatters: 'Transfers, reserve rotations, and block-hour allocation all operate per-base.',
     whereUsed: ['PBS', 'Transfers', 'Staffing models'],
-    example: 'Opening/closing a satellite base follows contractual notice processes (§10.U).',
+    example: 'A Flight Attendant based at DFW reports and is released at DFW. If their base has a satellite, sequences built for that satellite originate and terminate there instead — a different reporting location under the same staffing structure.',
     related: ['hbt', 'vacancy-transfer'],
     developerRelevance: 'Base dimension on nearly every entity; satellite linkage modeled parent-child.',
     source: cba('2024 CBA §2.I, §2.XX'),
@@ -902,7 +1014,7 @@ export const dictionary: DictionaryTerm[] = [
     category: 'Operations',
     definition:
       'Two or more airports in the same metro area treated as a single base for reporting and pay. A sequence can open at one and close at the other; a deadhead between them is often handled as ground transport rather than a flight segment.',
-    businessPurpose: 'Metro realism: New York (JFK·LGA), Washington (DCA·IAD), Chicago (ORD·MDW), Dallas (DFW·DAL), Los Angeles (LAX + satellites).',
+    businessPurpose: 'Lets a multi-airport metro area operate as one base for reporting and pay — for example New York (JFK·LGA), Washington (DCA·IAD), Chicago (ORD·MDW), Dallas (DFW·DAL), and Los Angeles with its satellites.',
     whyItMatters: 'Open-at-one-close-at-the-other changes loop validation and segment counting.',
     whereUsed: ['Sequence construction', 'Base reporting', 'Pay'],
     example: 'A sequence opening JFK and closing LGA is still a closed New York loop.',

@@ -14,12 +14,22 @@ export const ruleFacts: RuleFact[] = [
 const ruleFactsById = new Map(ruleFacts.map((fact) => [fact.id, fact]))
 
 const moduleRuleFactIds: Record<string, string[]> = {
+  'bid-month-overview': ['scheduling-horizons', 'pbs-purpose', 'reserve-processing'],
+  'build-the-month': ['pbs-purpose', 'scheduling-guardrails'],
+  'reshape-the-month': ['scheduling-horizons'],
+  'near-term-open-time': ['scheduling-horizons'],
+  'reserve-coverage': [
+    'reserve-processing',
+    'reserve-rap-count',
+    'reserve-rap-duration',
+    'reserve-rap-d-window',
+    'standby-duration-options',
+    'aggressive-reserve-lmco-precedence',
+    'roc-election-window',
+  ],
   'fa-lifecycle': ['crew-base-directory', 'reserve-rap-count', 'reserve-rap-duration'],
   'fa-operations': ['trip-rig-ratio', 'duty-rig-ratio'],
-  scheduling: ['pbs-purpose'],
-  pbs: ['pbs-purpose'],
-  bidding: ['pbs-purpose'],
-  reserve: ['reserve-rap-count', 'reserve-rap-duration', 'reserve-rap-d-window'],
+  'crew-management': ['scheduling-horizons', 'reserve-processing'],
   payroll: [
     'lineholder-monthly-guarantee',
     'reserve-monthly-guarantee',

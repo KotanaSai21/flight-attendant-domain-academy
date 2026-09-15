@@ -15,7 +15,8 @@ const router = createRouter({
       component: () => import('../views/ModuleView.vue'),
     },
     { path: '/dictionary', name: 'dictionary', component: () => import('../views/DictionaryView.vue') },
-    { path: '/bidding', name: 'bidding', component: () => import('../views/BiddingAcademyView.vue') },
+    // Bidding content now lives in the Learn path (modules 4-8).
+    { path: '/bidding', redirect: { name: 'module', params: { id: 'bid-month-overview' } } },
     { path: '/simulator', name: 'simulator', component: () => import('../views/SimulatorView.vue') },
     { path: '/map', name: 'domain-map', component: () => import('../views/DomainMapView.vue') },
     { path: '/search', name: 'search', component: () => import('../views/SearchView.vue') },

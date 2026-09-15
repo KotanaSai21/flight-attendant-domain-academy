@@ -11,28 +11,31 @@ Flight Attendant domain — without prior airline experience — within 3–5 da
 - `knowledge-sources/JCBA-LOA_081522.txt`, redline, constitution, bonus agreement (supporting)
 - APFA public resources (apfa.org, apfa.org/bidding) — content tagged `Source: APFA Website`
 
-Content provenance is enforced in-app via source chips: **AA/APFA Contract**, **LOA**, or
-**APFA Website**.
+Content provenance is represented in-app with source references where available: **AA/APFA
+Contract**, **LOA**, or **APFA Website**.
+
+> **Important:** This academy reflects the author's current understanding of the subject and is
+> provided for learning purposes. It is not a legal reference; always consult the applicable
+> contract and official guidance.
 
 ## Modules
 
 | # | Module | # | Module |
 |---|--------|---|--------|
-| 1 | Airline Fundamentals | 9 | TTS |
-| 2 | FA Lifecycle & Workgroups | 10 | ETB |
-| 3 | Flight Attendant Operations | 11 | Crew Management |
-| 4 | Scheduling | 12 | Payroll & Credit |
-| 5 | Pairings & Sequences | 13 | Training |
-| 6 | PBS | 14 | International Flying |
-| 7 | Bidding | 15 | Seniority |
-| 8 | Reserve | 16 | Business Scenarios Capstone |
+| 1 | Airline Fundamentals | 8 | Cover the Month · ROTA, ROTD & Aggressive |
+| 2 | Crew | 9 | Payroll & Credit |
+| 3 | Flight Attendants | 10 | Operational Changes & Scenarios |
+| 4 | Your Bidding Month | 11 | Training |
+| 5 | Build the Month · TBS, LRD, PBS | 12 | Business Scenarios Capstone |
+| 6 | Reshape the Month · TTS & ETB | 13 | International Flying |
+| 7 | The Next Two Days · UBL & Open Time | 14 | Seniority |
 
 Each module: What is this? · Why It Exists · How It Works · Systems Involved · Information Behind It ·
 Real Examples · Interactive Quiz — pure domain, no developer jargon.
 
 ## Features
 
-- **Learning Center** — 15 modules with per-section progress tracking (localStorage)
+- **Learning Center** — 14 modules with per-section progress tracking (localStorage)
 - **Interactive Domain Dictionary** — 35 contract-grounded terms with business purpose,
   developer relevance, examples, related-term graph navigation
 - **Bidding Academy** — bid-cycle timeline with contract references; reserve processing flow;
@@ -55,6 +58,18 @@ npm install
 npm run dev      # http://localhost:5173
 npm run build    # typecheck + production build
 npm run preview  # serve dist/
+```
+
+## Issues and Contributions
+
+For questions, corrections, issues, or contributions, visit the source repository on GitHub:
+
+<https://github.com/KotanaSai21/flight-attendant-domain-academy>
+
+Before submitting a change, run the full validation suite:
+
+```bash
+npm run validate
 ```
 
 ## Roadmap

@@ -1,0 +1,51 @@
+@startuml
+skinparam BoxPadding 15
+skinparam ParticipantPadding 10
+
+title American Airlines Daily Reserve & Open Time Handoff Workflow
+
+box "Open Time Systems" #LightBlue
+participant "TTS / UBL" as TTS
+end box
+
+box "Reserve Systems" #LightYellow
+participant "ROTA\n(3 PM Automated Run)" as ROTA
+participant "ROTD\n(Real-Time Assignment)" as ROTD
+end box
+
+actor "Flight Attendant" as FA
+
+== The 48-Hour Open Time & UBL Window ==
+note over TTS: TTS runs nightly for trips 2+ days out.\nInside 48 hours, UBL takes over.
+FA -> TTS: Submits ballots for next-day open time (UBL)
+note over TTS: Auto-UBL Windows run continuously\nfrom 0400 to 1445 HBT for next-day trips.
+TTS -> FA: Awards trip automatically if match found (No scheduling phone call)
+
+== The ROTA Cutoff & Execution (1500 HBT) ==
+note over TTS: Final UBL sweep finishes at 1445 HBT
+ROTA -> TTS: Pulls all remaining unassigned sequences for tomorrow
+FA -> ROTA: Daily reserve bids lock strictly at 1500 HBT
+
+group ROTA Automated Processing (In Seniority Order)
+    ROTA -> ROTA: 1. Awards / Assigns Sequences to Reserves
+    ROTA -> ROTA: 2. Awards / Assigns Standby Shifts (OPR)
+    ROTA -> ROTA: 3. Assigns Remaining Pool to RAPs
+end
+
+ROTA -> FA: Posts tomorrow's complete timeline (By 1930 HBT)
+
+== The Live Operational Window (1501+ HBT) ==
+note right of ROTD: ROTD handles late-breaking changes dynamically
+TTS -> ROTD: New sequence drops into open time after 1500 ROTA run
+ROTD -> ROTD: Matches trip to an available assigned RAP
+ROTD -> FA: Live assignment pushed to Crew Portal (Screen alert)
+
+== Nightly Acknowledgment Deadline (2230 HBT) ==
+FA -> FA: Checks Crew Portal before bed
+alt Awarded a Sequence or Standby Shift
+    FA -> ROTA: Electronically Acknowledges Assignment by 2230 HBT
+else Assigned a clean RAP only
+    note over FA: No acknowledgment required for a basic RAP
+end
+
+@enduml

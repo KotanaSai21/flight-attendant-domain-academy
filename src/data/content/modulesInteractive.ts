@@ -2,7 +2,8 @@ import type { AcademyModule } from '../types'
 
 const fundamentals: AcademyModule = {
   id: 'airline-fundamentals', number: 1, title: 'Airline Fundamentals', icon: 'mdi-airplane', color: '#0061AB',
-  tagline: 'Learn the places, handoffs, phases, passenger types, and measures behind every flight.', estimatedMinutes: 22, terms: [],
+  tagline: 'Learn the places, handoffs, phases, passenger types, and measures behind every flight.', estimatedMinutes: 22,
+  terms: ['hub', 'station', 'crew-base', 'irops', 'occ', 'd0', 'a14', 'completion-factor', 'mel'],
   blocks: [
     { kind: 'hero', icon: 'mdi-airplane', title: 'AIRLINE FUNDAMENTALS', text: 'Build the shared vocabulary needed to follow a flight from the published schedule to arrival. This page stays with the airline operation; crew-specific clocks and Flight Attendant work follow on the next two pages.' },
     { kind: 'callout', tone: 'error', icon: 'mdi-shield-check', title: 'The operating priority', text: 'Safety and regulatory compliance come first. Security, operational reliability, and customer service support that foundation.' },
@@ -72,12 +73,48 @@ const fundamentals: AcademyModule = {
       ['IROPS', 'Irregular operations', 'Delays, cancellations, diversions, and other disruptions.'],
       ['OCC', 'Operations Control Center', 'Coordinates and monitors the airline’s day of operation.'],
     ], termIds: ['atc', 'eta-etd', 'utc', 'faa', 'mel', 'pnr', 'sop', 'irops', 'occ'] },
-  ], quiz: [],
+  ], quiz: [
+    {
+      question: 'What makes an airport a hub rather than just a station?',
+      options: [
+        'It is bigger',
+        'Flights are scheduled in connecting banks that exchange passengers and aircraft',
+        'Flight Attendants are based there',
+        'It has international service',
+      ],
+      answerIndex: 1,
+      explanation: 'The connecting banks are the point. They are also why one late inbound aircraft at a hub can ripple across dozens of downstream flights.',
+    },
+    {
+      question: 'A flight scheduled to depart at 09:00 pushes back at 09:01. Did it make D0?',
+      options: ['Yes, one minute is within tolerance', 'No — D0 means departing by the scheduled minute', 'Only if it arrives on time', 'D0 does not measure departures'],
+      answerIndex: 1,
+      explanation: 'D0 is unforgiving: a single minute misses it. A14 is the arrival measure, and that one does allow up to 14 minutes.',
+    },
+    {
+      question: 'A flight is four hours late but still operates. How does that affect Completion Factor?',
+      options: [
+        'It lowers CF',
+        'It does not affect CF — the flight was completed, not cancelled',
+        'It only affects CF if the delay was controllable',
+        'CF measures delays, not cancellations',
+      ],
+      answerIndex: 1,
+      explanation: 'CF counts whether the published flying was operated at all. A very late flight still completes; punctuality is measured separately by D0 and A14.',
+    },
+    {
+      question: 'A cabin item is broken but the flight departs anyway with a placard and a repair deadline. What allowed that?',
+      options: ['An SOP', 'The MEL', 'A PNR', 'The OCC'],
+      answerIndex: 1,
+      explanation: 'The Minimum Equipment List defines which inoperative equipment may be deferred, and under what conditions, so the flight can depart legally instead of cancelling.',
+    },
+  ],
 }
 
 const crew: AcademyModule = {
   id: 'fa-lifecycle', number: 2, title: 'Crew', icon: 'mdi-account-group-outline', color: '#5A2D82',
-  tagline: 'Understand who operates and supports a flight, how the crew clock works, and how crew trips are structured.', estimatedMinutes: 23, terms: [],
+  tagline: 'Understand who operates and supports a flight, how the crew clock works, and how crew trips are structured.', estimatedMinutes: 23,
+  terms: ['sequence', 'duty-period', 'flight-segment', 'report-time', 'release', 'block-time', 'turn', 'layover', 'tafb', 'hbt'],
   blocks: [
     { kind: 'hero', icon: 'mdi-account-group-outline', title: 'CREW', text: '“Crew” can mean the people physically operating the flight or the teams supporting them. Learn each role, the shared timeline around a flight, and the trip structure every crew application relies on.' },
     { kind: 'callout', tone: 'warning', icon: 'mdi-alert-outline', title: 'One flight, separate workgroups', text: 'Pilots and Flight Attendants share flights and trip structure, but they have separate qualifications, contracts, bidding rules, legality rules, and position assignments.' },
@@ -135,12 +172,53 @@ const crew: AcademyModule = {
       ['Block time', 'Aircraft gate-out to gate-in.', 'A flight clock, not the whole crew-duty clock.'], ['Turn / one-day turn', 'A sequence with one duty period that returns to base the same day.', 'A trip shape, distinct from the ground turn interval between segments.'],
       ['Layover', 'Time and location away from base between duty periods.', 'Connects rest, hotel, transportation, and per diem.'], ['Home Base Time (HBT)', 'The time-zone reference attached to the crew base.', 'Rules must identify which time basis applies.'],
     ], termIds: ['sequence', 'duty-period', 'flight-segment', 'report-time', 'release', 'block-time', 'turn', 'layover', 'hbt'] },
-  ], quiz: [],
+  ], quiz: [
+    {
+      question: 'Rank these from largest to smallest.',
+      options: [
+        'Segment → duty period → sequence',
+        'Sequence → duty period → segment',
+        'Duty period → sequence → segment',
+        'They are three words for the same thing',
+      ],
+      answerIndex: 1,
+      explanation: 'A sequence is the whole trip. It contains duty periods (working days), and each duty period contains flight segments.',
+    },
+    {
+      question: 'A crew reports at 08:30 and the aircraft blocks out at 09:30. When did the duty period start?',
+      options: ['09:30, at block-out', '08:30, at report', 'At the safety briefing', 'When the last passenger boarded'],
+      answerIndex: 1,
+      explanation: 'The crew clock is wider than the flight. Duty starts at report and runs past the final arrival until release.',
+    },
+    {
+      question: 'Which is the best description of block time?',
+      options: [
+        'Report to release',
+        'Gate-out to gate-in',
+        'Wheels-up to wheels-down',
+        'The time a crew is away from base',
+      ],
+      answerIndex: 1,
+      explanation: 'Block time is gate-to-gate for one segment. Report-to-release is duty time, and away-from-base is TAFB — three different clocks that are easy to conflate.',
+    },
+    {
+      question: 'Why do scheduled, estimated, and actual times need to be stored separately?',
+      options: [
+        'They are always the same, so it does not matter',
+        'They answer different questions — the plan, the current forecast, and what actually happened',
+        'Only the actual time is ever used',
+        'Regulators require three copies',
+      ],
+      answerIndex: 1,
+      explanation: 'Collapsing them loses the ability to explain a delay, measure performance, or reconstruct what the crew was told at the time.',
+    },
+  ],
 }
 
 const flightAttendants: AcademyModule = {
   id: 'fa-operations', number: 3, title: 'Flight Attendants', icon: 'mdi-account-tie-outline', color: '#0078D2',
-  tagline: 'Follow the Flight Attendant from monthly schedule and position assignment through report, flying, and release.', estimatedMinutes: 26, terms: [],
+  tagline: 'Follow the Flight Attendant from monthly schedule and position assignment through report, flying, and release.', estimatedMinutes: 26,
+  terms: ['crew-base', 'seniority-occupational', 'qualification', 'position', 'complement', 'availability', 'lineholder', 'reserve-line', 'deadhead', 'commuter'],
   blocks: [
     { kind: 'hero', icon: 'mdi-account-tie-outline', title: 'FLIGHT ATTENDANTS', text: 'A Flight Attendant is a qualified safety professional working a specific cabin position on a legal sequence. Their month combines awarded work, days off, schedule changes, training, and sometimes on-call availability.' },
     { kind: 'callout', tone: 'error', icon: 'mdi-shield-account-outline', title: 'Safety professional first', text: 'Service is visible, but safety, security, compliance, emergency readiness, and passenger management define the role.' },
@@ -219,7 +297,53 @@ The next week may look entirely different. A monthly line is not a repeating Mon
       ['Seniority', 'Occupational ranking commonly based on date of hire.', 'Influences bidding and awards but does not replace actual assignment data.'], ['Golden / Flex day', 'Reserve day-off categories with different protections under current rules.', 'Preserve the category rather than storing only “off.”'],
     ], termIds: ['line-of-time', 'lineholder', 'reserve-line', 'rap', 'standby', 'assignment', 'seniority-occupational', 'golden-day'] },
     { kind: 'callout', tone: 'primary', icon: 'mdi-database-clock-outline', title: 'The system needs history, not just the latest schedule', text: 'Preserve the original award, every later transaction or assignment, notifications and acknowledgements, and the current operating view. Each answers a different business question.' },
-  ], quiz: [],
+  ], quiz: [
+    {
+      question: 'Which single attribute decides which doors and emergency equipment a Flight Attendant is responsible for?',
+      options: ['Seniority', 'Base', 'Position', 'Status'],
+      answerIndex: 2,
+      explanation: 'Position is the operating assignment, and it maps to specific doors, a cabin zone, and emergency duties. Seniority influences what you are awarded — it never identifies the position you work.',
+    },
+    {
+      question: 'A Flight Attendant’s CQ training has lapsed. What can they be assigned?',
+      options: [
+        'Anything, if they are senior enough',
+        'Only domestic flying',
+        'Nothing — qualification is a hard gate',
+        'Only deadheads',
+      ],
+      answerIndex: 2,
+      explanation: 'Qualification is checked before anything else. An expired qualification removes flying eligibility entirely, at any seniority.',
+    },
+    {
+      question: 'A Flight Attendant travels as a passenger on the first flight, then works the second. What is that first segment called?',
+      options: ['Commuting', 'A deadhead', 'A ferry flight', 'Positive-space personal travel'],
+      answerIndex: 1,
+      explanation: 'Company-directed travel as a passenger to position a crew member is a deadhead. Commuting is personal travel to base before report, and it is not company-directed.',
+    },
+    {
+      question: 'What is the core difference between a Lineholder and a Reserve?',
+      options: [
+        'Reserves have a different safety role',
+        'A Lineholder starts the month with awarded trips; a Reserve starts with availability',
+        'Lineholders are paid more',
+        'Reserves cannot fly internationally',
+      ],
+      answerIndex: 1,
+      explanation: 'Same safety role, different scheduling model. What changes is whether the month starts with concrete sequences or with availability windows that flying is assigned into.',
+    },
+    {
+      question: 'Why keep the original award as well as the current schedule?',
+      options: [
+        'Regulators require a backup',
+        'They answer different questions — what was committed versus what is happening now',
+        'The current schedule is unreliable',
+        'There is no reason; the latest version is enough',
+      ],
+      answerIndex: 1,
+      explanation: 'Disputes, pay protection, and audit all depend on the original award. Overwriting it destroys the ability to explain how the month got to where it is.',
+    },
+  ],
 }
 
 export const interactiveModules: AcademyModule[] = [fundamentals, crew, flightAttendants]

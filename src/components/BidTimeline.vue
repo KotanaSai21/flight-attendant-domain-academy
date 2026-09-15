@@ -25,16 +25,16 @@ const steps = [
     ref: '§10.D, §2.MM',
   },
   {
-    title: 'Award Generated',
+    title: 'Award Generated & GDFD Designation',
     detail:
-      'Lines of Time (70–90 hrs standard) and Reserve lines post. Awards in seniority order; misawards (e.g., cancellations during bidding) route to remediation.',
-    ref: '§10.D.15, §10.T',
+      'Lines of Time (70–90 hrs standard) and Reserve lines post. Awards in seniority order; Reserves use the GDFD application to customize 8 Golden and 4 Flex Days (closes Day 21 at 1200 CT).',
+    ref: '§10.D.15, §10.D.16.b, §12.B',
   },
   {
-    title: 'Schedule Published → TTS / UBL Open',
+    title: 'Schedule Published → TTS / UBL / RTDO Open',
     detail:
-      'Post-award reshaping begins: drops, pickups, trades validated against Credit Windows; denials can pass to UBL for daily-run retries. ETB trades continue real-time throughout.',
-    ref: '§10.E–K, §2.G/GG',
+      'Post-award reshaping begins: TTS nightly trading, ETB real-time swaps, and RTDO ballots for Reserves to trade days off with the Company (opens 24th).',
+    ref: '§10.E–K, §12.C.1–2',
   },
   {
     title: 'Operational Month Begins',

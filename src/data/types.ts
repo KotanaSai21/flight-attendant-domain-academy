@@ -38,6 +38,7 @@ export interface KnowledgeSource {
   kind: SourceKind
   label: string
   reference?: string
+  url?: string
 }
 
 export interface DictionaryTerm {
@@ -77,7 +78,7 @@ export interface ModuleSection {
 
 /** Loose-typed content block for free-form, interactive modules */
 export interface ContentBlock {
-  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'table' | 'flow' | 'steps' | 'compare' | 'illustration'
+  kind: 'hero' | 'header' | 'prose' | 'callout' | 'diagram' | 'terms' | 'table' | 'flow' | 'steps' | 'compare' | 'illustration' | 'roadmap' | 'calendar' | 'dayclock'
   title?: string
   text?: string
   body?: string // markdown
@@ -90,6 +91,16 @@ export interface ContentBlock {
   columns?: string[]
   rows?: string[][]
   termIds?: Array<string | undefined>
+  /** For `roadmap`: bidding journey stage ids to spotlight; omit to show the whole month. */
+  stageIds?: string[]
+  /** For `calendar`: marked days of a 1-based month grid. */
+  days?: Array<{ day: number; label?: string; detail?: string; color?: string; icon?: string }>
+  daysInMonth?: number
+  startWeekday?: number
+  legend?: Array<{ label: string; color: string }>
+  /** For `dayclock`: points and shaded windows on a 24-hour HBT track. */
+  markers?: Array<{ time: string; label: string; detail?: string; color?: string; icon?: string }>
+  bands?: Array<{ from: string; to: string; label: string; color: string }>
   items?: Array<{
     term?: string
     definition?: string

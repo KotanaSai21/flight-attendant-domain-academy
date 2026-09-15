@@ -1,135 +1,11 @@
 import type { AcademyModule } from '../types'
 
 /* ==================================================================
- * MODULE 10 — ETB
- * ================================================================== */
-const etb: AcademyModule = {
-  id: 'etb',
-  number: 10,
-  title: 'ETB — Real-Time Trading',
-  icon: 'mdi-view-dashboard-variant',
-  color: '#0078D2',
-  tagline: 'Post, claim, or trade eligible trips in a real-time marketplace after the monthly award.',
-  estimatedMinutes: 10,
-  terms: ['etb', 'tts', 'open-time', 'credit-window', 'red-flagging'],
-  blocks: [
-    {
-      kind: 'hero',
-      icon: 'mdi-view-dashboard-variant',
-      title: 'ELECTRONIC TRADE BOARD',
-      text: 'ETB is the real-time trading path used after the monthly award. Unlike TTS, which waits for a scheduled processing run, an eligible ETB transaction is decided when a posting is claimed and validated.',
-    },
-    {
-      kind: 'prose',
-      title: 'Where ETB fits in the month',
-      icon: 'mdi-store-outline',
-      body: `PBS creates the starting monthly award. TTS and UBL provide a scheduled batch path for eligible Lineholder changes. **ETB provides the real-time path**.
-
-A Flight Attendant may post eligible flying, another eligible participant may claim it, and the system validates the transaction before updating the affected schedules. Availability, legality, qualification, and current rules still apply.`,
-    },
-    {
-      kind: 'compare',
-      title: 'TTS vs ETB — same verbs, opposite cadence',
-      items: [
-        {
-          title: 'TTS (Trip Trade System)',
-          icon: 'mdi-swap-horizontal-bold',
-          color: '#003057',
-          points: [
-            'Scheduled and batch-processed after requests are submitted.',
-            'Supports planned drops, pickups, trades, or improvements.',
-            'An eligible unsuccessful preference can pass to UBL for later consideration.',
-          ],
-        },
-        {
-          title: 'ETB (Electronic Trade Board)',
-          icon: 'mdi-view-dashboard-variant',
-          color: '#0078D2',
-          points: [
-            'Real-time rather than a scheduled batch run.',
-            'Supports posting or claiming eligible trip opportunities.',
-            'The transaction validates against the current schedules when claimed.',
-          ],
-        },
-      ],
-    },
-    {
-      kind: 'callout',
-      tone: 'info',
-      icon: 'mdi-store-clock-outline',
-      title: 'Real time still needs processing windows',
-      text: 'ETB availability can be affected by scheduled PBS or TTS processing because the tools may touch the same schedules and open flying. The current portal state and published calendar determine when transactions are available.',
-    },
-    {
-      kind: 'diagram',
-      caption: 'One post, one claim, instant commit — or a clean rejection with a reason code.',
-      code: `flowchart LR
-    A["Post / offer"] --> B["Legality + window check"]
-    B -- ok --> C["Commit instantly"]
-    B -- conflict --> D["Reject: reason code"]
-    C --> E["Both schedules update"]`,
-    },
-    {
-      kind: 'callout',
-      tone: 'error',
-      icon: 'mdi-ray-start-vertex',
-      title: 'One opportunity can have only one successful claim',
-      text: 'Two people may try to claim the same posting. The system must accept one eligible transaction and clearly tell the other participant that the opportunity is no longer available.',
-    },
-    {
-      kind: 'prose',
-      title: 'Some postings can carry special attributes',
-      icon: 'mdi-flag-variant',
-      body: `Open-time postings may carry labels such as premium or red-flag status. At this level, remember that the label can affect eligibility, pay, or credit treatment. Exact values and exceptions belong in the later pay and contractual modules.`,
-    },
-    {
-      kind: 'table',
-      title: 'ETB terminology',
-      columns: ['Term', 'Meaning', 'Simple example'],
-      rows: [
-        ['ETB', 'Electronic Trade Board', 'A Flight Attendant posts or claims an eligible trip opportunity in real time.'],
-        ['Posting', 'An offered trip or transaction opportunity', 'A trip becomes visible to eligible participants.'],
-        ['Claim', 'A request to accept the posted opportunity', 'The system validates the claimant before committing.'],
-        ['Open time', 'Flying currently needing coverage', 'An available sequence may appear for pickup.'],
-      ],
-      termIds: ['etb', 'etb', 'etb', 'open-time'],
-    },
-    {
-      kind: 'callout',
-      tone: 'info',
-      icon: 'mdi-code-braces',
-      title: 'The simple distinction',
-      text: 'PBS builds the month. TTS/UBL reshapes it through scheduled processing. ETB reshapes it through real-time eligible transactions. ROTA and ROTD serve the Reserve assignment path instead.',
-    },
-  ],
-  quiz: [
-    {
-      question: 'ETB allocation principle:',
-      options: ['Seniority', 'First come/first served', 'Lottery', 'Base size'],
-      answerIndex: 1,
-      explanation: 'Unlike PBS, ETB is explicitly FCFS.',
-    },
-    {
-      question: 'On success, ETB updates schedules:',
-      options: ['Next day', 'Next TTS run', 'Immediately', 'After payroll'],
-      answerIndex: 2,
-      explanation: 'Real-time commitment is its defining trait.',
-    },
-    {
-      question: 'A red-flagged trip picked up on ETB pays/credits:',
-      options: ['150%/150%', '150%/100%', '100%/100%', '200%/100%'],
-      answerIndex: 1,
-      explanation: 'Premium pay at 150%, credit capped at 100%.',
-    },
-  ],
-}
-
-/* ==================================================================
- * MODULE 11 — CREW MANAGEMENT
+ * MODULE 10 — OPERATIONAL CHANGES & SCENARIOS
  * ================================================================== */
 const crewManagement: AcademyModule = {
   id: 'crew-management',
-  number: 12,
+  number: 10,
   title: 'Operational Changes & Scenarios',
   icon: 'mdi-transit-connection-variant',
   color: '#0061AB',
@@ -293,11 +169,11 @@ Store the absence category, interval, approval state, source, and effective time
 }
 
 /* ==================================================================
- * MODULE 12 — PAYROLL & CREDIT
+ * MODULE 9 — PAYROLL & CREDIT
  * ================================================================== */
 const payroll: AcademyModule = {
   id: 'payroll',
-  number: 11,
+  number: 9,
   title: 'Payroll & Credit',
   icon: 'mdi-cash-multiple',
   color: '#C01933',
@@ -833,8 +709,12 @@ Notice how each handoff is a **system boundary** with its own ordering rules (wh
   ],
 }
 
+/* ==================================================================
+ * The former Module 4 "Scheduling" lived here. Its content is now the
+ * five-module bidding journey in ./modulesBidding.ts (modules 4–8).
+ * ================================================================== */
+
 export const modulesPart2: AcademyModule[] = [
-  etb,
   payroll,
   crewManagement,
 ]

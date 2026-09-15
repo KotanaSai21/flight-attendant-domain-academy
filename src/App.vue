@@ -10,9 +10,8 @@ const query = ref('')
 
 const nav = [
   { icon: 'mdi-home-outline', title: 'Home', to: '/' },
-  { icon: 'mdi-school-outline', title: 'Learning Center', to: '/learn' },
+  { icon: 'mdi-school-outline', title: 'Learn Scheduling', to: '/learn' },
   { icon: 'mdi-book-open-variant', title: 'Domain Dictionary', to: '/dictionary' },
-  { icon: 'mdi-timeline-clock-outline', title: 'Bidding Academy', to: '/bidding' },
   { icon: 'mdi-play-circle-outline', title: 'Scenario Simulator', to: '/simulator' },
   { icon: 'mdi-hub-outline', title: 'Interactive Domain Map', to: '/map' },
 ]
@@ -69,7 +68,7 @@ function search() {
 
       <template #append>
         <div class="pa-4 text-caption text-medium-emphasis border-thin">
-          Sources: AA/APFA 2024 CBA · Implementation LOA · APFA
+            Content reflects the author's current understanding and should be independently verified.
         </div>
       </template>
     </v-navigation-drawer>
@@ -98,13 +97,19 @@ function search() {
       </div>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="app-main">
+      <v-alert class="mx-4 mt-4 mb-0" type="info" variant="tonal" density="comfortable">
+        This academy reflects the author's current understanding of the subject and is provided for
+        learning purposes.
+      </v-alert>
       <router-view />
-      <v-footer height="auto" class="text-caption text-medium-emphasis mt-10 py-4" color="white" border>
-        <v-container fluid class="pa-0">
-          Flight Attendant Domain Academy — internal training platform. Content grounded in the
-          AA/APFA 2024 CBA & LOAs; external items tagged “Source: APFA Website”. Not a legal
-          reference — always consult the contract.
+      <v-footer height="auto" class="app-footer text-caption text-medium-emphasis py-4" color="white" border>
+        <v-container class="footer-content py-0">
+          Flight Attendant Domain Academy — internal training platform. To contribute or report any
+          issues, visit the
+          <a href="https://github.com/KotanaSai21/flight-attendant-domain-academy" target="_blank" rel="noopener noreferrer">
+            source repository on GitHub
+          </a>.
         </v-container>
       </v-footer>
     </v-main>
@@ -114,5 +119,27 @@ function search() {
 <style scoped>
 .brand {
   background: linear-gradient(135deg, #eaf3fb 0%, #f5f7fa 100%);
+}
+
+.app-main {
+  padding-bottom: 5rem !important;
+}
+
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 272px;
+  z-index: 1000;
+}
+
+.footer-content {
+  max-width: 1100px;
+  text-align: center;
+}
+
+@media (max-width: 959px) {
+  .app-footer {
+    left: 0;
+  }
 }
 </style>

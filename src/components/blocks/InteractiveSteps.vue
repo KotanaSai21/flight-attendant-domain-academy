@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 const props = defineProps<{
-  items: Array<{ title?: string; detail?: string; icon?: string }>
+  items: Array<{ title?: string; detail?: string; icon?: string; day?: string; time?: string }>
 }>()
 
 const idx = ref(0)
@@ -30,6 +30,14 @@ function back() {
             <v-icon :icon="items[idx].icon ?? 'mdi-map-marker-right'" color="white" size="26" />
           </v-avatar>
           <div class="flex-grow-1">
+            <div v-if="items[idx].day || items[idx].time" class="d-flex ga-2 mb-2 flex-wrap">
+              <v-chip v-if="items[idx].day" size="x-small" color="primary" variant="tonal" prepend-icon="mdi-calendar-blank-outline">
+                {{ items[idx].day }}
+              </v-chip>
+              <v-chip v-if="items[idx].time" size="x-small" color="secondary" variant="tonal" prepend-icon="mdi-clock-outline">
+                {{ items[idx].time }}
+              </v-chip>
+            </div>
             <div class="text-h6 font-weight-bold mb-1">{{ items[idx].title }}</div>
             <div class="text-body-1" style="line-height: 1.6">{{ items[idx].detail }}</div>
           </div>
