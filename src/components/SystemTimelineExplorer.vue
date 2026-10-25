@@ -46,7 +46,7 @@ const stages = [
   { week: 'Week 3 · Sep 16–23', title: 'Awards & designations', note: 'October line published', systems: [byName('GDFD')],
     milestone: { day: 18, text: 'October line published', sub: 'Lineholders: sequences. Reserves: reserve days + days off.' },
     handoff: 'Reserves label their days off' },
-  { week: 'Week 4 · Sep 20–30', title: 'TTS opens for October', note: 'Lineholders trade trips · Reserves trade days off', systems: [byName('TTS (October)')],
+  { week: 'Week 4 · Sep 20–30', title: 'TTS opens for October', note: 'Trip changes for eligible Lineholders and Reserves · Reserve days-off trades', systems: [byName('TTS (October)')],
     handoff: 'From October 1, the daily systems below take over' },
 ]
 const dayOfWeek = (day: number) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(day + 1) % 7]
