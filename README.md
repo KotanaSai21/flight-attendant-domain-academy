@@ -59,9 +59,17 @@ Real Examples · Interactive Quiz — pure domain, no developer jargon.
   automatic release, pay protection or a fixed attendance penalty.
   Decisions branch the narrative and update the calendar: a TTS request remains pending until
   the illustrated award, a reserve day-off exchange changes the duty dates, and choosing extra
-  flying changes both home plans and the month-end conversation. Backtracking reconstructs the
+  flying changes both home plans and the month-end conversation.
+  The premium-pickup story distinguishes Lineholder credit from Reserve day-off
+  pay-no-credit; UBL participation and late bids are explicit, and confirmed day-off trades
+  update Golden/Flex designations as well as duty dates. Backtracking reconstructs the
   calendar; changing an earlier choice discards later choices. Each persona's position and choices
   resume separately from localStorage (`fada-month-story-v1`); restarting resets only that persona.
+  Month-end summaries follow the selected trade choices. ETB guidance requires system approval,
+  and ROTA acknowledgement covers sequence, standby and RAP assignments with the on-sequence exception.
+  Aggressive Reserve guidance covers eligible ROTA/ROTD processing; the October 10 example
+  uses current-day ROTD preferences rather than implying availability on the following Golden Day.
+  LRD preferences are distinguished from confirmed status, which must be checked before PBS bidding.
   This is a simplified story, not an award predictor, legality engine, complete RAP roster or pay
   calculator. A choice selects an explicitly fictional outcome rather than guaranteeing a real award.
   The 21 shorter system/life stories remain available at `/life/stories` and their existing deep links,

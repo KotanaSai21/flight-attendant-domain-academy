@@ -143,7 +143,7 @@ function restart() {
       <v-btn value="maya">Maya · Lineholder</v-btn>
       <v-btn value="jordan">Jordan · Reserve</v-btn>
     </v-btn-toggle>
-    <p class="text-body-2 mb-4">{{ persona.home }} Follow the scenario below. Company requests stay pending until the system returns a result; a peer-to-peer ETB trade takes effect after both flight attendants complete it.</p>
+    <p class="text-body-2 mb-4">{{ persona.home }} Follow the scenario below. Company requests stay pending until the system returns a result; a peer-to-peer ETB trade takes effect only after acceptance, applicable eligibility and legality checks, and system approval. Verify the updated schedule.</p>
 
     <div class="paired-calendars">
       <section aria-labelledby="september-heading">
@@ -184,7 +184,7 @@ function restart() {
           {{ systemGuide[system.name].simple }}
         </p>
         <p v-if="chapter.id === 'next-day-result' && chosenSequence" class="scenario-text">
-          ROTA gives Jordan {{ chosenSequence.label }} on October 7–8. He confirms it by 22:30 HBT.
+          ROTA gives Jordan {{ chosenSequence.label }} on October 7–8. He acknowledges it through the automated system before 22:30 HBT.
           October 9–10 are still Reserve days. Picking a trip is a wish—seniority and coverage decide the real result.
         </p>
         <p v-else class="scenario-text">{{ chapter.text }}</p>

@@ -281,6 +281,14 @@ checkMonth(!hasEvent(moment(maya, 'first-trip', { 'trade-choice': 'trade', 'repa
 checkMonth(!hasEvent(moment(maya, 'month-close', { 'repair-bill': 'home' }), 'premium-trip') &&
   hasEvent(moment(maya, 'month-close', { 'repair-bill': 'pickup' }), 'premium-trip'),
   'extra-income decision must change the actual calendar')
+const mayaPendingPickup = moment(maya, 'birthday-delay', { 'repair-bill': 'pickup' })
+checkMonth(hasEvent(mayaPendingPickup, 'premium-request') && !hasEvent(mayaPendingPickup, 'premium-trip') &&
+  missedReport.branches.find((branch) => branch.option === 'pickup').text.includes('not on UBL yet'),
+  'October 22 pickup must remain pending for TTS, not appear as an early UBL request or award')
+const nearTermPickup = maya.chapters.find((chapter) => chapter.id === 'near-term-result')
+checkMonth(nearTermPickup.branches.find((branch) => branch.option === 'pickup').text.includes('On October 23') &&
+  nearTermPickup.branches.find((branch) => branch.option === 'pickup').text.includes('elected participation'),
+  'Maya must enter UBL on the eligible date with participation elected')
 const pendingOff = moment(jordan, 'appointment-request', { 'appointment-request': 'request' })
 checkMonth(eventsForDay(pendingOff.events, 19).some((event) => event.kind === 'reserve') &&
   hasEvent(pendingOff, 'rtdo-request'), 'RTDO request must not prematurely release reserve duty')
@@ -289,6 +297,94 @@ checkMonth(eventsForDay(awardedOff.events, 19).some((event) => event.id === 'swa
   !eventsForDay(awardedOff.events, 19).some((event) => event.kind === 'reserve') &&
   eventsForDay(awardedOff.events, 25).some((event) => event.id === 'swapped-duty'),
   'RTDO outcome must update both the new day off and the exchanged duty date')
+for (const [day, designation] of [[17, 'Flex'], [18, 'Golden'], [19, 'Golden']]) {
+  checkMonth(eventsForDay(awardedOff.events, day).some((event) => event.kind === 'off' && event.label.startsWith(designation)),
+    `day-off trade: October ${day} must be ${designation} so Flex precedes Golden`)
+}
+for (const state of [moment(jordan, 'day-designations'), awardedOff]) {
+  const offDays = Array.from({ length: 31 }, (_, index) => eventsForDay(state.events, index + 1))
+    .flat().filter((event) => event.kind === 'off')
+  checkMonth(offDays.filter((event) => event.label.startsWith('Golden')).length === 8 &&
+    offDays.filter((event) => event.label.startsWith('Flex')).length === 4,
+    'day-off trade must preserve eight Golden and four Flex Days')
+}
+const unchangedOff = moment(jordan, 'appointment-result', { 'appointment-request': 'reschedule' })
+checkMonth(eventsForDay(unchangedOff.events, 17).some((event) => event.label === 'Golden') &&
+  eventsForDay(unchangedOff.events, 19).some((event) => event.kind === 'reserve') &&
+  eventsForDay(unchangedOff.events, 25).some((event) => event.label === 'Flex'),
+  'declining the day-off trade must retain the original designations and duty')
+const reservePickup = jordan.chapters.find((chapter) => chapter.id === 'extra-income').choice.options
+  .find((option) => option.id === 'pickup')
+checkMonth(reservePickup.reply.includes('late bid') && reservePickup.reply.includes('does not guarantee an award'),
+  'Jordan must submit an eligible UBL late bid without treating submission as an award')
+const reservePay = jordan.chapters.find((chapter) => chapter.id === 'month-close').branches
+  .find((branch) => branch.option === 'pickup').text
+checkMonth(reservePay.includes('150%') && reservePay.includes('pay-no-credit') &&
+  reservePay.includes('does not add credit'),
+  'Reserve day-off premium pickup must distinguish premium pay from reserve credit')
+for (const person of [maya, jordan]) {
+  const ending = person.chapters.find((chapter) => chapter.id === 'month-close')
+  const decisionIds = person.id === 'maya' ? ['trade-choice', 'peer-offer'] : ['appointment-request']
+  for (const decisionId of decisionIds) {
+    const decision = person.chapters.find((chapter) => chapter.id === decisionId)
+    for (const option of decision.choice.options) {
+      const choices = { [decisionId]: option.id }
+      const matching = ending.branches.filter((branch) => branch.from === decisionId &&
+        branch.option === choices[branch.from])
+      checkMonth(matching.length === 1 && matching[0].text.trim(),
+        `${person.id}: ending must summarize the ${decisionId}/${option.id} choice`)
+    }
+  }
+  checkMonth(!/a trade|he traded a day off/.test(ending.text),
+    `${person.id}: unconditional ending must not claim an optional trade happened`)
+}
+const firstDayOffResult = systemTimings.find((system) => system.system === 'TTS (October)')
+  .keyDates.find((date) => date.role === 'result')
+checkMonth(firstDayOffResult.day === 25 && firstDayOffResult.time === 'by 04:00 HBT',
+  'first Reserve day-off run on September 24 must show next-morning results on September 25')
+checkMonth(septemberMilestones.find((item) => item.day === 24).detail.includes('September 25 at 04:00 HBT'),
+  'September milestone must distinguish the overnight Reserve day-off run from its next-morning results')
+const etbTiming = systemTimings.find((system) => system.system === 'ETB')
+checkMonth(etbTiming.result.includes('system approval') && etbTiming.result.includes('eligibility and legality') &&
+  etbTiming.doesNot.includes('remain responsible') && etbTiming.glance.result.includes('system approval'),
+  'ETB guidance must require system approval and checks, not agreement alone')
+for (const person of [maya, jordan]) {
+  const homeEnding = person.chapters.find((chapter) => chapter.id === 'month-close').branches
+    .find((branch) => branch.option === 'home')
+  checkMonth(homeEnding.text.includes('from this optional pickup'),
+    `${person.id}: declining a pickup must not imply there is no other extra pay in the month`)
+}
+const rotaTiming = systemTimings.find((system) => system.system === 'ROTA')
+const lrdTiming = systemTimings.find((system) => system.system === 'LRD')
+checkMonth(['seniority', 'Reserve rotation', 'staffing needs', 'applicable rules']
+  .every((text) => lrdTiming.does.includes(text)) &&
+  lrdTiming.doesNot.includes('does not guarantee') &&
+  systemGuide.LRD.simple.includes('confirmed status') &&
+  septemberMilestones.find((item) => item.label === 'LRD opens').detail.includes('does not guarantee'),
+  'LRD guidance must distinguish eligible preferences from confirmed status and explain outcome constraints')
+checkMonth(jordan.chapters.find((chapter) => chapter.id === 'kitchen-table').text.includes('does not guarantee') &&
+  jordan.chapters.find((chapter) => chapter.id === 'bid-month').text.includes('confirmed Reserve status'),
+  'Jordan must verify confirmed Reserve status before PBS bidding rather than assume his LRD preference won')
+const ublTiming = systemTimings.find((system) => system.system === 'UBL')
+checkMonth(ublTiming.who.includes('late bid') && ublTiming.starts.includes('participation elected') &&
+  ublTiming.scenario.steps[0].text.includes('elected UBL participation'),
+  'UBL guidance must include eligible late bidders and explicit TTS-to-UBL elections')
+const aggressiveTiming = systemTimings.find((system) => system.system === 'Aggressive Reserve')
+checkMonth([aggressiveTiming.starts, aggressiveTiming.ends, aggressiveTiming.does,
+  aggressiveTiming.scenario.takeaway, systemGuide['Aggressive Reserve'].simple]
+  .every((text) => text.includes('ROTA / ROTD')),
+  'Aggressive Reserve guidance must cover both ROTA and ROTD')
+const aggressiveChapter = jordan.chapters.find((chapter) => chapter.id === 'volunteer')
+checkMonth(aggressiveChapter.day === 10 && aggressiveChapter.text.includes('today’s ROTD') &&
+  aggressiveChapter.text.includes('Tomorrow is a Golden Day') &&
+  aggressiveChapter.choice.options.find((option) => option.id === 'volunteer').reply.includes('not a guaranteed'),
+  'October 10 aggressive example must use eligible current-day ROTD preferences, not imply next-day availability')
+const rotaAcknowledgement = jordan.chapters.find((chapter) => chapter.id === 'next-day-result').timing
+for (const text of [rotaTiming.result, rotaAcknowledgement]) {
+  checkMonth(/sequence/i.test(text) && text.includes('standby') && text.includes('RAP') &&
+    text.includes('before 22:30 HBT') && text.includes('unavailable') && text.includes('one hour after release'),
+    'ROTA guidance must cover all assignment types, acknowledgement and the on-sequence exception')
+}
 checkMonth(eventsForDay(moment(jordan, 'training').events, 14).filter((event) => event.kind !== 'personal').every((event) => event.kind === 'training'),
   'training must not be hidden by the simplified reserve block')
 const beforeReplay = JSON.stringify(monthlyPersonas)
