@@ -16,12 +16,19 @@ function loadPureDataModule(relativePath) {
   }).outputText
   const moduleRecord = { exports: {} }
   const loadModule = new Function('exports', 'require', 'module', '__filename', '__dirname', compiled)
-  loadModule(moduleRecord.exports, require, moduleRecord, sourcePath, dirname(sourcePath))
+  const loadDependency = (id) => id.startsWith('.')
+    ? loadPureDataModule(resolve(dirname(sourcePath), `${id}.ts`))
+    : require(id)
+  loadModule(moduleRecord.exports, loadDependency, moduleRecord, sourcePath, dirname(sourcePath))
   return moduleRecord.exports
 }
 
 const { dictionary } = loadPureDataModule('../src/data/dictionary.ts')
 const { scenarios } = loadPureDataModule('../src/data/scenarios.ts')
+const { lifeScenarios } = loadPureDataModule('../src/data/lifeScenarios.ts')
+const { modules } = loadPureDataModule('../src/data/modules.ts')
+const { monthlyPersonas, monthSnapshot, eventsForDay } = loadPureDataModule('../src/data/monthlyStory.ts')
+const { septemberMilestones, systemTimings, systemGuide, rotaSequences, calendarSnapshot, applicationFor, calendarReferences } = loadPureDataModule('../src/data/schedulingCalendar.ts')
 const errors = []
 const ids = new Set()
 const requiredTextFields = [
@@ -86,10 +93,317 @@ for (const [index, scenario] of scenarios.entries()) {
   if (!scenario.source?.kind || !scenario.source?.label) errors.push(`${label}: missing source metadata`)
 }
 
+const moduleIds = new Set(modules.map((module) => module.id))
+const coveredModules = new Set()
+const lifeIds = new Set()
+const systemNames = ['TBS', 'LRD', 'PBS', 'GDFD', 'RTDO', 'TTS', 'ETB', 'UBL', 'Red Flag', 'ROTA', 'ROTD', 'Aggressive Reserve']
+for (const [index, scenario] of lifeScenarios.entries()) {
+  const label = scenario.id || `life scenario ${index + 1}`
+  if (lifeIds.has(scenario.id)) errors.push(`${label}: duplicate life scenario id`)
+  lifeIds.add(scenario.id)
+  for (const field of ['id', 'title', 'icon', 'person', 'situation', 'goal', 'startingConditions', 'roleDifference', 'verifyCurrent']) {
+    if (typeof scenario[field] !== 'string' || !scenario[field].trim()) errors.push(`${label}: missing ${field}`)
+  }
+  if (!scenario.roles?.length || scenario.roles.some((role) => !['Lineholder', 'Reserve'].includes(role))) {
+    errors.push(`${label}: must identify valid flight attendant roles`)
+  }
+  if (!scenario.systems?.length || scenario.systems.some((system) => !system.trim())) errors.push(`${label}: missing systems`)
+  let hasChoice = false
+  if (scenario.systemJourney) {
+    if (!systemNames.includes(scenario.systemJourney.system)) errors.push(`${label}: invalid journey system`)
+    for (const field of ['learningGoal', 'timing']) {
+      if (!scenario.systemJourney[field]?.trim()) errors.push(`${label}: missing system journey ${field}`)
+    }
+    if ((scenario.storyScenes?.length ?? 0) < 3 || scenario.storyScenes.length > 4) errors.push(`${label}: needs three or four simple story scenes`)
+    let hasSystemLink = false
+    for (const [sceneIndex, scene] of (scenario.storyScenes ?? []).entries()) {
+      for (const field of ['time', 'title', 'text']) {
+        if (!scene[field]?.trim()) errors.push(`${label}: scene ${sceneIndex + 1} missing ${field}`)
+      }
+      if ((scene.text?.trim().split(/\s+/).length ?? 0) > 90) errors.push(`${label}: scene ${sceneIndex + 1} exceeds 90 words`)
+      if (scene.system) {
+        hasSystemLink = true
+        if (!moduleIds.has(scene.lessonId)) errors.push(`${label}: scene system must link to an existing lesson`)
+      }
+      if (scene.choice) {
+        hasChoice = true
+        if (!scene.choice.prompt?.trim() || (scene.choice.options?.length ?? 0) < 2) errors.push(`${label}: incomplete scene choice`)
+        for (const option of scene.choice.options ?? []) {
+          if (!option.label?.trim() || !option.reply?.trim()) errors.push(`${label}: choice needs a label and feedback`)
+        }
+      }
+    }
+    if (scenario.systemJourney && (!hasSystemLink || !hasChoice)) errors.push(`${label}: simple story needs a linked system scene and an interactive choice`)
+  }
+  if (!Array.isArray(scenario.steps) || scenario.steps.length < 3) errors.push(`${label}: must trace at least three steps`)
+  for (const [stepIndex, step] of (scenario.steps ?? []).entries()) {
+    if (scenario.systemJourney && !step.systemState?.trim()) errors.push(`${label}: step ${stepIndex + 1} missing system state`)
+    for (const field of ['time', 'title', 'action', 'check']) {
+      if (!step[field]?.trim()) errors.push(`${label}: step ${stepIndex + 1} missing ${field}`)
+    }
+  }
+  const statuses = new Set((scenario.outcomes ?? []).map((outcome) => outcome.status))
+  for (const status of ['success', 'pending', 'warning']) {
+    if (!statuses.has(status)) errors.push(`${label}: missing ${status} outcome`)
+  }
+  for (const [outcomeIndex, outcome] of (scenario.outcomes ?? []).entries()) {
+    for (const field of ['label', 'systemResult', 'nextAction', 'lifeImpact']) {
+      if (!outcome[field]?.trim()) errors.push(`${label}: outcome ${outcomeIndex + 1} missing ${field}`)
+    }
+    if (!['success', 'pending', 'warning'].includes(outcome.status)) errors.push(`${label}: invalid outcome status`)
+  }
+  if (!scenario.lessonIds?.length) errors.push(`${label}: must connect to existing lessons`)
+  for (const id of scenario.lessonIds ?? []) {
+    if (!moduleIds.has(id)) errors.push(`${label}: lesson '${id}' does not exist`)
+    coveredModules.add(id)
+  }
+  if (!scenario.relatedTerms?.length) errors.push(`${label}: must connect to dictionary terms`)
+  for (const id of scenario.relatedTerms ?? []) {
+    if (!ids.has(id)) errors.push(`${label}: related term '${id}' does not exist`)
+  }
+  if (!scenario.sources?.length) errors.push(`${label}: missing sources`)
+  for (const source of scenario.sources ?? []) {
+    if (!source.kind || !source.label?.trim()) errors.push(`${label}: incomplete source`)
+    if (source.kind === 'apfa' && !source.url?.startsWith('https://www.apfa.org/')) errors.push(`${label}: APFA source must link to APFA`)
+    if (source.kind === 'contract' && !source.reference?.trim()) errors.push(`${label}: contract source needs a reference`)
+  }
+  const question = scenario.question
+  if (!question && !hasChoice) errors.push(`${label}: missing interactive choice or decision check`)
+  if (question && (!question.question?.trim() || !question.explanation?.trim())) errors.push(`${label}: incomplete decision check`)
+  if (question && (!Array.isArray(question.options) || question.options.length < 2 || question.options.some((option) => !option.trim()))) {
+    errors.push(`${label}: decision must offer at least two complete options`)
+  }
+  if (question && (!Number.isInteger(question.answerIndex) || question.answerIndex < 0 || question.answerIndex >= (question.options?.length ?? 0))) {
+    errors.push(`${label}: decision answerIndex is invalid`)
+  }
+}
+for (const id of moduleIds) {
+  if (!coveredModules.has(id)) errors.push(`Life scenarios: existing module '${id}' has no connected story`)
+}
+for (const role of ['Lineholder', 'Reserve']) {
+  if (!lifeScenarios.some((scenario) => scenario.roles.includes(role))) errors.push(`Life scenarios: missing ${role} coverage`)
+}
+for (const system of systemNames) {
+  if (!lifeScenarios.some((scenario) => scenario.systemJourney?.system === system)) errors.push(`System journeys: missing ${system}`)
+}
+for (const id of ['school-pickup', 'reserve-childcare', 'extra-income', 'family-graduation', 'plan-next-month', 'commute-international', 'disrupted-homecoming', 'cq-appointment', 'new-base-new-routine']) {
+  if (!lifeScenarios.some((scenario) => scenario.id === id && !scenario.systemJourney)) errors.push(`Original life situation '${id}' must remain available`)
+}
+
+const monthlySystems = new Set()
+function checkMonth(condition, message) {
+  if (!condition) errors.push(`Monthly story: ${message}`)
+}
+function validateEvents(events, label) {
+  for (const event of events ?? []) {
+    checkMonth(event.id?.trim() && event.label?.trim() && event.detail?.trim(), `${label}: incomplete calendar event`)
+    checkMonth(Number.isInteger(event.start) && Number.isInteger(event.end) &&
+      event.start >= 1 && event.end >= event.start && event.end <= 31, `${label}: event dates outside October`)
+    checkMonth(['flying', 'reserve', 'training', 'personal', 'request', 'off'].includes(event.kind), `${label}: invalid event kind`)
+  }
+}
+for (const person of monthlyPersonas) {
+  const previousChapters = new Map()
+  let lastDay = 0
+  validateEvents(person.initialEvents, person.id)
+  for (const chapter of person.chapters) {
+    checkMonth(!previousChapters.has(chapter.id), `${person.id}: duplicate chapter ${chapter.id}`)
+    for (const field of ['date', 'title', 'text']) checkMonth(chapter[field]?.trim(), `${chapter.id}: missing ${field}`)
+    if (chapter.day !== undefined) {
+      checkMonth(chapter.day >= lastDay && chapter.day <= 31, `${chapter.id}: story dates go backward or out of month`)
+      lastDay = chapter.day
+    }
+    validateEvents(chapter.change?.add, chapter.id)
+    for (const system of chapter.systems ?? []) {
+      monthlySystems.add(system.name)
+      checkMonth(moduleIds.has(system.lessonId), `${chapter.id}: system link must reach an existing lesson`)
+    }
+    if (chapter.choice) {
+      checkMonth(chapter.choice.options.length >= 2 && chapter.choice.prompt?.trim(), `${chapter.id}: incomplete choice`)
+      const optionIds = new Set()
+      for (const option of chapter.choice.options) {
+        checkMonth(option.id?.trim() && option.label?.trim() && option.reply?.trim(), `${chapter.id}: incomplete choice option`)
+        checkMonth(!optionIds.has(option.id), `${chapter.id}: duplicate choice option`)
+        optionIds.add(option.id)
+        validateEvents(option.change?.add, chapter.id)
+      }
+    }
+    for (const branch of chapter.branches ?? []) {
+      checkMonth(previousChapters.get(branch.from)?.choice?.options.some((option) => option.id === branch.option),
+        `${chapter.id}: branch must reference a valid earlier choice`)
+      checkMonth(branch.text?.trim(), `${chapter.id}: empty branch narrative`)
+      validateEvents(branch.change?.add, chapter.id)
+    }
+    previousChapters.set(chapter.id, chapter)
+  }
+  checkMonth(person.chapters.at(-1).day === 31, `${person.id}: narrative must reach month end`)
+}
+const calendarSystemNames = systemNames.map((name) => (name === 'RTDO' ? 'TTS (October)' : name))
+for (const system of calendarSystemNames) checkMonth(monthlySystems.has(system), `missing ${system} from the continuous month`)
+
+const maya = monthlyPersonas.find((person) => person.id === 'maya')
+const jordan = monthlyPersonas.find((person) => person.id === 'jordan')
+checkMonth(maya.home.includes('school-age son'), 'Maya must introduce Leo as her child')
+const missedReport = maya.chapters.find((chapter) => chapter.id === 'birthday-delay')
+checkMonth(missedReport.text.includes('Crew Scheduling/Tracking') &&
+  missedReport.text.includes('not a TTS drop or an automatic day off') &&
+  missedReport.timing.includes('attendance review') &&
+  missedReport.branches.every((branch) => branch.text.includes('confirms revised duty instructions')),
+  'missed-report scene must explain contact, confirmed next steps and circumstance-dependent consequences')
+const moment = (person, id, choices = {}) => monthSnapshot(person, person.chapters.findIndex((chapter) => chapter.id === id), choices)
+const hasEvent = (state, id) => state.events.some((event) => event.id === id)
+checkMonth(!moment(maya, 'kitchen-table').published && !hasEvent(moment(maya, 'kitchen-table'), 'bos'),
+  'future flying must not leak into the pre-award calendar')
+checkMonth(moment(maya, 'month-award').published && hasEvent(moment(maya, 'month-award'), 'bos'),
+  'publishing the award must add the actual trip')
+for (const person of monthlyPersonas) {
+  const firstOctober = person.chapters.findIndex((chapter) => chapter.day !== undefined)
+  const octoberStart = monthSnapshot(person, firstOctober, {})
+  checkMonth(person.chapters[firstOctober].day === 1 && octoberStart.published,
+    `${person.id}: October 1 must start with the line already awarded in September`)
+  checkMonth(octoberStart.events.some((event) => event.kind === (person.role === 'Lineholder' ? 'flying' : 'reserve')),
+    `${person.id}: October 1 must show awarded trips or reserve obligations`)
+}
+const requestedTrade = moment(maya, 'trade-choice', { 'trade-choice': 'trade' })
+checkMonth(hasEvent(requestedTrade, 'bos') && hasEvent(requestedTrade, 'trade-request') && !hasEvent(requestedTrade, 'replacement'),
+  'saving a trade must keep original duty and show only a pending request')
+const awardedTrade = moment(maya, 'trade-result', { 'trade-choice': 'trade' })
+checkMonth(!hasEvent(awardedTrade, 'bos') && !hasEvent(awardedTrade, 'trade-request') &&
+  hasEvent(awardedTrade, 'replacement') && hasEvent(awardedTrade, 'school'),
+  'trade award must replace flying without erasing the personal event')
+checkMonth(hasEvent(moment(maya, 'trade-result', { 'trade-choice': 'keep' }), 'bos'),
+  'keeping the trip must not inherit the awarded-trade branch')
+checkMonth(eventsForDay(moment(maya, 'birthday-delay', { 'repair-bill': 'home' }).events, 22)
+  .some((event) => event.id === 'delay' && event.kind === 'flying'),
+  'missed report must retain revised duty rather than silently create a day off')
+checkMonth(!hasEvent(moment(maya, 'first-trip', { 'trade-choice': 'trade', 'repair-bill': 'pickup' }), 'premium-trip'),
+  'future choices must not affect an earlier story snapshot')
+checkMonth(!hasEvent(moment(maya, 'month-close', { 'repair-bill': 'home' }), 'premium-trip') &&
+  hasEvent(moment(maya, 'month-close', { 'repair-bill': 'pickup' }), 'premium-trip'),
+  'extra-income decision must change the actual calendar')
+const pendingOff = moment(jordan, 'appointment-request', { 'appointment-request': 'request' })
+checkMonth(eventsForDay(pendingOff.events, 19).some((event) => event.kind === 'reserve') &&
+  hasEvent(pendingOff, 'rtdo-request'), 'RTDO request must not prematurely release reserve duty')
+const awardedOff = moment(jordan, 'appointment-result', { 'appointment-request': 'request' })
+checkMonth(eventsForDay(awardedOff.events, 19).some((event) => event.id === 'swapped-off') &&
+  !eventsForDay(awardedOff.events, 19).some((event) => event.kind === 'reserve') &&
+  eventsForDay(awardedOff.events, 25).some((event) => event.id === 'swapped-duty'),
+  'RTDO outcome must update both the new day off and the exchanged duty date')
+checkMonth(eventsForDay(moment(jordan, 'training').events, 14).filter((event) => event.kind !== 'personal').every((event) => event.kind === 'training'),
+  'training must not be hidden by the simplified reserve block')
+const beforeReplay = JSON.stringify(monthlyPersonas)
+moment(maya, 'month-close', { 'trade-choice': 'trade', 'repair-bill': 'pickup' })
+moment(maya, 'kitchen-table')
+checkMonth(JSON.stringify(monthlyPersonas) === beforeReplay, 'calendar replay must not mutate shared story data')
+for (const person of monthlyPersonas) {
+  const award = person.chapters.find((chapter) => chapter.id === 'month-award')
+  checkMonth(award.text.includes('PBS') && award.date.startsWith('September 18') && award.timing.includes('12:00 DFW'),
+    `${person.id}: October award review must name PBS and the prior-month date and time zone`)
+  const bid = person.chapters.find((chapter) => chapter.id === 'bid-month')
+  checkMonth(bid.date.startsWith('September 10') && bid.text.includes('September 10') &&
+    bid.timing.includes('September 15 at 12:00') && bid.timing.includes('DFW'),
+    `${person.id}: monthly bid must identify its scene date, cutoff and time zone`)
+  for (const chapter of person.chapters) {
+    checkMonth(/^(September|October) \d{1,2}\b/.test(chapter.date),
+      `${person.id}/${chapter.id}: each scene must have a specific date`)
+    checkMonth(!/preliminary|final bid/i.test(`${chapter.text} ${chapter.timing ?? ''}`),
+      `${person.id}/${chapter.id}: keep the narrative to one simple bid-to-award journey`)
+  }
+}
+for (const [id, snippets] of [
+  ['next-day-bid', ['15:00 HBT', '19:30 HBT']],
+  ['next-day-result', ['22:30 HBT']],
+  ['appointment-request', ['23:00 HBT', 'two days']],
+  ['appointment-result', ['04:00 HBT']],
+]) {
+  const chapter = jordan.chapters.find((item) => item.id === id)
+  for (const snippet of snippets) checkMonth(chapter.timing?.includes(snippet), `${id}: missing timing context ${snippet}`)
+}
+
+const milestoneDays = new Set()
+checkMonth(applicationFor.RTDO === 'TTS' && applicationFor['TTS (October)'] === 'TTS' && applicationFor['Red Flag'] === 'TTS' &&
+  applicationFor['Aggressive Reserve'] === 'ROTA / ROTD',
+  'calendar: actions and conditions must map to applications, not appear as separate apps')
+checkMonth(calendarReferences.length >= 3 && calendarReferences.every((source) => source.url.startsWith('https://www.apfa.org/')),
+  'calendar: application mapping must retain APFA verification references')
+const timingNames = new Set()
+for (const system of systemTimings) {
+  checkMonth(systemGuide[system.system]?.name?.trim() && systemGuide[system.system]?.simple?.trim(),
+    `calendar timings/${system.system}: missing beginner explanation`)
+  checkMonth(!timingNames.has(system.system), `calendar timings: duplicate ${system.system}`)
+  timingNames.add(system.system)
+  for (const field of ['system', 'who', 'starts', 'ends', 'does', 'result']) {
+    checkMonth(typeof system[field] === 'string' && system[field].trim(), `calendar timings/${system.system}: missing ${field}`)
+  }
+  for (const sequence of rotaSequences) {
+    const bidIndex = jordan.chapters.findIndex((chapter) => chapter.id === 'next-day-bid')
+    const resultIndex = jordan.chapters.findIndex((chapter) => chapter.id === 'next-day-result')
+    const pending = calendarSnapshot(jordan, bidIndex, {}, sequence.id)
+    const awarded = calendarSnapshot(jordan, resultIndex, {}, sequence.id)
+    checkMonth(eventsForDay(pending.events, 7).some((event) => event.kind === 'reserve') &&
+      !pending.events.some((event) => event.id === 'reserve-trip'),
+      `ROTA practice/${sequence.id}: preference must not award flying early`)
+    checkMonth(eventsForDay(awarded.events, 7).some((event) => event.label === sequence.label) &&
+      eventsForDay(awarded.events, 8).some((event) => event.label === sequence.label) &&
+      eventsForDay(awarded.events, 9).some((event) => event.kind === 'reserve'),
+      `ROTA practice/${sequence.id}: confirmed sequence must update only its duty dates`)
+    checkMonth(!calendarSnapshot(maya, maya.chapters.length - 1, {}, sequence.id).events.some((event) => event.label === sequence.label),
+      `ROTA practice/${sequence.id}: reserve choice must not affect Maya`)
+  }
+  checkMonth(['Build October in September', 'Manage the awarded month'].includes(system.phase),
+    `calendar timings/${system.system}: invalid phase`)
+  checkMonth(['month', 'day', 'linked'].includes(system.cycle), `calendar timings/${system.system}: invalid cycle`)
+  checkMonth(system.audience?.trim(), `calendar timings/${system.system}: missing audience`)
+  if (system.cycle === 'month') {
+    checkMonth(['opens', 'closes', 'result'].every((role) => system.keyDates?.some((date) => date.role === role && date.label?.trim() && date.time?.trim())) &&
+      system.keyDates.every((date) => date.day === undefined || (Number.isInteger(date.day) && date.day >= 1 && date.day <= 30)),
+      `calendar timings/${system.system}: monthly systems need opens/closes/result key dates within September`)
+  }
+  for (const field of ['opens', 'closes', 'result']) {
+    checkMonth(system.glance?.[field]?.trim(), `calendar timings/${system.system}: missing glance ${field}`)
+  }
+  checkMonth(system.doesNot?.trim(), `calendar timings/${system.system}: missing doesNot`)
+  checkMonth(system.scenario?.persona?.trim() && system.scenario?.takeaway?.trim() && system.scenario?.steps?.length >= 2 &&
+    system.scenario.steps.every((item) => item.when?.trim() && item.text?.trim()),
+    `calendar timings/${system.system}: scenario needs persona, takeaway and at least two steps`)
+  if (system.cycle === 'linked') {
+    checkMonth(system.via?.trim() && system.bars.length === 0, `calendar timings/${system.system}: linked options need via and no bars`)
+  } else {
+    const max = system.cycle === 'month' ? 30 : 24
+    checkMonth(system.bars.length > 0, `calendar timings/${system.system}: missing timeline bars`)
+    for (const bar of system.bars) {
+      checkMonth(bar.label?.trim() && bar.from >= (system.cycle === 'month' ? 1 : 0) && bar.to <= max &&
+        (system.cycle === 'month' ? bar.to >= bar.from : bar.to > bar.from),
+        `calendar timings/${system.system}: bar "${bar.label}" out of range`)
+    }
+    for (const marker of system.markers) {
+      checkMonth(marker.label?.trim() && marker.at >= 0 && marker.at <= max, `calendar timings/${system.system}: marker out of range`)
+    }
+  }
+  checkMonth(moduleIds.has(system.lessonId), `calendar timings/${system.system}: invalid lesson`)
+}
+for (const name of calendarSystemNames) checkMonth(timingNames.has(name), `calendar timings: missing ${name}`)
+checkMonth(!timingNames.has('RTDO'), 'calendar timings: reserve day-off trades run in TTS, not a separate RTDO system')
+for (const milestone of septemberMilestones) {
+  checkMonth(!milestoneDays.has(milestone.day), `calendar: duplicate September date ${milestone.day}`)
+  milestoneDays.add(milestone.day)
+  checkMonth(Number.isInteger(milestone.day) && milestone.day >= 1 && milestone.day <= 30 &&
+    milestone.label?.trim() && milestone.detail?.trim(), 'calendar: incomplete September milestone')
+}
+for (const day of [1, 3, 6, 7, 8, 10, 15, 18, 21, 24]) {
+  checkMonth(milestoneDays.has(day), `calendar: missing September opening/cutoff/award milestone ${day}`)
+}
+checkMonth(!monthSnapshot(maya, -1, {}).published &&
+  monthSnapshot(maya, -1, {}).events.every((event) => event.kind === 'personal'),
+  'calendar: before starting, October must contain personal plans only')
+checkMonth(!hasEvent(moment(maya, 'bid-month'), 'atl') && hasEvent(moment(maya, 'bid-month'), 'cq'),
+  'calendar: submitting PBS must keep awarded training but not show future awarded trips')
+
 if (errors.length) {
   console.error(`Content validation failed with ${errors.length} issue(s):`)
   for (const error of errors) console.error(`- ${error}`)
   process.exit(1)
 }
 
-console.log(`Content validation passed: ${dictionary.length} terms and ${scenarios.length} interactive scenarios are complete and connected.`)
+console.log(`Content validation passed: ${dictionary.length} terms, ${scenarios.length} simulator scenarios, and ${lifeScenarios.length} life scenarios covering all ${moduleIds.size} modules are complete and connected.`)
+console.log(`Monthly story validation passed: ${monthlyPersonas.length} personas, all scheduling systems linked, and calendar branch/replay checks passed.`)

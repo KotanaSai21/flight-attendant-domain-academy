@@ -18,6 +18,8 @@ const router = createRouter({
     // Bidding content now lives in the Learn path (modules 4-8).
     { path: '/bidding', redirect: { name: 'module', params: { id: 'bid-month-overview' } } },
     { path: '/simulator', name: 'simulator', component: () => import('../views/SimulatorView.vue') },
+    { path: '/life/:id?', name: 'life-scenarios', component: () => import('../views/LifeScenariosView.vue') },
+    { path: '/calendar', name: 'scheduling-calendar', component: () => import('../views/SchedulingCalendarView.vue') },
     { path: '/map', name: 'domain-map', component: () => import('../views/DomainMapView.vue') },
     { path: '/search', name: 'search', component: () => import('../views/SearchView.vue') },
   ],

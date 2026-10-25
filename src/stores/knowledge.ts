@@ -3,10 +3,13 @@ import Fuse, { type IFuseOptions } from 'fuse.js'
 import { dictionary } from '../data/dictionary'
 import { modules } from '../data/modules'
 import { scenarios } from '../data/scenarios'
+import { lifeScenarios } from '../data/lifeScenarios'
+import { monthlyPersonas } from '../data/monthlyStory'
+import { septemberMilestones, systemTimings } from '../data/schedulingCalendar'
 import type { AcademyModule, DictionaryTerm, Scenario } from '../data/types'
 
 export interface SearchHit {
-  kind: 'term' | 'module' | 'scenario'
+  kind: 'term' | 'module' | 'scenario' | 'life-scenario' | 'month-story' | 'scheduling-calendar'
   id: string
   title: string
   subtitle: string
@@ -21,7 +24,7 @@ const opts: IFuseOptions<unknown> = {
 }
 
 interface Doc {
-  kind: 'term' | 'module' | 'scenario'
+  kind: SearchHit['kind']
   id: string
   title: string
   subtitle: string
@@ -63,7 +66,29 @@ export const useKnowledgeStore = defineStore('knowledge', {
 })
 
 function buildDocs(): Doc[] {
-  const docs: Doc[] = []
+  const docs: Doc[] = [{
+    kind: 'month-story',
+    id: 'monthly-life',
+    title: 'A month with Maya and Jordan',
+    subtitle: 'A Day in the Life · Interactive monthly calendar · Lineholder and Reserve',
+    body: monthlyPersonas.map((person) => [
+      person.name, person.role, person.intro, person.home,
+      ...person.chapters.map((chapter) => [
+        chapter.title, chapter.text, ...(chapter.systems ?? []).map((system) => system.name),
+        ...(chapter.branches ?? []).map((branch) => branch.text),
+      ].join(' ')),
+    ].join(' ')).join(' '),
+  }]
+  docs.push({
+    kind: 'scheduling-calendar',
+    id: 'scheduling-calendar',
+    title: 'Scheduling Calendar',
+    subtitle: 'September builds October · Two-month systems calendar · Lineholder and Reserve',
+    body: septemberMilestones.map((step) => [step.label, step.detail].join(' ')).join(' ') +
+      ' Interactive scenarios update October training, trips and reserve duty. System Timings: ' +
+      systemTimings.map((system) => [system.system, system.starts, system.ends, system.does, system.result, system.doesNot,
+        ...system.scenario.steps.map((step) => step.text), system.scenario.takeaway].join(' ')).join(' '),
+  })
   for (const t of dictionary) {
     docs.push({
       kind: 'term',
@@ -93,6 +118,22 @@ function buildDocs(): Doc[] {
       title: s.title,
       subtitle: `Simulator · ${s.audience}`,
       body: [s.prompt, ...s.steps.map((st) => `${st.title} ${st.detail}`)].join(' '),
+    })
+  }
+  for (const s of lifeScenarios) {
+    docs.push({
+      kind: 'life-scenario',
+      id: s.id,
+      title: s.title,
+      subtitle: `A Day in the Life · ${s.systemJourney ? `${s.systemJourney.system} system journey · ` : ''}${s.roles.join(' / ')} · ${s.person}`,
+      body: [
+        s.situation, s.goal, s.startingConditions, ...s.systems,
+        s.systemJourney?.learningGoal, s.systemJourney?.timing,
+        ...s.steps.map((step) => `${step.time} ${step.title} ${step.action} ${step.check} ${step.systemState ?? ''}`),
+        ...s.outcomes.map((outcome) => `${outcome.label} ${outcome.systemResult} ${outcome.nextAction} ${outcome.lifeImpact}`),
+        ...(s.storyScenes ?? []).map((scene) => [scene.text, scene.system, scene.choice?.prompt, ...(scene.choice?.options.map((option) => `${option.label} ${option.reply}`) ?? [])].join(' ')),
+        s.roleDifference, s.question?.question, s.question?.explanation,
+      ].join(' '),
     })
   }
   return docs

@@ -28,15 +28,24 @@ function to(hit: { kind: string; id: string }) {
     case 'scenario':
       router.push('/simulator')
       break
+    case 'life-scenario':
+      router.push({ name: 'life-scenarios', params: { id: hit.id } })
+      break
+    case 'month-story':
+      router.push({ name: 'life-scenarios' })
+      break
+    case 'scheduling-calendar':
+      router.push({ name: 'scheduling-calendar' })
+      break
   }
 }
 
 const iconFor = (kind: string) =>
-  ({ term: 'mdi-book-open-variant', module: 'mdi-school-outline', scenario: 'mdi-play-circle-outline' })[kind] ??
+  ({ term: 'mdi-book-open-variant', module: 'mdi-school-outline', scenario: 'mdi-play-circle-outline', 'life-scenario': 'mdi-calendar-heart', 'month-story': 'mdi-calendar-month-outline', 'scheduling-calendar': 'mdi-calendar-sync' })[kind] ??
   'mdi-magnify'
 
 const colorFor = (kind: string) =>
-  ({ term: 'secondary', module: 'primary', scenario: 'success' })[kind] ?? 'default'
+  ({ term: 'secondary', module: 'primary', scenario: 'success', 'life-scenario': 'info', 'month-story': 'info', 'scheduling-calendar': 'info' })[kind] ?? 'default'
 </script>
 
 <template>
