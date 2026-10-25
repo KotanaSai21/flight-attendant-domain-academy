@@ -42,9 +42,9 @@ export const reserveDays: ContentBlock = {
     },
     {
       day: 'Step 3 · Trade Days Off (~Day 24 onwards)',
-      title: 'Trade days off via RTDO (Company) or ETB (Peer)',
+      title: 'Trade days off in TTS (Company) or ETB (Peer)',
       detail:
-        'To swap days off with the Company, submit an RTDO (Reserve Trade Days Off) ballot by 1200 HBT 2 days prior to the traded date (processed daily in seniority order). To swap days off with another Reserve at base, use peer-to-peer ETB trading.',
+        'Reserve Trade Days Off is a TTS action, not a separate application. Published APFA implementation guidance uses a 2300 HBT cutoff two days before the requested trade date and overnight results by 0400 HBT. Confirm the current TTS guide rather than relying on the older noon contractual process. Peer reserve day-off trades use ETB.',
     },
     {
       day: 'Step 4 · Live Operation',
@@ -109,4 +109,3 @@ export const payConsequenceTerms: ContentBlock = {
     { id: 'misaward', term: 'Misaward', icon: 'mdi-alert-decagram-outline', definition: 'A PBS award that does not correctly reflect legality, seniority, or preference processing — it has its own contractual remedy process.' },
   ],
 }
-

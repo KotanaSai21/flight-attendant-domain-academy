@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { moduleById, modules } from '../data/modules'
+import { lifeScenarios } from '../data/lifeScenarios'
 import { useKnowledgeStore } from '../stores/knowledge'
 import { useProgressStore } from '../stores/progress'
 import MarkdownView from '../components/MarkdownView.vue'
@@ -48,6 +49,9 @@ const coursePosition = computed(() => {
   return index < 0 ? 0 : Math.round(((index + 1) / modules.length) * 100)
 })
 const courseStep = computed(() => modules.findIndex((m) => m.id === mod.value?.id) + 1)
+const connectedStories = computed(() => lifeScenarios.filter((story) =>
+  mod.value && story.lessonIds.includes(mod.value.id),
+))
 
 function onQuizComplete(percent: number) {
   if (mod.value) progress.setQuizScore(mod.value.id, percent)
@@ -81,6 +85,10 @@ function relatedFor(id: string): DictionaryTerm[] {
     </v-alert>
 
     <!-- Interactive blocks (free-form modules) -->
+    <v-alert v-if="mod.id === 'build-the-month'" variant="tonal" color="primary" class="mb-6">
+      See how September’s bids build October, then follow the daily systems.
+      <v-btn to="/calendar" variant="text" size="small">Open the two-month calendar</v-btn>
+    </v-alert>
     <template v-if="isInteractive">
       <BlockRenderer :blocks="blocks" />
       <div class="d-flex justify-end mb-8">
@@ -137,6 +145,18 @@ function relatedFor(id: string): DictionaryTerm[] {
           >
             <v-chip variant="tonal" color="secondary" label>{{ knowledge.termById(t)?.term ?? t }}</v-chip>
           </router-link>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <v-card v-if="connectedStories.length" variant="tonal" color="primary" class="mb-5">
+      <v-card-text class="pa-6">
+        <h2 class="text-h6 font-weight-bold mb-2">See this workflow in everyday life</h2>
+        <p class="text-body-2 mb-3">Connect the lesson to a real-life need, a system result, and the next decision.</p>
+        <div class="d-flex flex-wrap ga-2">
+          <v-btn v-for="story in connectedStories" :key="story.id"
+            :to="{ name: 'life-scenarios', params: { id: story.id } }"
+            variant="outlined" size="small" :prepend-icon="story.icon">{{ story.title }}</v-btn>
         </div>
       </v-card-text>
     </v-card>

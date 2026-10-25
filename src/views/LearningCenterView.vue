@@ -81,6 +81,13 @@ function isPhaseStart(index: number) {
     </div>
 
     <v-alert color="secondary" variant="tonal" icon="mdi-compass-outline" class="mt-8">New to all of this? Module 4 is the animated roadmap of the whole month — it is the fastest way to see how every system fits together before the detail arrives.</v-alert>
+    <v-card to="/life" variant="tonal" color="primary" class="mt-5">
+      <v-card-text>
+        <h2 class="text-h6 font-weight-bold mb-2">Put the workflows into everyday life</h2>
+        <p class="mb-2">Follow Maya or Jordan through a continuous month of flying, childcare and family plans. Make choices and watch work and home share the same calendar.</p>
+        <span class="font-weight-bold">Explore A Day in the Life <v-icon icon="mdi-arrow-right" size="18" /></span>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 

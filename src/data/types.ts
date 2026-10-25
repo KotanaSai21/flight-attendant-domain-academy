@@ -158,4 +158,55 @@ export interface Scenario {
     answerIndex: number
     explanation: string
   }
+
+}
+
+export interface StoryScene {
+  time: string
+  title: string
+  text: string
+  system?: string
+  lessonId?: string
+  choice?: {
+    prompt: string
+    options: Array<{ label: string; reply: string }>
+  }
+}
+
+export interface LifeScenario {
+  id: string
+  systemJourney?: {
+    system: string
+    learningGoal: string
+    timing: string
+  }
+  storyScenes?: StoryScene[]
+  title: string
+  icon: string
+  roles: Array<'Lineholder' | 'Reserve'>
+  person: string
+  situation: string
+  goal: string
+  startingConditions: string
+  systems: string[]
+  steps: Array<{
+    time: string
+    title: string
+    action: string
+    check: string
+    systemState?: string
+  }>
+  outcomes: Array<{
+    label: string
+    status: 'success' | 'pending' | 'warning'
+    systemResult: string
+    nextAction: string
+    lifeImpact: string
+  }>
+  roleDifference: string
+  verifyCurrent: string
+  lessonIds: string[]
+  relatedTerms: string[]
+  sources: KnowledgeSource[]
+  question?: QuizQuestion
 }

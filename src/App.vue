@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useDisplay } from 'vuetify'
 import { modules } from './data/modules'
 
 const router = useRouter()
 const route = useRoute()
-const drawer = ref(true)
+const { mdAndUp } = useDisplay()
+const drawer = ref(mdAndUp.value)
 const query = ref('')
 
 const nav = [
   { icon: 'mdi-home-outline', title: 'Home', to: '/' },
   { icon: 'mdi-school-outline', title: 'Learn Scheduling', to: '/learn' },
+  { icon: 'mdi-calendar-sync', title: 'Scheduling Calendar', to: '/calendar' },
   { icon: 'mdi-book-open-variant', title: 'Domain Dictionary', to: '/dictionary' },
+  { icon: 'mdi-calendar-heart', title: 'A Day in the Life', to: '/life' },
   { icon: 'mdi-play-circle-outline', title: 'Scenario Simulator', to: '/simulator' },
   { icon: 'mdi-hub-outline', title: 'Interactive Domain Map', to: '/map' },
 ]
@@ -23,7 +27,7 @@ function search() {
 
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" app permanent :width="272">
+    <v-navigation-drawer v-model="drawer" app :permanent="mdAndUp" :temporary="!mdAndUp" :width="272">
       <div class="brand pa-5 d-flex align-center">
         <v-avatar color="primary" size="40" class="mr-3">
           <v-icon icon="mdi-airplane" color="white" />
@@ -42,7 +46,7 @@ function search() {
           :prepend-icon="item.icon"
           :title="item.title"
           rounded="lg"
-          :active="route.path === item.to"
+          :active="route.path === item.to || (item.to === '/life' && route.path.startsWith('/life/'))"
           color="primary"
           class="mb-1"
         />
@@ -65,16 +69,10 @@ function search() {
           </template>
         </v-list-item>
       </v-list>
-
-      <template #append>
-        <div class="pa-4 text-caption text-medium-emphasis border-thin">
-            Content reflects the author's current understanding and should be independently verified.
-        </div>
-      </template>
     </v-navigation-drawer>
 
     <v-app-bar flat height="64" color="white" border>
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-nav-icon aria-label="Toggle navigation" @click="drawer = !drawer" />
       <v-toolbar-title class="font-weight-bold text-primary d-none d-sm-block">
         Flight Attendant Domain Academy
       </v-toolbar-title>
@@ -97,22 +95,27 @@ function search() {
       </div>
     </v-app-bar>
 
-    <v-main class="app-main">
+    <v-main>
       <v-alert class="mx-4 mt-4 mb-0" type="info" variant="tonal" density="comfortable">
         This academy reflects the author's current understanding of the subject and is provided for
         learning purposes.
       </v-alert>
       <router-view />
-      <v-footer height="auto" class="app-footer text-caption text-medium-emphasis py-4" color="white" border>
-        <v-container class="footer-content py-0">
-          Flight Attendant Domain Academy — internal training platform. To contribute or report any
-          issues, visit the
-          <a href="https://github.com/KotanaSai21/flight-attendant-domain-academy" target="_blank" rel="noopener noreferrer">
-            source repository on GitHub
-          </a>.
-        </v-container>
-      </v-footer>
     </v-main>
+    <footer class="app-footer text-caption text-medium-emphasis px-4 py-3 bg-white border-t" aria-label="Academy information">
+      <v-container class="footer-content py-0">
+        <span>Flight Attendant Domain Academy · Learning reference only; verify current guidance before acting.</span>
+        <a
+          class="footer-link"
+          href="https://github.com/KotanaSai21/flight-attendant-domain-academy"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Contribute or report an issue
+          <v-icon icon="mdi-open-in-new" size="14" />
+        </a>
+      </v-container>
+    </footer>
   </v-app>
 </template>
 
@@ -121,25 +124,33 @@ function search() {
   background: linear-gradient(135deg, #eaf3fb 0%, #f5f7fa 100%);
 }
 
-.app-main {
-  padding-bottom: 5rem !important;
-}
-
 .app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 272px;
-  z-index: 1000;
+  width: 100%;
 }
 
 .footer-content {
-  max-width: 1100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   text-align: center;
 }
 
-@media (max-width: 959px) {
-  .app-footer {
-    left: 0;
-  }
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #0061ab;
+  font-size: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
 }
+
+.footer-link:focus-visible {
+  outline: 2px solid #0061ab;
+  outline-offset: 2px;
+}
+
 </style>

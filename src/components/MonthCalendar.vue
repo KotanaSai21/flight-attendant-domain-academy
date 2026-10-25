@@ -16,11 +16,22 @@ const props = withDefaults(
     /** 0 = the 1st falls on Sunday, 1 = Monday, and so on. */
     startWeekday?: number
     legend?: Array<{ label: string; color: string }>
+    selectedDay?: number | null
+    showDetail?: boolean
   }>(),
-  { daysInMonth: 30, startWeekday: 0, legend: () => [] },
+  { daysInMonth: 30, startWeekday: 0, legend: () => [], showDetail: true },
 )
+const emit = defineEmits<{ select: [day: number] }>()
 
-const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+const weekdays = [
+  { short: 'Su', full: 'Sunday' },
+  { short: 'Mo', full: 'Monday' },
+  { short: 'Tu', full: 'Tuesday' },
+  { short: 'We', full: 'Wednesday' },
+  { short: 'Th', full: 'Thursday' },
+  { short: 'Fr', full: 'Friday' },
+  { short: 'Sa', full: 'Saturday' },
+]
 
 const byDay = computed(() => new Map(props.days.map((d) => [d.day, d])))
 const cells = computed(() => {
@@ -30,11 +41,13 @@ const cells = computed(() => {
 })
 
 const active = ref<number | null>(null)
-const activeCell = computed(() => (active.value === null ? null : byDay.value.get(active.value) ?? null))
+const selected = computed(() => props.selectedDay === undefined ? active.value : props.selectedDay)
+const activeCell = computed(() => (selected.value === null ? null : byDay.value.get(selected.value) ?? null))
 
 function select(cell: DayCell) {
   if (!cell.label) return
   active.value = active.value === cell.day ? null : cell.day
+  emit('select', cell.day)
 }
 </script>
 
@@ -42,7 +55,7 @@ function select(cell: DayCell) {
   <v-card variant="outlined" class="calendar">
     <v-card-text class="pa-4">
       <div class="grid head">
-        <div v-for="(w, i) in weekdays" :key="i" class="weekday">{{ w }}</div>
+        <div v-for="(w, i) in weekdays" :key="i" class="weekday" :title="w.full">{{ w.short }}</div>
       </div>
       <div class="grid">
         <template v-for="(cell, i) in cells" :key="i">
@@ -52,7 +65,8 @@ function select(cell: DayCell) {
             v-else
             :type="cell.label ? 'button' : undefined"
             class="cell"
-            :class="{ marked: !!cell.label, on: active === cell.day }"
+            :class="{ marked: !!cell.label, on: selected === cell.day }"
+            :aria-pressed="cell.label ? selected === cell.day : undefined"
             :style="{ '--c': cell.color ?? '#0061AB' }"
             :aria-label="cell.label ? `${cell.day}: ${cell.label}` : undefined"
             @click="select(cell)"
@@ -74,7 +88,7 @@ function select(cell: DayCell) {
 
       <v-expand-transition>
         <v-sheet
-          v-if="activeCell"
+          v-if="showDetail && activeCell"
           class="detail mt-3 pa-3 rounded-lg"
           :style="{ borderLeft: `4px solid ${activeCell.color ?? '#0061AB'}` }"
         >
@@ -143,6 +157,7 @@ function select(cell: DayCell) {
   color: var(--c);
 }
 .pill {
+  overflow-wrap: anywhere;
   display: inline-flex;
   align-items: center;
   gap: 3px;

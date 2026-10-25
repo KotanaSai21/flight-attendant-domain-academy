@@ -2,11 +2,19 @@
 import { modules } from '../data/modules'
 import { dictionary } from '../data/dictionary'
 import { scenarios } from '../data/scenarios'
+import { lifeScenarios } from '../data/lifeScenarios'
 import { useProgressStore } from '../stores/progress'
 
 const progress = useProgressStore()
 
 const features = [
+  {
+    icon: 'mdi-calendar-heart',
+    title: 'A Day in the Life',
+    text: `Follow Maya or Jordan through a whole month. Personal plans and work share a changing calendar, with ${lifeScenarios.length} shorter stories also available.`,
+    to: '/life',
+    color: '#00857D',
+  },
   {
     icon: 'mdi-school-outline',
     title: 'Learn Scheduling',
