@@ -18,6 +18,8 @@ const storyEl = ref<HTMLElement | null>(null)
 const scenarioApplications = computed(() => [...new Set((chapter.value?.systems ?? []).flatMap((system) =>
   applicationFor[system.name]?.split(' / ') ?? []))])
 const timedSystems = new Set(systemTimings.map((system) => system.system))
+const systemAbbreviations = [...new Set(systemTimings.map((system) => system.system).filter((name) => /^[A-Z]+$/.test(name)))]
+const hasSystemGuide = (name: string) => name in systemGuide
 
 /** First story chapter that features each system, preferring the persona used in that system's scenario. */
 const practiceTargets = computed(() => {
@@ -42,6 +44,7 @@ const reading = computed(() => readings.value[personaId.value])
 const chapter = computed(() => persona.value.chapters[reading.value.chapter])
 const snapshot = computed(() => calendarSnapshot(persona.value, reading.value.chapter, reading.value.choices, rotaPreference.value))
 const previous = computed(() => calendarSnapshot(persona.value, reading.value.chapter - 1, reading.value.choices, rotaPreference.value))
+const hasMiaSequence = computed(() => snapshot.value.events.some((item) => item.id === 'mia'))
 const activeOption = computed(() => chapter.value?.choice?.options.find((option) =>
   option.id === reading.value.choices[chapter.value.id]))
 const branches = computed(() => (chapter.value?.branches ?? []).filter((branch) =>
@@ -73,8 +76,14 @@ const octoberDays = computed(() => Array.from({ length: 31 }, (_, i) => {
 }))
 const changedDays = computed(() => Array.from({ length: 31 }, (_, i) => i + 1).filter((day) =>
   JSON.stringify(eventsForDay(snapshot.value.events, day)) !== JSON.stringify(eventsForDay(previous.value.events, day))))
-const canContinue = computed(() => (!chapter.value?.choice || Boolean(activeOption.value)) &&
+const canContinue = computed(() => (!chapter.value?.choice || (chapter.value.id === 'same-day-drop' && !hasMiaSequence.value) || Boolean(activeOption.value)) &&
   (chapter.value?.id !== 'next-day-bid' || Boolean(chosenSequence.value)))
+
+function selectScenario(index: number) {
+  if (!persona.value.chapters[index]) return
+  readings.value[personaId.value] = { chapter: index, choices: {} }
+  if (personaId.value === 'jordan') rotaPreference.value = null
+}
 
 function practice(system: string) {
   const target = practiceTargets.value[system]
@@ -131,6 +140,12 @@ function restart() {
       <div><strong>Times</strong><span>DFW = Dallas/Fort Worth · HBT = Home Base Time · CT = Central.</span></div>
       <div><strong>Before you rely on a change</strong><span>Wait for the company-system result, or confirmation of an ETB trade.</span></div>
     </div>
+    <!-- <section class="abbreviation-guide mb-6" aria-labelledby="abbreviation-heading">
+      <h2 id="abbreviation-heading" class="text-subtitle-1 font-weight-bold mb-2">System abbreviations</h2>
+      <ul class="abbreviation-list">
+        <li v-for="name in systemAbbreviations" :key="name"><strong>{{ name }}</strong> ({{ systemGuide[name].name }})</li>
+      </ul>
+    </section> -->
 
     <section ref="storyEl" class="scroll-target" aria-labelledby="story-heading">
       <h2 id="story-heading" class="text-h5 font-weight-bold mb-1">Walk through an example month</h2>
@@ -171,28 +186,30 @@ function restart() {
       </section>
     </div>
 
-    <v-card class="scenario-card mt-5 pa-4 pa-md-5" variant="outlined" aria-live="polite">
+    <div class="scenario-workspace mt-5">
+    <v-card class="scenario-card pa-4 pa-md-5" variant="outlined" aria-live="polite">
       <template v-if="chapter">
-        <div class="text-caption text-medium-emphasis mb-2">{{ chapter.date }} · Step {{ reading.chapter + 1 }} of {{ persona.chapters.length }}</div>
+        <div class="text-caption text-medium-emphasis mb-2">{{ chapter.date }} · Scenario {{ reading.chapter + 1 }} of {{ persona.chapters.length }}</div>
         <h2 class="text-h6 mb-3">{{ chapter.title }}</h2>
         <div v-if="scenarioApplications.length" class="application-flow mb-3">
           <span><strong>1. Open</strong> {{ scenarioApplications.join(' or ') }}</span>
           <span><strong>2. Choose</strong> the action below</span>
           <span><strong>3. Check</strong> the result and schedule</span>
         </div>
-        <p v-for="system in chapter.systems?.filter((item) => systemGuide[item.name])" :key="system.name" class="plain-definition mb-3">
+        <p v-for="system in chapter.systems?.filter((item) => hasSystemGuide(item.name))" :key="system.name" class="plain-definition mb-3">
           {{ systemGuide[system.name].simple }}
         </p>
         <p v-if="chapter.id === 'next-day-result' && chosenSequence" class="scenario-text">
-          ROTA gives Jordan {{ chosenSequence.label }} on October 7–8. He acknowledges it through the automated system before 22:30 HBT.
-          October 9–10 are still Reserve days. Picking a trip is a wish—seniority and coverage decide the real result.
+          After the UBL step, ROTA awards Jordan {{ chosenSequence.label }} on October 7–8 in this illustrative outcome. A preferred sequence is not guaranteed; eligibility, availability and Reserve assignment rules determine the actual result. He acknowledges the published assignment through the automated system before 22:30 HBT.
+          October 9–10 are still Reserve days.
         </p>
         <p v-else class="scenario-text">{{ chapter.text }}</p>
         <p v-if="chapter.message" class="text-body-2 mt-3"><strong>{{ chapter.message.from }}:</strong> “{{ chapter.message.text }}”</p>
         <p v-if="chapter.timing" class="text-body-2 text-medium-emphasis mt-3">{{ chapter.timing }}</p>
+        <p v-if="chapter.id === 'same-day-drop' && !hasMiaSequence" class="scenario-text mt-3">The day-before scenario already confirmed that Maya no longer holds the MIA sequence, so this last-minute drop scenario does not apply.</p>
         <div v-if="chapter.id === 'next-day-bid'" class="mt-4">
-          <h3 class="text-subtitle-1 font-weight-bold">1. Which trip would Jordan prefer tomorrow?</h3>
-          <p class="text-body-2 mb-3">Practice trips only. Picking one saves a wish—it does not book the trip.</p>
+          <h3 class="text-subtitle-1 font-weight-bold">1. Which sequence preference does Jordan submit?</h3>
+          <p class="text-body-2 mb-3">Practice only. This records a preference, not a booking. A daily ROTA bid may also include sequence preferences, a specific standby shift or RAP.</p>
           <div class="choices">
             <button v-for="sequence in rotaSequences" :key="sequence.id" type="button" class="sequence-option"
               :aria-pressed="rotaPreference === sequence.id" @click="chooseSequence(sequence.id)">
@@ -201,7 +218,7 @@ function restart() {
           </div>
           <p v-if="chosenSequence" class="text-body-2 mt-3">Saved: {{ chosenSequence.label }}. October 7–8 still show Reserve until ROTA results at 19:30.</p>
         </div>
-        <div v-if="chapter.choice" class="mt-4">
+        <div v-if="chapter.choice && (chapter.id !== 'same-day-drop' || hasMiaSequence)" class="mt-4">
           <h3 class="text-subtitle-1 mb-2">{{ chapter.id === 'next-day-bid' ? '2. Keep a childcare backup while the request is pending' : chapter.choice.prompt }}</h3>
           <div class="choices">
             <v-btn v-for="option in chapter.choice.options" :key="option.id" color="primary"
@@ -233,6 +250,24 @@ function restart() {
         <v-btn variant="text" @click="restart">Restart {{ persona.name }}</v-btn>
       </div>
     </v-card>
+    <aside class="scenario-index" aria-labelledby="scenario-index-heading">
+      <h2 id="scenario-index-heading" class="text-subtitle-1 font-weight-bold mb-1">Choose a scenario</h2>
+      <p class="text-caption text-medium-emphasis mb-3">{{ persona.name }} · {{ persona.chapters.length }} examples</p>
+      <nav class="scenario-list" :aria-label="`${persona.name} scenarios`">
+        <button v-for="(scenario, index) in persona.chapters" :key="scenario.id" type="button" class="scenario-link"
+          :class="{ selected: reading.chapter === index }" :aria-pressed="reading.chapter === index"
+          @click="selectScenario(index)">
+          <span class="scenario-number">{{ index + 1 }}</span>
+          <span class="scenario-link-copy">
+            <strong>{{ scenario.title }}</strong>
+            <small>{{ scenario.date }}</small>
+            <span v-if="scenario.choice" class="scenario-kind">Interactive</span>
+            <span v-else-if="scenario.branches?.length" class="scenario-kind">Outcome</span>
+          </span>
+        </button>
+      </nav>
+    </aside>
+    </div>
     </section>
 
     <section ref="explorerEl" class="scroll-target mt-10" aria-labelledby="systems-heading">
@@ -264,6 +299,17 @@ function restart() {
 .calendar-page { max-width: 1500px; }
 .paired-calendars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .paired-calendars section { min-width: 0; }
+.scenario-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.scenario-index { min-width: 0; border-top: 3px solid #0061ab; padding-top: 12px; }
+.scenario-list { display: grid; gap: 4px; max-height: min(72vh, 720px); overflow-y: auto; padding-right: 4px; }
+.scenario-link { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; width: 100%; padding: 8px; border: 1px solid transparent; border-bottom-color: #d3e0eb; border-radius: 4px; background: transparent; color: #1b2a35; text-align: left; cursor: pointer; }
+.scenario-link:hover, .scenario-link.selected { border-color: #0061ab; background: #eaf3fb; }
+.scenario-link:focus-visible { outline: 3px solid #0061ab; outline-offset: 2px; }
+.scenario-number { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #e6f0f9; color: #003057; font-size: .75rem; font-weight: 700; }
+.scenario-link-copy { display: grid; min-width: 0; gap: 3px; }
+.scenario-link-copy strong { font-size: .8125rem; line-height: 1.3; }
+.scenario-link-copy small { color: #60717d; font-size: .6875rem; line-height: 1.3; }
+.scenario-kind { color: #0061ab; font-size: .625rem; font-weight: 700; text-transform: uppercase; }
 .timeline-detail { background: #eaf3fb; border-radius: 8px; }
 .calendar-legend, .choices { display: flex; flex-wrap: wrap; gap: 8px; }
 .calendar-legend span { border-left: 4px solid; padding-left: 5px; font-size: .75rem; }
@@ -274,9 +320,14 @@ function restart() {
 .quick-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .quick-facts div { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 10px; background: #f5f9fc; border: 1px solid #e1eaf1; font-size: .8125rem; }
 .quick-facts strong { color: #003057; font-size: .875rem; }
+.abbreviation-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: .8125rem; }
+.abbreviation-list strong { color: #003057; }
 .scroll-target { scroll-margin-top: 80px; }
 @media (max-width: 1050px) { .quick-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1050px) { .scenario-workspace { grid-template-columns: 1fr; } .scenario-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 360px; } }
 @media (max-width: 560px) { .quick-facts { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .scenario-list { grid-template-columns: 1fr; max-height: 420px; } }
+@media (max-width: 760px) { .abbreviation-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .plain-definition { border-left: 3px solid #0061ab; padding: 8px 12px; background: #f5f9fc; font-size: .875rem; }
 .sequence-option { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 16px; border: 2px solid #cbd8e3; border-radius: 10px; flex: 1 1 220px; }
 .sequence-option[aria-pressed="true"] { border-color: #0061ab; background: #eaf3fb; }
