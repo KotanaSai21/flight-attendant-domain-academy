@@ -2,8 +2,8 @@
 import { computed, nextTick, ref } from 'vue'
 import MonthCalendar from '../components/MonthCalendar.vue'
 import SystemTimelineExplorer from '../components/SystemTimelineExplorer.vue'
-import { applicationFor, calendarReferences, calendarSnapshot, rotaSequences, septemberMilestones, systemGuide, systemTimings } from '../data/schedulingCalendar'
-import { eventsForDay, monthlyPersonas, type MonthEvent, type MonthPersona } from '../data/monthlyStory'
+import { calendarReferences, calendarSnapshot, rotaSequences, septemberMilestones, systemGuide, systemTimings } from '../data/schedulingCalendar'
+import { chapterForEvents, eventsForDay, monthlyPersonas, scenarioEntryIndex, type MonthEvent, type MonthPersona } from '../data/monthlyStory'
 
 interface Reading {
   chapter: number
@@ -15,8 +15,7 @@ const chosenSequence = computed(() => rotaSequences.find((item) => item.id === r
 const selectedSystem = ref('TBS')
 const explorerEl = ref<HTMLElement | null>(null)
 const storyEl = ref<HTMLElement | null>(null)
-const scenarioApplications = computed(() => [...new Set((chapter.value?.systems ?? []).flatMap((system) =>
-  applicationFor[system.name]?.split(' / ') ?? []))])
+const scenarioSystems = computed(() => (chapter.value?.systems ?? []).map((system) => system.name))
 const timedSystems = new Set(systemTimings.map((system) => system.system))
 const systemAbbreviations = [...new Set(systemTimings.map((system) => system.system).filter((name) => /^[A-Z]+$/.test(name)))]
 const hasSystemGuide = (name: string) => name in systemGuide
@@ -41,12 +40,17 @@ const readings = ref<Record<MonthPersona['id'], Reading>>({
 })
 const persona = computed(() => monthlyPersonas.find((person) => person.id === personaId.value)!)
 const reading = computed(() => readings.value[personaId.value])
-const chapter = computed(() => persona.value.chapters[reading.value.chapter])
 const snapshot = computed(() => calendarSnapshot(persona.value, reading.value.chapter, reading.value.choices, rotaPreference.value))
 const previous = computed(() => calendarSnapshot(persona.value, reading.value.chapter - 1, reading.value.choices, rotaPreference.value))
-const hasMiaSequence = computed(() => snapshot.value.events.some((item) => item.id === 'mia'))
-const activeOption = computed(() => chapter.value?.choice?.options.find((option) =>
-  option.id === reading.value.choices[chapter.value.id]))
+const chapter = computed(() => {
+  const current = persona.value.chapters[reading.value.chapter]
+  return current ? chapterForEvents(current, previous.value.events) : undefined
+})
+const activeOption = computed(() => {
+  const current = chapter.value
+  if (!current?.choice) return undefined
+  return current.choice.options.find((option) => option.id === reading.value.choices[current.id])
+})
 const branches = computed(() => (chapter.value?.branches ?? []).filter((branch) =>
   reading.value.choices[branch.from] === branch.option))
 const selectedMilestone = ref<number | null>(null)
@@ -76,21 +80,22 @@ const octoberDays = computed(() => Array.from({ length: 31 }, (_, i) => {
 }))
 const changedDays = computed(() => Array.from({ length: 31 }, (_, i) => i + 1).filter((day) =>
   JSON.stringify(eventsForDay(snapshot.value.events, day)) !== JSON.stringify(eventsForDay(previous.value.events, day))))
-const canContinue = computed(() => (!chapter.value?.choice || (chapter.value.id === 'same-day-drop' && !hasMiaSequence.value) || Boolean(activeOption.value)) &&
+const canContinue = computed(() => (!chapter.value?.choice || Boolean(activeOption.value)) &&
   (chapter.value?.id !== 'next-day-bid' || Boolean(chosenSequence.value)))
 
 function selectScenario(index: number) {
-  if (!persona.value.chapters[index]) return
-  readings.value[personaId.value] = { chapter: index, choices: {} }
-  if (personaId.value === 'jordan') rotaPreference.value = null
+  const target = scenarioEntryIndex(persona.value, index, reading.value.choices)
+  if (target < 0) return
+  reading.value.chapter = personaId.value === 'jordan' && persona.value.chapters[target].id === 'next-day-result' && !chosenSequence.value
+    ? persona.value.chapters.findIndex((item) => item.id === 'next-day-bid')
+    : target
 }
 
 function practice(system: string) {
   const target = practiceTargets.value[system]
   if (!target) return
   personaId.value = target.persona
-  readings.value[target.persona] = { chapter: target.chapter, choices: {} }
-  if (target.persona === 'jordan') rotaPreference.value = null
+  selectScenario(target.chapter)
   nextTick(() => storyEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
 }
 
@@ -102,6 +107,7 @@ function showTiming(system: string) {
 
 function choose(id: string) {
   if (!chapter.value?.choice?.options.some((option) => option.id === id)) return
+  if (reading.value.choices[chapter.value.id] === id) return
   for (const later of persona.value.chapters.slice(reading.value.chapter + 1)) {
     delete reading.value.choices[later.id]
   }
@@ -109,7 +115,7 @@ function choose(id: string) {
 }
 
 function chooseSequence(id: string) {
-  if (!rotaSequences.some((sequence) => sequence.id === id)) return
+  if (!rotaSequences.some((sequence) => sequence.id === id) || rotaPreference.value === id) return
   rotaPreference.value = id
   for (const later of persona.value.chapters.slice(reading.value.chapter + 1)) {
     delete reading.value.choices[later.id]
@@ -117,7 +123,7 @@ function chooseSequence(id: string) {
 }
 
 function next() {
-  if (canContinue.value && reading.value.chapter < persona.value.chapters.length - 1) reading.value.chapter++
+  if (canContinue.value && reading.value.chapter < persona.value.chapters.length - 1) selectScenario(reading.value.chapter + 1)
 }
 
 function restart() {
@@ -131,7 +137,7 @@ function restart() {
     <h1 class="text-h4 font-weight-bold mb-2">Scheduling Calendar</h1>
     <p class="text-body-1 text-medium-emphasis mb-3">Learn which scheduling system to use, who it is for, and when to check for a result.</p>
     <v-alert type="info" variant="tonal" class="mb-4" density="comfortable">
-      <strong>Practice guide:</strong> The September–October 2026 dates, trips, and outcomes are fictional examples—not a live calendar or a promise of an award.
+      <strong>Practice guide:</strong> September–October 2026 illustrates published scheduling rules with fictional trips and outcomes—not a live calendar or a promise of an award.
       Check current Company/APFA guidance for real dates, eligibility, and procedures.
     </v-alert>
     <div class="quick-facts mb-6">
@@ -191,10 +197,8 @@ function restart() {
       <template v-if="chapter">
         <div class="text-caption text-medium-emphasis mb-2">{{ chapter.date }} · Scenario {{ reading.chapter + 1 }} of {{ persona.chapters.length }}</div>
         <h2 class="text-h6 mb-3">{{ chapter.title }}</h2>
-        <div v-if="scenarioApplications.length" class="application-flow mb-3">
-          <span><strong>1. Open</strong> {{ scenarioApplications.join(' or ') }}</span>
-          <span><strong>2. Choose</strong> the action below</span>
-          <span><strong>3. Check</strong> the result and schedule</span>
+        <div v-if="scenarioSystems.length" class="application-flow mb-3">
+          <span><strong>Systems involved:</strong> {{ scenarioSystems.join(', ') }}</span>
         </div>
         <p v-for="system in chapter.systems?.filter((item) => hasSystemGuide(item.name))" :key="system.name" class="plain-definition mb-3">
           {{ systemGuide[system.name].simple }}
@@ -206,7 +210,6 @@ function restart() {
         <p v-else class="scenario-text">{{ chapter.text }}</p>
         <p v-if="chapter.message" class="text-body-2 mt-3"><strong>{{ chapter.message.from }}:</strong> “{{ chapter.message.text }}”</p>
         <p v-if="chapter.timing" class="text-body-2 text-medium-emphasis mt-3">{{ chapter.timing }}</p>
-        <p v-if="chapter.id === 'same-day-drop' && !hasMiaSequence" class="scenario-text mt-3">The day-before scenario already confirmed that Maya no longer holds the MIA sequence, so this last-minute drop scenario does not apply.</p>
         <div v-if="chapter.id === 'next-day-bid'" class="mt-4">
           <h3 class="text-subtitle-1 font-weight-bold">1. Which sequence preference does Jordan submit?</h3>
           <p class="text-body-2 mb-3">Practice only. This records a preference, not a booking. A daily ROTA bid may also include sequence preferences, a specific standby shift or RAP.</p>
@@ -218,7 +221,7 @@ function restart() {
           </div>
           <p v-if="chosenSequence" class="text-body-2 mt-3">Saved: {{ chosenSequence.label }}. October 7–8 still show Reserve until ROTA results at 19:30.</p>
         </div>
-        <div v-if="chapter.choice && (chapter.id !== 'same-day-drop' || hasMiaSequence)" class="mt-4">
+        <div v-if="chapter.choice" class="mt-4">
           <h3 class="text-subtitle-1 mb-2">{{ chapter.id === 'next-day-bid' ? '2. Keep a childcare backup while the request is pending' : chapter.choice.prompt }}</h3>
           <div class="choices">
             <v-btn v-for="option in chapter.choice.options" :key="option.id" color="primary"
@@ -262,7 +265,7 @@ function restart() {
             <strong>{{ scenario.title }}</strong>
             <small>{{ scenario.date }}</small>
             <span v-if="scenario.choice" class="scenario-kind">Interactive</span>
-            <span v-else-if="scenario.branches?.length" class="scenario-kind">Outcome</span>
+            <span v-else-if="scenario.requiresChoices?.length || scenario.branches?.length" class="scenario-kind">Outcome</span>
           </span>
         </button>
       </nav>
@@ -279,14 +282,14 @@ function restart() {
       and implementation before acting.</p>
     <details class="mt-5 text-body-2 text-medium-emphasis">
       <summary>Sources, verification limits and practice outcomes</summary>
-      <p class="mt-2">Application mapping reviewed against public APFA search excerpts on October 22, 2026.
-        Direct APFA page retrieval returned access errors, so full current page text and signed-in Crew Portal menus were not verified.
+      <p class="mt-2">Timing and eligibility reviewed on October 28, 2026 against the 2024 CBA, Sections 10.C, 10.E–G and 12.I–K,
+        and the public APFA guidance linked below, including its published monthly bidding timeline. Signed-in Crew Portal menus and current operational notices were not verified.
         Day-off trading is shown as a TTS action; premium conditions and voluntary elections are not separate applications.
         No live application links or exact menu paths are claimed. This page is a practice interface, not an AA application.</p>
       <ul class="ml-4 mt-2"><li v-for="source in calendarReferences" :key="source.url">
         <a :href="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a>
       </li></ul>
-      <p class="mt-2">This is a fictional September–October 2026 teaching calendar, not a live schedule, legality engine or award predictor.
+      <p class="mt-2">This September–October 2026 teaching calendar uses fictional trips and outcomes, not a live schedule, legality engine or award predictor.
         Choices select illustrative outcomes. Reserve blocks are simplified. Use current APFA/Company calendars and procedures.
         DFW means Dallas/Fort Worth time; HBT means Home Base Time. October’s monthly PBS bidding builds November.
         Selecting a September date explains the timeline; it does not submit a bid or advance the scenario.
