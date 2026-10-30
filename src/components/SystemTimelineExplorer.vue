@@ -43,11 +43,11 @@ const stages = [
     handoff: 'Your CQ date and Line/Reserve status go into PBS' },
   { week: 'Week 2 · Sep 8–15', title: 'Bid the month', note: 'Bid package Sep 8, then bidding', systems: [byName('PBS')],
     handoff: 'PBS processes every bid by seniority' },
-  { week: 'Week 3 · Sep 16–23', title: 'Awards & designations', note: 'October line published', systems: [byName('GDFD')],
-    milestone: { day: 18, text: 'October line published', sub: 'Lineholders: sequences. Reserves: reserve days + days off.' },
+  { week: 'Week 3 · Sep 16–23', title: 'Awards & designations', note: 'Viewable Sep 18 · final Sep 20', systems: [byName('GDFD')],
+    milestone: { day: 20, text: 'Final October line published', sub: 'Lineholders: sequences. Reserves: reserve days + days off.' },
     handoff: 'Reserves label their days off' },
   { week: 'Week 4 · Sep 20–30', title: 'TTS opens for October', note: 'Trip changes for eligible Lineholders and Reserves · Reserve days-off trades', systems: [byName('TTS (October)')],
-    handoff: 'From October 1, the daily systems below take over' },
+    handoff: 'Trip runs begin Sep 21; days-off runs Sep 24. Daily processing continues through October.' },
 ]
 const dayOfWeek = (day: number) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][(day + 1) % 7]
 
@@ -149,7 +149,7 @@ function step(delta: number) {
           <span class="cycle-step">2</span>
           <div>
             <h2 id="day-cycle-heading" class="text-h6">Daily cycle · every day of the awarded month</h2>
-            <p class="text-body-2 text-medium-emphasis">After awards publish, these systems repeat every 24 hours (Home Base Time). They change the month you already hold.</p>
+            <p class="text-body-2 text-medium-emphasis">After each system opens for the month, daily deadlines and event-triggered processing apply in Home Base Time. They can change the awarded month before it begins.</p>
           </div>
         </header>
         <div class="legend mb-3" aria-label="Daily legend">

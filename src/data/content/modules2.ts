@@ -230,7 +230,7 @@ A worked example makes it concrete: a 12-hour duty day that only flew 5:00 is pa
       items: [
         { id: 'duty-rig', term: 'Duty Rig', icon: 'mdi-timer-outline', definition: '1-hour credit per 2 hours on-duty, minute-prorated — the most common rig.' },
         { id: 'rig', term: 'RIG', icon: 'mdi-shield-crown-outline', definition: 'Ratio in Guarantee — the family of pay floors protecting against low-flying days.' },
-        { id: 'tafb', term: 'TAFB', icon: 'mdi-timer-sand', definition: 'Time Away From Base — first-day report to last-day release; drives Trip Rig and per diem.' },
+        { id: 'tafb', term: 'TAFB', icon: 'mdi-timer-sand', definition: 'Contractual trip span from required home-base check-in/actual report through return-base release, including required post-arrival time; drives Trip Rig.' },
         { id: 'pay-no-credit', term: 'Pay No Credit', icon: 'mdi-credit-card-off', definition: 'Paid but not credited — counts above guarantee but not toward maxima.' },
         { id: 'credited-hours', term: 'Credited hours', icon: 'mdi-counter', definition: 'The unified total counting toward monthly maximum: flights + absences + rigs + more.' },
         { id: 'red-flagging', term: 'Red flag', icon: 'mdi-flag-variant', definition: 'Hard-to-cover open time paying 150% but crediting 100%.' },
@@ -269,7 +269,7 @@ A worked example makes it concrete: a 12-hour duty day that only flew 5:00 is pa
       icon: 'mdi-seal-variant',
       body: `Two more concepts seal the design:
 
-- **The monthly guarantee.** If credit for the month falls below your awarded line value, the guarantee tops your *pay* up to that floor. This is why line values matter even before you fly a single trip.
+  - **The monthly guarantee.** The CBA provides each Lineholder a 71-hour minimum monthly guarantee, subject to applicable contractual reductions. This is separate from the awarded line value and credited hours; cancellation and rescheduling protection follow their own rules.
 - **Carry-over at the month boundary.** A trip that reports in one month and releases in the next must split its credit across the boundary correctly. Botch it and you corrupt two months of payroll at once.
 
 And remember the month boundary from the FA’s side: time before midnight credits to the originating month; time after midnight (along with RIGs) carries to the next.`,
@@ -313,15 +313,15 @@ And remember the month boundary from the FA’s side: time before midnight credi
       explanation: 'Trip Rig = TAFB ÷ 3.5 → 35 ÷ 3.5 = 10 hours guaranteed regardless of the 8 block hours.',
     },
     {
-      question: 'Time Away From Base (TAFB) is measured from…',
+      question: 'Under the CBA, Time Away From Base (TAFB) is measured using…',
       options: [
         'Gate-out to gate-in',
-        'First-day report to last-day release',
+        'Required home-base check-in/actual report through return-base release with contractual buffers',
         'Door close to door open',
         'Block-out to block-in',
       ],
       answerIndex: 1,
-      explanation: 'TAFB spans the whole sequence — report on day one through release on the final day.',
+      explanation: 'The CBA defines TAFB using required check-in (or later actual report) and release after return to base, including the applicable post-arrival interval.',
     },
   ],
 }

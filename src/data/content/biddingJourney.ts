@@ -74,9 +74,9 @@ export const biddingJourney: BiddingStage[] = [
     short: 'PBS',
     name: 'Preferential Bidding System',
     phase: 'Build the month',
-    when: 'Days 10–18 · prior month',
+    when: 'Days 10–20 · prior month',
     opens:
-      'The bid package is published by the 8th. Bidding typically opens around the 10th and closes around the 15th; awards post around the 18th and reach the operation the following day.',
+      'The bid package is available by the 8th. Bidding opens on the 10th and closes on the 15th; a preliminary award is viewable on the 18th, and the official award publishes by the 20th at 1200 DFW.',
     who: 'Every Flight Attendant — Lineholders and Reserves each bid, but PBS builds two different kinds of month.',
     purpose:
       'This is where your month is actually built. You describe what you want across 7 sequential preference layers (Layer 1 critical, Layers 2–6 progressive refinement, Layer 7 catch-all fallback), and PBS constructs a legal schedule for you in seniority order.',
@@ -97,8 +97,8 @@ export const biddingJourney: BiddingStage[] = [
     phase: 'Reshape the month',
     when: 'Nightly · 2300–0400 HBT',
     opens:
-      'Opens once PBS awards are published (around the 20th of the prior month) and then runs every night from 2300 to 0400 Home Base Time through the end of the bid month.',
-    who: 'Lineholders. Reserves can also use it for flying on their days off, and to request Golden Day / Flex Day trades.',
+      'Ballots for the awarded month open with the official PBS publication on the 20th of the prior month. TTS then processes nightly from 2300 to 0400 Home Base Time through the bid month.',
+    who: 'Lineholders. Eligible Reserves can also use TTS for flying and Reserve day-off trades; peer-to-peer day-off exchanges use ETB.',
     purpose:
       'Your awarded line is a starting point, not a sentence. TTS lets you drop trips you do not want, pick up flying you do want, or swap one for the other — resolved by seniority, not by speed.',
     example:

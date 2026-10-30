@@ -256,9 +256,9 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose:
       'Defines the shape and value of a Lineholder’s month so coverage, pay guarantees, and days off stay predictable.',
     whyItMatters:
-      'Line value drives the monthly guarantee, Credit Window math, and vacation proration calculations.',
-    whereUsed: ['PBS award', 'Payroll guarantee', 'Credit window calculation'],
-    example: 'An 85-hour line means roughly 85 credited hours are owed even if trips cancel (pay protection applies).',
+      'Line value is scheduled credit, not the Lineholder’s minimum monthly guarantee. It also feeds TTS credit-window calculations; cancellations follow their specific protection rules.',
+    whereUsed: ['PBS award', 'TTS credit-window calculation', 'Schedule review'],
+    example: 'An 85-hour line is the scheduled value of the award. It is not, by itself, a promise of 85 actual credited hours or an 85-hour minimum guarantee.',
     related: ['pbs', 'credit-window', 'credited-hours'],
     developerRelevance:
       'Constraints: min/max credit, flex pools, High/Low options — model as validation rules in line-building logic.',
@@ -360,18 +360,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'TAFB',
     category: 'Payroll & Credit',
     definition:
-      'Total elapsed time a Flight Attendant is away from their crew base on a trip — from the report time of the first duty period to the release time of the last duty period (the sequence span).',
+      'The contractual trip-time measure from the required home-base check-in (one hour before scheduled departure for Domestic/NIPD, or one hour and fifteen minutes for IPD, unless actual report is later) through release, including at least 15 minutes after actual arrival at base for Domestic or 30 minutes for NIPD/IPD.',
     businessPurpose:
       'TAFB is the basis for the Trip Rig (1 hour pay per 3.5 hours away) and the per-diem/expenses clock; it captures the full cost of a trip to a crew member’s life.',
     whyItMatters:
       'Two trips can have identical block time but very different TAFB — driving both Trip Rig pay and per-diem differences. It is distinct from on-duty time.',
     whereUsed: ['Trip Rig pay', 'Per diem', 'Sequence comparison', 'Payroll'],
     example:
-      'A DFW 3-day sequence reports Monday 0700 and releases Thursday 1600 → TAFB ≈ 57 hours. If it only flew 12:00, Trip Rig pays ≥ 57 ÷ 3.5 = 16:17.',
+      'For a Domestic sequence, include the required report/check-in time and at least 15 minutes after actual arrival back at base when determining the sequence span. NIPD/IPD use the contractual 30-minute post-arrival interval.',
     related: ['rig', 'duty-rig', 'duty-period', 'layover', 'credited-hours'],
     developerRelevance:
-      'Derived measure = release(last day) − report(first day). Distinct from duty minutes; used as input to Trip Rig and per-diem accrual.',
-    source: { kind: 'apfa', label: 'APFA Website', reference: 'Resources → Pay → Pay Guarantees (RIGs)' },
+      'Derive from the contractual required check-in/actual report and return-to-base release intervals; do not substitute first report to last release without the required buffers. Distinct from duty minutes; used by Trip Rig.',
+    source: cba('2024 CBA §2.CCC, §11.D.4'),
   },
   {
     id: 'rap',
@@ -451,13 +451,13 @@ export const dictionary: DictionaryTerm[] = [
     businessPurpose:
       'Allows Reserves to customize which of their awarded days off are protected (Golden) vs. assignable (Flex), conforming to contract rules such as Flex Days preceding Golden Days in grouped blocks.',
     whyItMatters:
-      'PBS awards days off as a raw total (e.g. 12 days off). The GDFD system gives the Reserve control over where their 8 inviolable Golden Days and 4 assignable Flex Days sit before trading opens.',
+      'PBS awards the days off; GDFD designates their Golden/Flex status. Check the published designation window for each bid period, separately from Reserve day-off trade processing.',
     whereUsed: ['Post-PBS award processing', 'Crew Portal', 'CrewHub monthly schedule'],
     example:
       'A Reserve is awarded a 4-day block of days off (12th–15th). In GDFD, they designate the 12th–13th as Flex Days and the 14th–15th as Golden Days to protect their weekend.',
     related: ['golden-day', 'flex-day', 'pbs', 'rtdo', 'reserve-line'],
     developerRelevance:
-      'Window-driven configuration tool opening ~Day 18/19 after PBS and closing ~Day 21 at 1200 CT. Enforces 8 GD / 4 FD counts and placement constraints (Flex must precede Golden in grouped blocks).',
+      'Post-award designation workflow. The opening and closing dates are published per bid period; enforce the applicable Golden/Flex counts and placement constraints (Flex precedes Golden in grouped blocks).',
     source: cba('2024 CBA §10.D.16.b, §12.B, Implementation LOA'),
   },
   {
@@ -466,18 +466,18 @@ export const dictionary: DictionaryTerm[] = [
     shortName: 'RTDO',
     category: 'Reserve',
     definition:
-      'The automated ballot system that allows Reserve Flight Attendants to request trading their scheduled days off directly with the Company.',
+      'A Reserve day-off trade request type handled through TTS for exchanging a scheduled Reserve duty day and day off with the Company; it is not a separate application.',
     businessPurpose:
-      'Enables Reserves to adjust day-off placement with Company open days-off inventory after PBS awards and GDFD designations are locked.',
+      'Lets Reserves request a Company day-off exchange after their Reserve line is awarded, while preserving the TTS processing and eligibility rules.',
     whyItMatters:
-      'Provides a contractual mechanism to swap days off with the Company (processed in seniority order) separate from peer-to-peer day-off trading via ETB.',
-    whereUsed: ['Reserve day-off adjustments', 'Crew Portal', 'Monthly schedule maintenance'],
+      'Distinguishes Company day-off requests processed in TTS from peer-to-peer Reserve day-off trades through ETB.',
+    whereUsed: ['TTS Reserve day-off requests', 'ETB peer day-off trades', 'Monthly schedule maintenance'],
     example:
-      'A Reserve submits an RTDO ballot starting on the 24th to trade an off day on the 10th for an off day on the 14th; the system awards the trade in seniority order by 1200 HBT the next day.',
+      'A Reserve saves a Company day-off exchange request in TTS. The original Reserve obligation remains until the request is processed and the updated schedule confirms the trade.',
     related: ['gdfd', 'golden-day', 'flex-day', 'etb', 'reserve-line'],
     developerRelevance:
-      'Automated ballot system opening on the 24th of the prior month at 1200 HBT; requests submitted at least 2 days prior to traded date and processed daily in seniority order per CBA §12.C.2.',
-    source: cba('2024 CBA §12.C.2'),
+      'Model as a TTS Reserve day-off transaction, not a standalone system. APFA implementation guidance sets a 2300 HBT cutoff two days before the requested date and results by 0400 HBT after processing; the first run and ballot opening are on the published bid-period calendar.',
+    source: { kind: 'apfa', label: 'APFA Website', reference: 'Reserve day-off trades in TTS', url: 'https://www.apfa.org/2025/09/19/9-19-25-contract-implementation-update-40-1-october-2025-reserve-updates-part-i/' },
   },
   {
     id: 'flex-day',

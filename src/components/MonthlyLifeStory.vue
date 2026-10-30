@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { eventsForDay, monthSnapshot, monthlyPersonas } from '../data/monthlyStory'
+import { chapterForEvents, eventsForDay, monthSnapshot, monthlyPersonas } from '../data/monthlyStory'
 import type { MonthEvent } from '../data/monthlyStory'
 
 interface Reading {
@@ -31,11 +31,14 @@ function isSavedMonth(value: unknown): value is SavedMonth {
     if (!isRecord(saved) || typeof saved.chapter !== 'number' || !Number.isInteger(saved.chapter) ||
       saved.chapter < 0 || saved.chapter >= person.chapters.length || typeof saved.finished !== 'boolean' || !isRecord(saved.choices)) return false
     if (saved.finished && saved.chapter !== person.chapters.length - 1) return false
+    const choices: Record<string, string> = {}
     for (const [id, option] of Object.entries(saved.choices)) {
-      if (!person.chapters.find((chapter) => chapter.id === id)?.choice?.options.some((item) => item.id === option)) return false
+      if (typeof option !== 'string' || !person.chapters.find((chapter) => chapter.id === id)?.choice?.options.some((item) => item.id === option)) return false
+      choices[id] = option
     }
-    for (const chapter of person.chapters.slice(0, saved.chapter)) {
-      if (chapter.choice && saved.choices[chapter.id] === undefined) return false
+    for (const [index, chapter] of person.chapters.slice(0, saved.chapter).entries()) {
+      const applicable = chapterForEvents(chapter, monthSnapshot(person, index - 1, choices).events)
+      if (applicable.choice && choices[chapter.id] === undefined) return false
     }
   }
   return true
@@ -58,9 +61,9 @@ function load(): SavedMonth {
 const saved = ref(load())
 const persona = computed(() => monthlyPersonas.find((item) => item.id === saved.value.persona) ?? monthlyPersonas[0])
 const reading = computed(() => saved.value.readings[persona.value.id])
-const chapter = computed(() => persona.value.chapters[reading.value.chapter])
 const snapshot = computed(() => monthSnapshot(persona.value, reading.value.chapter, reading.value.choices))
 const previous = computed(() => monthSnapshot(persona.value, reading.value.chapter - 1, reading.value.choices))
+const chapter = computed(() => chapterForEvents(persona.value.chapters[reading.value.chapter], previous.value.events))
 const selectedDay = ref<number | null>(null)
 const days = Array.from({ length: 31 }, (_, index) => index + 1)
 const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
