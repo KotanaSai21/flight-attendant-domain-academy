@@ -18,27 +18,27 @@ export const scenarios: Scenario[] = [
       {
         title: 'Seniority is seeded at class start',
         detail:
-          'Your first day of initial training becomes your occupational seniority date (post-2014). Same-day classmates sort by birth date, then SSN last four. Graduation starts your longevity clock for pay/vacation accrual.',
+          'For Flight Attendants hired after August 1, 2014, occupational seniority begins on the first day of initial training. Same-day classes use birth date, with a precedence exception for Company employees transferring departments; Company hire date orders those transferees. Applicable remaining ties use the last four SSN digits. Classification/longevity for pay and vacation accrual begins at graduation.',
       },
       {
         title: 'Reserve designation & rotation begins',
         detail:
-          'If the base needs Reserves, new hires post-ratification serve straight Reserve for two years. Your name joins the base’s reserve rotation ledger.',
+          'If the base needs Reserves, Flight Attendants hired on or after ratification and implementation serve straight Reserve for their first two years. Their reserve rotation then follows the applicable CBA rules.',
       },
       {
         title: 'PBS builds your Reserve line',
         detail:
-          'You bid in PBS like everyone else — but for a Reserve line: a set of RAPs plus Golden Days (inviolable without consent) and Flex Days (assignable). Bid preferences still matter for RAP times and day patterns.',
+          'You bid in PBS like everyone else — but for a Reserve line: a set of RAPs plus Golden Days (inviolable without consent) and Flex Days (assignable under Reserve rules). Bid preferences still matter for RAP times and day patterns.',
       },
       {
         title: 'ROTA fills known gaps ahead of time',
         detail:
-          'Before the month starts, future processing awards known open sequences/standbys to Reserves in seniority order. Golden-Day elections lock before Future processing (submit by 1500 HBT).',
+          'At future processing, after the applicable UBL step, legal and available Reserves are processed for known open sequences and Standby shifts. Grouping, preferences, seniority, and assignment rules all apply. Eligible Reserves may bid for a sequence or Standby, or conditionally Remain on Call. A choice to work into a Golden Day must be made known to Future Scheduling before 1500 HBT.',
       },
       {
-        title: 'ROTD handles the day itself',
+        title: 'ROTD handles later openings',
         detail:
-          'On duty days you’re reachable inside RAP windows. ROTD awards aggressive bids and standbys; call-outs come from Crew Scheduling. LMCO premiums apply when contact-to-report drops below standard.',
+          'ROTD handles sequences that open during or after future processing and report today or the following day. The applicable UBL process runs first, including a rerun immediately before a ROTD award or assignment. Reserve availability, legality, aggressive preferences, and the contractual priority order determine who may receive the work. Standard call-out is two hours, or three hours at co-terminals; shorter-notice assignments follow applicable LMCO rules.',
       },
       {
         title: 'Pay follows credit',
@@ -71,36 +71,36 @@ export const scenarios: Scenario[] = [
       {
         title: 'Pre-bid reviews (prior month)',
         detail:
-          '1st/3rd/6th at 1200 DFW: APFA sequence review rounds with Crew Schedule Planning; illegal sequences get rebuilt.',
+          'On the 1st, Crew Schedule Planning provides sequences for initial APFA review; the APFA response is due on the 3rd, and final review sequences are provided on the 6th, all at 1200 DFW. Identified illegal sequences must be rebuilt.',
       },
       {
-        title: 'Package publishes ≤8th (1200 DFW)',
+        title: 'Package publishes by the 8th (1200 DFW)',
         detail:
-          'Bid package lands in PBS with RAP lists, line ranges, projected lines min/mid/max per base, minimum Reserves, hotels, and projected standby shifts.',
+          'The final bid package is available in PBS and includes RAP lists, line ranges, projected lines by base, minimum Reserves, hotels, and projected standby shifts.',
       },
       {
         title: 'You submit ranked choices',
         detail:
-          'Preferences encode patterns (sign-ons, days off, avoid ODAN), trip choices, High/Low options, waive rights where allowed.',
+          'Preferences encode patterns (sign-ons, days off, avoid ODAN), trip choices, High/Low options, and any waivers allowed by the bid rules.',
       },
       {
         title: 'Award engine processes top-down',
         detail:
-          'In seniority order, PBS covers global constraints first, then honors each person’s highest achievable preference. Inputs are snapshot-frozen for reproducibility.',
+          'PBS constructs legal lines in seniority order while applying global parameters and each Flight Attendant’s bid preferences. Review the actual bid, package, settings, and award rather than assuming a result from preferences alone.',
       },
       {
         title: 'Award or misaward path',
         detail:
-          'Got your realistic choices? Award posts. A sequence cancels mid-bidding after awarding you? Misaward rules (§10.T / §10.C.7) define remedies instead of silent loss.',
+          'The award publishes on the contractual schedule. If a sequence is canceled during the PBS bidding window and was nevertheless awarded, §10.C.7 directs the case to the misaward process in §10.T.',
       },
       {
         title: 'Post-award reshaping opens',
         detail:
-          'TTS trades refine within your Credit Window; denied-but-eager requests pass to UBL for daily-run retries; ETB handles instant FCFS deals until the month ends.',
+          'TTS processes eligible transactions by seniority. An unsuccessful request reaches UBL only when the Flight Attendant elects it and the request meets the applicable date-range rules. ETB is first-come, first-served, subject to acceptance, eligibility, and contractual checks.',
       },
     ],
     outcome:
-      'Bids are deterministic given frozen inputs — support can replay any award decision against its snapshot.',
+      'An award can be reviewed when the bid, bid package, applicable settings, and resulting award are preserved.',
     relatedTerms: ['pbs', 'misaward', 'ubl', 'tts', 'credit-window'],
     decision: {
       prompt: 'The award is posted, but the Flight Attendant wants a different trip. Which action belongs next?',
@@ -124,27 +124,27 @@ export const scenarios: Scenario[] = [
       {
         title: 'Cancellation event fires',
         detail:
-          'The sequence returns to open time and simultaneously disappears from your working schedule while remaining on your *credit* radar pending protection evaluation.',
+          'Record the original award and the cancellation or reschedule event. A canceled flight may lead to a revised sequence, replacement flying, or release under the applicable rule; do not assume every cancellation turns the whole sequence into Open Time or removes the duty obligation.',
       },
       {
         title: 'Pay-protection evaluation',
         detail:
-          'Contract rules (§10.J/K/L family, incl. protections when losing multiple full sequences) determine whether cancelled hours stay credited/paid versus re-coverage obligations.',
+          'Apply the clause for the event and timing. For example, §10.J.10 protects the pay value of certain rescheduled sequences, including canceled segments; separate cancellation and loss-of-sequence provisions have their own eligibility and re-coverage rules. Do not treat every canceled hour as automatically credited or protected.',
       },
       {
         title: 'Re-coverage offers may arrive',
         detail:
-          'Replacement flying (carry-over/change-over posted by the 10th if crossing months, reschedules, involuntary assignment rules) can restore hours; refusal rules have their own consequences.',
+          'Crew Scheduling may revise or replace flying under the applicable rescheduling rules. Check the actual assignment, notification, and any acceptance or release options; a replacement does not erase the original event or its protection rules.',
       },
       {
-        title: 'Ledgers reconcile nightly',
+        title: 'Ledgers reconcile',
         detail:
-          'Credit ledger keeps guarantee math honest; pay ledger adds protection amounts as distinct entries referencing source events.',
+          'Reconcile actual pay and credit separately against the guarantee and any protection that applies. Preserve the source event and the clause-based calculation; cancellation does not itself establish a credit or pay result.',
       },
       {
-        title: 'Discrepancy window',
+        title: 'Discrepancy resolution',
         detail:
-          'Spot something wrong? §3.P governs reporting timelines; system-nature irregularities (crew-base-wide) have explicit carve-outs.',
+          'If a paycheck is short, §3.P sets how a resolved shortage is paid and addresses system- or crew-base-wide irregularities. It does not set the deadline for reporting a claim; use the current payroll process for that.',
       },
     ],
     outcome:
@@ -172,27 +172,27 @@ export const scenarios: Scenario[] = [
       {
         title: 'Your availability window is active',
         detail:
-          'RAP defines when you must answer. Modified RAP shifts start (same end); only YOU can request an Extended RAP end via Crew Scheduling approval.',
+          'A RAP defines when you must be available and contactable. A Modified RAP changes the start while retaining the published end; a Reserve may request an Extended RAP end, subject to Crew Scheduling approval.',
       },
       {
-        title: 'ROTD runs the morning match',
+        title: 'ROTD follows the UBL process',
         detail:
-          'Aggressive bids award first-come-by-seniority among bidders; known open time redistributes by noon HBT per Implementation LOA provisions.',
+          'ROTD is event-triggered, not a fixed morning run. For an open sequence reporting today or tomorrow, Crew Scheduling runs the applicable UBL process first and reruns UBL immediately before ROTD. If the sequence remains open, ROTD applies the contractual order: eligible aggressive bids and Reserve groups are considered under their preferences, availability, RAP, and legality rules.',
       },
       {
         title: 'Call-out lands',
         detail:
-          'Contact inside RAP → report per sequence. Short notice? LMCO premium territory. Aggressive Reserve awards precede standby for LMCO coverage.',
+          'During a RAP, follow the assignment and acknowledgement instructions. The standard report window is two hours after notification, or three hours at co-terminals. Shorter-notice work follows LMCO processing and its priority rules; an aggressive Reserve bid precedes Standby in the applicable LMCO order.',
       },
       {
         title: 'Legality + rest checks run silently',
         detail:
-          'Engines validate rest since last release, maxima, Golden-Day waivers (if your election applies), and Flex-Day assignability before offering anything.',
+          'Before assignment, validate availability, qualification, required rest, monthly limits, Golden-Day consent where applicable, and Flex-Day assignability.',
       },
       {
         title: 'Fly, then reconcile',
         detail:
-          'Sequence credits post with any premiums; rotation ledger records the served Reserve day; tomorrow repeats.',
+          'Sequence credit and any premiums follow the assignment and actual operation; reserve guarantees and rotation accounting follow their applicable rules.',
       },
     ],
     outcome: 'Reserve tooling = interval math + precedence rules + consent records, all under HBT time discipline.',
@@ -214,7 +214,7 @@ export const scenarios: Scenario[] = [
     title: 'Chasing Extra Flying (and Premiums)',
     prompt: '“I want maximum money this month. Which levers exist?”',
     audience: 'Power users · Marketplace devs',
-    source: contract('§2.G/GG/RR, §10.E'),
+    source: contract('§2.G, §2.GGG, §2.RR, §10.E–H'),
     steps: [
       {
         title: 'Know your Credit Window',
@@ -227,15 +227,15 @@ export const scenarios: Scenario[] = [
       },
       {
         title: 'Use ETB for speed',
-        detail: 'FCFS board commits instantly between TTS runs; stale listings reject safely.',
+        detail: 'ETB is first-come, first-served between TTS runs. A request changes the schedule only after the other Flight Attendant accepts and the transaction passes applicable checks.',
       },
       {
         title: 'UBL as safety net',
-        detail: 'Elect pass-to-UBL so daily runs keep hunting matches for your standing appetite.',
+        detail: 'For an eligible unsuccessful TTS request, elect UBL consideration. UBL processing is limited by the request’s eligibility and sequence date; it is not a general standing bid for any open trip.',
       },
       {
         title: 'Mind ceilings',
-        detail: 'Monthly maxima and High/Low bounds still bind; Pay-No-Credit rows boost cash without consuming credit.',
+        detail: 'Monthly maxima and High/Low bounds still bind; Pay-No-Credit rows add pay without credit only where the contract permits.',
       },
     ],
     outcome: 'Premium-aware pickup strategy = windows + flags + channels, all auditable.',
@@ -265,20 +265,20 @@ export const scenarios: Scenario[] = [
       },
       {
         title: 'Relocation Days block duty',
-        detail: 'Up to five consecutive days free from ALL duty once granted — engines must honor the block.',
+        detail: 'On request before the transfer effective date, the Company provides five consecutive calendar days free from duty for relocation, subject to contractual blackout dates. These days are unpaid and uncredited.',
       },
       {
         title: 'Reserve positioning resets',
         detail:
-          'If BOS seniority places you in the reserve group, you serve reserve your FIRST FULL SCHEDULING MONTH there regardless of prior-base history.',
+          'If BOS seniority places you in the Reserve group, you serve Reserve in the first full scheduling month at the new base, regardless of prior-base Reserve service.',
       },
       {
         title: 'Lines re-anchor to HBT=BOS',
-        detail: 'Deadlines, RAP windows, rest math all re-express in the new base clock.',
+        detail: 'On the effective date, BOS becomes the home-base context. Use BOS’s published HBT deadlines and RAP configuration; preserve the old base and time context on earlier records.',
       },
       {
         title: 'Records propagate',
-        detail: 'Seniority unchanged; longevity unchanged; rotation ledger branches under new-base rules.',
+        detail: 'Preserve occupational and classification/longevity seniority while applying the new base’s reserve rotation rules.',
       },
     ],
     outcome: 'Transfers look administrative but ripple through every engine — effective-date events drive it all.',

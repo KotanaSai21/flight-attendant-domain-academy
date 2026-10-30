@@ -8,9 +8,9 @@ export const systemGuide: Record<string, { name: string; simple: string }> = {
   TTS: { name: 'Trip Trade System', simple: 'Change your month with the Company—Lineholders and Reserves.' },
   ETB: { name: 'Electronic Trade Board', simple: 'Trade directly with another flight attendant.' },
   UBL: { name: 'Unsuccessful Bidders List', simple: 'Today/tomorrow open time: eligible pickups, drops and trades. TTS-to-UBL transfers require eligibility and an election; late bids use the same near-term departure window.' },
-  ROTA: { name: 'Reserve future processing', simple: 'Reserves bid preferences; ROTA assigns future open work remaining after UBL.' },
-  ROTD: { name: 'Reserve day-of processing', simple: 'After UBL, ROTD assigns remaining same-day and next-day trips or standby to Reserves.' },
-  RTDO: { name: 'Reserve Trade Days Off', simple: 'Ask the Company to exchange a reserve duty day and a day off—not swap a flight.' },
+  ROTA: { name: 'Reserve Open Time Assignment/Award', simple: 'Reserves bid preferences; ROTA assigns future open work remaining after UBL.' },
+  ROTD: { name: 'Reserve Open Time Assignment/Award Daily', simple: 'After UBL, ROTD assigns remaining same-day and next-day trips or standby to Reserves.' },
+  RTDO: { name: 'Reserve day-off trade (TTS)', simple: 'Request a Company Reserve day-off exchange in TTS; the original duty obligation remains until the trade is awarded.' },
   'TTS (October)': { name: 'Trip Trade System opens for October', simple: 'Lineholders change trips. Eligible Reserves can also change day-off trips and request days-off trades in TTS.' },
   'Aggressive Reserve': { name: 'Voluntary reserve option', simple: 'Volunteer for priority consideration in ROTA / ROTD, subject to eligibility and saved preferences.' },
   'Red Flag': { name: 'Extra-pay trip label', simple: 'Trips that pay more. Pick up through TTS or UBL.' },
@@ -98,6 +98,7 @@ export interface SystemTiming {
   doesNot: string
   scenario: SystemScenario
   lessonId: string
+  practiceChapter?: string
 }
 
 export const toneLabels: Record<WindowTone, string> = {
@@ -322,6 +323,7 @@ export const systemTimings: SystemTiming[] = [
   },
   {
     system: 'ROTD', phase: 'Manage the awarded month', cycle: 'day', audience: 'Reserve only', who: 'Reserves',
+    practiceChapter: 'day-of-change',
     glance: { opens: 'After ROTA · as trips open', closes: 'No fixed daily clock', result: 'After UBL processing' },
     bars: [{ from: 0, to: 24, label: 'Processes new open work after UBL', tone: 'processing' }],
     markers: [],

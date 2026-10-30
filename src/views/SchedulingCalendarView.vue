@@ -13,21 +13,25 @@ const personaId = ref<MonthPersona['id']>('maya')
 const rotaPreference = ref<string | null>(null)
 const chosenSequence = computed(() => rotaSequences.find((item) => item.id === rotaPreference.value))
 const selectedSystem = ref('TBS')
-const explorerEl = ref<HTMLElement | null>(null)
+const explorerEl = ref<HTMLDetailsElement | null>(null)
 const storyEl = ref<HTMLElement | null>(null)
-const scenarioSystems = computed(() => (chapter.value?.systems ?? []).map((system) => system.name))
+const scenarioSystems = computed(() => (chapter.value?.systems ?? []).map((system) => {
+  const guide = systemGuide[system.name]
+  return { ...system, label: guide ? `${system.name} (${guide.name})` : system.name, simple: guide?.simple }
+}))
 const timedSystems = new Set(systemTimings.map((system) => system.system))
 const systemAbbreviations = [...new Set(systemTimings.map((system) => system.system).filter((name) => /^[A-Z]+$/.test(name)))]
-const hasSystemGuide = (name: string) => name in systemGuide
 
-/** First story chapter that features each system, preferring the persona used in that system's scenario. */
+/** Use the linked scenario when specified, otherwise the first chapter featuring the system. */
 const practiceTargets = computed(() => {
   const targets: Record<string, { persona: MonthPersona['id']; chapter: number }> = {}
   for (const system of systemTimings) {
     const preferred = system.scenario.persona.toLowerCase().startsWith('jordan') ? 'jordan' : 'maya'
     for (const id of [preferred, preferred === 'maya' ? 'jordan' : 'maya'] as const) {
       const person = monthlyPersonas.find((item) => item.id === id)!
-      const chapter = person.chapters.findIndex((item) => item.systems?.some((s) => s.name === system.system))
+      const chapter = person.chapters.findIndex((item) => system.practiceChapter
+        ? item.id === system.practiceChapter
+        : item.systems?.some((entry) => entry.name === system.system))
       if (chapter >= 0) { targets[system.system] = { persona: id, chapter }; break }
     }
   }
@@ -39,6 +43,7 @@ const readings = ref<Record<MonthPersona['id'], Reading>>({
   jordan: { chapter: -1, choices: {} },
 })
 const persona = computed(() => monthlyPersonas.find((person) => person.id === personaId.value)!)
+const scenarioOptions = computed(() => persona.value.chapters.map((item, index) => ({ title: `${index + 1}. ${item.title}`, value: index })))
 const reading = computed(() => readings.value[personaId.value])
 const snapshot = computed(() => calendarSnapshot(persona.value, reading.value.chapter, reading.value.choices, rotaPreference.value))
 const previous = computed(() => calendarSnapshot(persona.value, reading.value.chapter - 1, reading.value.choices, rotaPreference.value))
@@ -96,17 +101,18 @@ function practice(system: string) {
   if (!target) return
   personaId.value = target.persona
   selectScenario(target.chapter)
-  nextTick(() => storyEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  nextTick(() => storyEl.value?.querySelector('.scenario-workspace')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
 }
 
 function showTiming(system: string) {
   if (!timedSystems.has(system)) return
   selectedSystem.value = system
+  if (explorerEl.value) explorerEl.value.open = true
   nextTick(() => (explorerEl.value?.querySelector('.detail') ?? explorerEl.value)?.scrollIntoView({ behavior: 'smooth', block: 'center' }))
 }
 
-function choose(id: string) {
-  if (!chapter.value?.choice?.options.some((option) => option.id === id)) return
+function choose(id: string | null) {
+  if (id === null || !chapter.value?.choice?.options.some((option) => option.id === id)) return
   if (reading.value.choices[chapter.value.id] === id) return
   for (const later of persona.value.chapters.slice(reading.value.chapter + 1)) {
     delete reading.value.choices[later.id]
@@ -114,8 +120,8 @@ function choose(id: string) {
   reading.value.choices[chapter.value.id] = id
 }
 
-function chooseSequence(id: string) {
-  if (!rotaSequences.some((sequence) => sequence.id === id) || rotaPreference.value === id) return
+function chooseSequence(id: string | null) {
+  if (id === null || !rotaSequences.some((sequence) => sequence.id === id) || rotaPreference.value === id) return
   rotaPreference.value = id
   for (const later of persona.value.chapters.slice(reading.value.chapter + 1)) {
     delete reading.value.choices[later.id]
@@ -135,17 +141,18 @@ function restart() {
 <template>
   <v-container fluid class="calendar-page pa-4 pa-md-6">
     <h1 class="text-h4 font-weight-bold mb-2">Scheduling Calendar</h1>
-    <p class="text-body-1 text-medium-emphasis mb-3">Learn which scheduling system to use, who it is for, and when to check for a result.</p>
-    <v-alert type="info" variant="tonal" class="mb-4" density="comfortable">
-      <strong>Practice guide:</strong> September–October 2026 illustrates published scheduling rules with fictional trips and outcomes—not a live calendar or a promise of an award.
-      Check current Company/APFA guidance for real dates, eligibility, and procedures.
+    <v-alert type="info" variant="tonal" class="mb-3" density="compact">
+      <strong>Practice only:</strong> Fictional trips and outcomes, not a live schedule. Requests do not change duty until confirmed.
+      Verify current Company/APFA dates and eligibility.
     </v-alert>
-    <div class="quick-facts mb-6">
-      <div><strong>Plan a future month</strong><span>The September example shows how October is built.</span></div>
-      <div><strong>Manage your awarded month</strong><span>Daily systems can change a schedule you already have.</span></div>
-      <div><strong>Times</strong><span>DFW = Dallas/Fort Worth · HBT = Home Base Time · CT = Central.</span></div>
-      <div><strong>Before you rely on a change</strong><span>Wait for the company-system result, or confirmation of an ETB trade.</span></div>
-    </div>
+    <details class="calendar-guide mb-5">
+      <summary>Terms and time zones</summary>
+      <p class="mt-2"><strong>Lineholder:</strong> awarded trips. <strong>Reserve:</strong> days of availability, with specific assignments later.
+        A <strong>sequence</strong> is a work trip containing one or more flights.</p>
+      <p class="mt-2">DFW = Dallas/Fort Worth time. HBT = Home Base Time. CT = Central Time.</p>
+      <p class="mt-2">September bidding builds October. Company requests remain pending until an award; ETB trades require acceptance,
+        eligibility and legality checks, and system approval. Verify the updated schedule.</p>
+    </details>
     <!-- <section class="abbreviation-guide mb-6" aria-labelledby="abbreviation-heading">
       <h2 id="abbreviation-heading" class="text-subtitle-1 font-weight-bold mb-2">System abbreviations</h2>
       <ul class="abbreviation-list">
@@ -154,17 +161,12 @@ function restart() {
     </section> -->
 
     <section ref="storyEl" class="scroll-target" aria-labelledby="story-heading">
-      <h2 id="story-heading" class="text-h5 font-weight-bold mb-1">Walk through an example month</h2>
-      <p class="text-body-2 text-medium-emphasis mb-4">Follow a fictional Lineholder or Reserve from September planning through October. Each step shows which system is involved and how a confirmed outcome could change the example schedule.</p>
-    <div class="beginner-guide mb-4 pa-4">
-      <p class="text-body-2"><strong>Lineholder:</strong> starts with awarded trips. <strong>Reserve:</strong> starts with days of availability; specific trips can be assigned later.
-        A <strong>sequence</strong> is one work trip, which may contain several flights over one or more days.</p>
-    </div>
-    <v-btn-toggle v-model="personaId" mandatory divided color="primary" variant="outlined" class="mb-4" aria-label="Flight attendant role">
+      <h2 id="story-heading" class="text-h6 font-weight-bold mb-3">Example month</h2>
+    <v-btn-toggle v-model="personaId" mandatory divided color="primary" variant="outlined" class="persona-switch mb-4" aria-label="Flight attendant role">
       <v-btn value="maya">Maya · Lineholder</v-btn>
       <v-btn value="jordan">Jordan · Reserve</v-btn>
     </v-btn-toggle>
-    <p class="text-body-2 mb-4">{{ persona.home }} Follow the scenario below. Company requests stay pending until the system returns a result; a peer-to-peer ETB trade takes effect only after acceptance, applicable eligibility and legality checks, and system approval. Verify the updated schedule.</p>
+    <p class="text-body-2 text-medium-emphasis mb-4">{{ persona.home }}</p>
 
     <div class="paired-calendars">
       <section aria-labelledby="september-heading">
@@ -193,69 +195,78 @@ function restart() {
     </div>
 
     <div class="scenario-workspace mt-5">
+    <v-select class="scenario-picker" label="Scenario" :items="scenarioOptions"
+      :model-value="reading.chapter < 0 ? null : reading.chapter" variant="outlined" density="compact" hide-details
+      @update:model-value="selectScenario" />
     <v-card class="scenario-card pa-4 pa-md-5" variant="outlined" aria-live="polite">
       <template v-if="chapter">
         <div class="text-caption text-medium-emphasis mb-2">{{ chapter.date }} · Scenario {{ reading.chapter + 1 }} of {{ persona.chapters.length }}</div>
         <h2 class="text-h6 mb-3">{{ chapter.title }}</h2>
-        <div v-if="scenarioSystems.length" class="application-flow mb-3">
-          <span><strong>Systems involved:</strong> {{ scenarioSystems.join(', ') }}</span>
-        </div>
-        <p v-for="system in chapter.systems?.filter((item) => hasSystemGuide(item.name))" :key="system.name" class="plain-definition mb-3">
-          {{ systemGuide[system.name].simple }}
-        </p>
+        <p v-if="scenarioSystems.length" class="scenario-systems mb-3">{{ scenarioSystems.map((system) => system.label).join(' · ') }}</p>
         <p v-if="chapter.id === 'next-day-result' && chosenSequence" class="scenario-text">
           After the UBL step, ROTA awards Jordan {{ chosenSequence.label }} on October 7–8 in this illustrative outcome. A preferred sequence is not guaranteed; eligibility, availability and Reserve assignment rules determine the actual result. He acknowledges the published assignment through the automated system before 22:30 HBT.
           October 9–10 are still Reserve days.
         </p>
         <p v-else class="scenario-text">{{ chapter.text }}</p>
         <p v-if="chapter.message" class="text-body-2 mt-3"><strong>{{ chapter.message.from }}:</strong> “{{ chapter.message.text }}”</p>
-        <p v-if="chapter.timing" class="text-body-2 text-medium-emphasis mt-3">{{ chapter.timing }}</p>
-        <div v-if="chapter.id === 'next-day-bid'" class="mt-4">
-          <h3 class="text-subtitle-1 font-weight-bold">1. Which sequence preference does Jordan submit?</h3>
-          <p class="text-body-2 mb-3">Practice only. This records a preference, not a booking. A daily ROTA bid may also include sequence preferences, a specific standby shift or RAP.</p>
-          <div class="choices">
-            <button v-for="sequence in rotaSequences" :key="sequence.id" type="button" class="sequence-option"
-              :aria-pressed="rotaPreference === sequence.id" @click="chooseSequence(sequence.id)">
-              <strong>{{ sequence.label }}</strong><span>{{ sequence.dates }}</span><span>{{ sequence.route }}</span>
-            </button>
+        <details v-if="chapter.timing || scenarioSystems.length" :key="`${personaId}-${chapter.id}`" class="scenario-reference mt-3">
+          <summary>Timing and rules</summary>
+          <p v-if="chapter.timing" class="mt-2">{{ chapter.timing }}</p>
+          <template v-for="system in scenarioSystems" :key="system.name">
+            <p v-if="system.simple" class="mt-2"><strong>{{ system.name }}:</strong> {{ system.simple }}</p>
+          </template>
+          <div class="reference-links d-flex flex-wrap ga-1 mt-2">
+            <template v-for="system in scenarioSystems" :key="system.name">
+              <v-btn v-if="timedSystems.has(system.name)" variant="text" color="primary" size="small" prepend-icon="mdi-clock-outline"
+                @click="showTiming(system.name)">{{ system.name }} timing</v-btn>
+              <v-btn v-else variant="text" size="small" prepend-icon="mdi-school-outline" :to="`/learn/${system.lessonId}`">{{ system.name }} lesson</v-btn>
+            </template>
           </div>
-          <p v-if="chosenSequence" class="text-body-2 mt-3">Saved: {{ chosenSequence.label }}. October 7–8 still show Reserve until ROTA results at 19:30.</p>
+        </details>
+        <div v-if="chapter.id === 'next-day-bid'" class="mt-4">
+          <h3 id="sequence-choice-heading" class="text-subtitle-2 font-weight-bold mb-2">Sequence preference</h3>
+          <v-radio-group :model-value="rotaPreference" aria-labelledby="sequence-choice-heading" hide-details class="scenario-options"
+            @update:model-value="chooseSequence">
+            <v-radio v-for="sequence in rotaSequences" :key="sequence.id" :value="sequence.id" color="primary">
+              <template #label><span class="sequence-copy"><strong>{{ sequence.label }}</strong><small>{{ sequence.dates }} · {{ sequence.route }}</small></span></template>
+            </v-radio>
+          </v-radio-group>
+          <p v-if="chosenSequence" class="text-caption text-medium-emphasis mt-2">Preference saved. October 7–8 remain Reserve until the published result; this is not a booking.</p>
         </div>
         <div v-if="chapter.choice" class="mt-4">
-          <h3 class="text-subtitle-1 mb-2">{{ chapter.id === 'next-day-bid' ? '2. Keep a childcare backup while the request is pending' : chapter.choice.prompt }}</h3>
-          <div class="choices">
-            <v-btn v-for="option in chapter.choice.options" :key="option.id" color="primary"
-              :variant="activeOption?.id === option.id ? 'flat' : 'outlined'"
-              :aria-pressed="activeOption?.id === option.id" @click="choose(option.id)">{{ option.label }}</v-btn>
-          </div>
-          <p v-if="activeOption" class="text-body-2 mt-3">{{ activeOption.reply }}</p>
+          <h3 id="scenario-choice-heading" class="text-subtitle-2 font-weight-bold mb-2">{{ chapter.id === 'next-day-bid' ? 'Childcare plan' : chapter.choice.prompt }}</h3>
+          <v-radio-group :model-value="activeOption?.id" aria-labelledby="scenario-choice-heading" hide-details class="scenario-options"
+            @update:model-value="choose">
+            <v-radio v-for="option in chapter.choice.options" :key="option.id" :value="option.id" :label="option.label" color="primary" />
+          </v-radio-group>
         </div>
-        <p v-for="branch in branches" :key="`${branch.from}-${branch.option}`" class="scenario-text mt-3">{{ branch.text }}</p>
+        <div v-if="activeOption || branches.length" class="scenario-result mt-4">
+          <h3 class="text-subtitle-2 font-weight-bold mb-1">Result</h3>
+          <p v-if="activeOption">{{ activeOption.reply }}</p>
+          <p v-for="branch in branches" :key="`${branch.from}-${branch.option}`">{{ branch.text }}</p>
+        </div>
         <p v-if="changedDays.length" class="text-body-2 mt-3 text-primary">October calendar updated: {{ changedDays.join(', ') }}.</p>
-        <p v-else class="text-body-2 mt-3 text-medium-emphasis">No October schedule change at this step.</p>
-        <div class="d-flex flex-wrap ga-2 mt-3">
-          <template v-for="system in chapter.systems" :key="system.name">
-            <v-btn v-if="timedSystems.has(system.name)" variant="tonal" color="primary" size="small" prepend-icon="mdi-timeline-clock-outline"
-              @click="showTiming(system.name)">When does {{ system.name }} open and close?</v-btn>
-            <v-btn v-else variant="text" size="small" :to="`/learn/${system.lessonId}`">{{ system.name }} · learn more</v-btn>
-          </template>
-        </div>
+        <p v-else class="text-caption mt-3 text-medium-emphasis">Schedule unchanged.</p>
       </template>
       <template v-else>
-        <h2 class="text-h6 mb-3">Start with personal plans—not an awarded line</h2>
-        <p>Nothing is awarded yet—only personal plans are on the calendar. Start {{ persona.name }}’s story to see each system fill in October, step by step.</p>
+        <h2 class="text-h6 mb-2">{{ persona.name }}’s October</h2>
+        <p>Only personal plans are on the calendar. No work has been awarded yet.</p>
       </template>
-      <div class="d-flex flex-wrap ga-2 mt-4">
-        <v-btn variant="text" :disabled="reading.chapter < 0" @click="reading.chapter--">Previous</v-btn>
-        <v-btn color="primary" :disabled="!canContinue || reading.chapter === persona.chapters.length - 1" @click="next">
-          {{ reading.chapter < 0 ? 'Begin scenario' : 'Continue scenario' }}
+      <div class="scenario-navigation d-flex flex-wrap align-center ga-2 mt-4">
+        <v-btn variant="text" prepend-icon="mdi-chevron-left" :disabled="reading.chapter < 0" @click="reading.chapter--">Previous</v-btn>
+        <v-btn color="primary" append-icon="mdi-chevron-right" :aria-label="reading.chapter < 0 ? 'Start scenario' : 'Continue scenario'"
+          :disabled="!canContinue || reading.chapter === persona.chapters.length - 1" @click="next">
+          {{ reading.chapter < 0 ? 'Start' : 'Continue' }}
         </v-btn>
-        <v-btn variant="text" @click="restart">Restart {{ persona.name }}</v-btn>
+        <v-tooltip :text="`Restart ${persona.name}`" location="top">
+          <template #activator="{ props: tooltipProps }">
+            <v-btn v-bind="tooltipProps" class="ml-auto" variant="text" icon="mdi-restart" size="small" :aria-label="`Restart ${persona.name}`" @click="restart" />
+          </template>
+        </v-tooltip>
       </div>
     </v-card>
     <aside class="scenario-index" aria-labelledby="scenario-index-heading">
-      <h2 id="scenario-index-heading" class="text-subtitle-1 font-weight-bold mb-1">Choose a scenario</h2>
-      <p class="text-caption text-medium-emphasis mb-3">{{ persona.name }} · {{ persona.chapters.length }} examples</p>
+      <h2 id="scenario-index-heading" class="text-subtitle-2 font-weight-bold mb-2">Scenarios · {{ persona.chapters.length }}</h2>
       <nav class="scenario-list" :aria-label="`${persona.name} scenarios`">
         <button v-for="(scenario, index) in persona.chapters" :key="scenario.id" type="button" class="scenario-link"
           :class="{ selected: reading.chapter === index }" :aria-pressed="reading.chapter === index"
@@ -264,8 +275,6 @@ function restart() {
           <span class="scenario-link-copy">
             <strong>{{ scenario.title }}</strong>
             <small>{{ scenario.date }}</small>
-            <span v-if="scenario.choice" class="scenario-kind">Interactive</span>
-            <span v-else-if="scenario.requiresChoices?.length || scenario.branches?.length" class="scenario-kind">Outcome</span>
           </span>
         </button>
       </nav>
@@ -273,13 +282,10 @@ function restart() {
     </div>
     </section>
 
-    <section ref="explorerEl" class="scroll-target mt-10" aria-labelledby="systems-heading">
-      <h2 id="systems-heading" class="text-h5 font-weight-bold mb-1">Every system: opens, cutoff, results</h2>
-      <p class="text-body-2 text-medium-emphasis mb-4">Click a system to see its times and a short example.</p>
-      <SystemTimelineExplorer v-model:selected="selectedSystem" :practiceable="Object.keys(practiceTargets)" @practice="practice" />
-    </section>
-    <p class="text-caption text-medium-emphasis mt-6">Teaching reference only. Confirm current APFA/Company dates, eligibility,
-      and implementation before acting.</p>
+    <details ref="explorerEl" class="system-timings scroll-target mt-6">
+      <summary>System timings</summary>
+      <SystemTimelineExplorer v-model:selected="selectedSystem" class="mt-4" :practiceable="Object.keys(practiceTargets)" @practice="practice" />
+    </details>
     <details class="mt-5 text-body-2 text-medium-emphasis">
       <summary>Sources, verification limits and practice outcomes</summary>
       <p class="mt-2">Timing and eligibility reviewed on October 28, 2026 against the 2024 CBA, Sections 10.C, 10.E–G and 12.I–K,
@@ -300,10 +306,15 @@ function restart() {
 
 <style scoped>
 .calendar-page { max-width: 1500px; }
+.persona-switch { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: min(100%, 390px); height: auto; }
+.persona-switch .v-btn { min-width: 0; min-height: 44px; height: auto; padding: 8px 12px; white-space: normal; text-transform: none; letter-spacing: 0; }
+.persona-switch :deep(.v-btn__content) { white-space: normal; }
 .paired-calendars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .paired-calendars section { min-width: 0; }
 .scenario-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
-.scenario-index { min-width: 0; border-top: 3px solid #0061ab; padding-top: 12px; }
+.scenario-picker { display: none; }
+.scenario-card { min-width: 0; border-radius: 8px; }
+.scenario-index { min-width: 0; border-left: 1px solid #d3e0eb; padding-left: 16px; }
 .scenario-list { display: grid; gap: 4px; max-height: min(72vh, 720px); overflow-y: auto; padding-right: 4px; }
 .scenario-link { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; width: 100%; padding: 8px; border: 1px solid transparent; border-bottom-color: #d3e0eb; border-radius: 4px; background: transparent; color: #1b2a35; text-align: left; cursor: pointer; }
 .scenario-link:hover, .scenario-link.selected { border-color: #0061ab; background: #eaf3fb; }
@@ -312,29 +323,32 @@ function restart() {
 .scenario-link-copy { display: grid; min-width: 0; gap: 3px; }
 .scenario-link-copy strong { font-size: .8125rem; line-height: 1.3; }
 .scenario-link-copy small { color: #60717d; font-size: .6875rem; line-height: 1.3; }
-.scenario-kind { color: #0061ab; font-size: .625rem; font-weight: 700; text-transform: uppercase; }
 .timeline-detail { background: #eaf3fb; border-radius: 8px; }
-.calendar-legend, .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.calendar-legend { display: flex; flex-wrap: wrap; gap: 8px; }
 .calendar-legend span { border-left: 4px solid; padding-left: 5px; font-size: .75rem; }
-.choices .v-btn { white-space: normal; height: auto; min-height: 44px; padding: 10px 16px; }
-.scenario-text { line-height: 1.8; }
-.application-flow { display: flex; flex-wrap: wrap; gap: 12px; padding: 12px; background: #eaf3fb; border-radius: 8px; font-size: .875rem; }
-.beginner-guide { background: #eaf3fb; border-radius: 12px; }
-.quick-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.quick-facts div { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 10px; background: #f5f9fc; border: 1px solid #e1eaf1; font-size: .8125rem; }
-.quick-facts strong { color: #003057; font-size: .875rem; }
+.scenario-text { line-height: 1.65; }
+.scenario-systems { color: #526673; font-size: .8125rem; line-height: 1.5; }
+.calendar-guide, .scenario-reference { font-size: .875rem; line-height: 1.55; }
+.scenario-reference > summary { color: #0061ab; font-weight: 600; }
+.scenario-options :deep(.v-selection-control) { align-items: flex-start; min-height: 44px; }
+.scenario-options :deep(.v-label) { white-space: normal; opacity: 1; padding: 9px 0; font-size: .875rem; }
+.sequence-copy { display: flex; flex-direction: column; gap: 2px; }
+.sequence-copy small { color: #60717d; }
+.scenario-result { border-left: 3px solid #237953; padding-left: 12px; font-size: .875rem; line-height: 1.6; }
+.scenario-result p + p { margin-top: 8px; }
+.scenario-navigation .v-btn, .reference-links .v-btn { text-transform: none; letter-spacing: 0; }
+.reference-links .v-btn { max-width: 100%; white-space: normal; height: auto; min-height: 36px; }
+.system-timings { border-top: 1px solid #d3e0eb; padding-top: 16px; }
+.system-timings > summary { font-size: 1rem; font-weight: 600; }
 .abbreviation-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 16px; margin: 0; padding: 0; list-style: none; font-size: .8125rem; }
 .abbreviation-list strong { color: #003057; }
 .scroll-target { scroll-margin-top: 80px; }
-@media (max-width: 1050px) { .quick-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 1050px) { .scenario-workspace { grid-template-columns: 1fr; } .scenario-list { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: 360px; } }
-@media (max-width: 560px) { .quick-facts { grid-template-columns: 1fr; } }
-@media (max-width: 560px) { .scenario-list { grid-template-columns: 1fr; max-height: 420px; } }
+@media (max-width: 1050px) {
+  .scenario-workspace { grid-template-columns: 1fr; }
+  .scenario-picker { display: block; }
+  .scenario-index { display: none; }
+}
 @media (max-width: 760px) { .abbreviation-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.plain-definition { border-left: 3px solid #0061ab; padding: 8px 12px; background: #f5f9fc; font-size: .875rem; }
-.sequence-option { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 16px; border: 2px solid #cbd8e3; border-radius: 10px; flex: 1 1 220px; }
-.sequence-option[aria-pressed="true"] { border-color: #0061ab; background: #eaf3fb; }
-.sequence-option:focus-visible { outline: 3px solid #0061ab; outline-offset: 3px; }
 summary { cursor: pointer; }
 @media (max-width: 1050px) { .paired-calendars { grid-template-columns: 1fr; } }
 </style>

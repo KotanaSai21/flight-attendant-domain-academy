@@ -22,21 +22,19 @@ Contract**, **LOA**, or **APFA Website**.
 
 | # | Module | # | Module |
 |---|--------|---|--------|
-| 1 | Airline Fundamentals | 8 | Cover the Month · ROTA, ROTD & Aggressive |
-| 2 | Crew | 9 | Payroll & Credit |
-| 3 | Flight Attendants | 10 | Operational Changes & Scenarios |
-| 4 | Your Bidding Month | 11 | Training |
-| 5 | Build the Month · TBS, LRD, PBS | 12 | Business Scenarios Capstone |
-| 6 | Reshape the Month · TTS & ETB | 13 | International Flying |
-| 7 | The Next Two Days · UBL & Open Time | 14 | Seniority |
+| 1 | Airline Fundamentals | 6 | Reshape the Month · TTS & ETB |
+| 2 | Crew | 7 | The Next Two Days · UBL & Open Time |
+| 3 | Flight Attendants | 8 | Cover the Month · ROTA, ROTD & Aggressive |
+| 4 | Your Bidding Month | 9 | Payroll & Credit |
+| 5 | Build the Month · TBS, LRD, PBS | 10 | Operational Changes & Scenarios |
 
 Each module: What is this? · Why It Exists · How It Works · Systems Involved · Information Behind It ·
 Real Examples · Interactive Quiz — pure domain, no developer jargon.
 
 ## Features
 
-- **Learning Center** — 14 modules with per-section progress tracking (localStorage)
-- **Interactive Domain Dictionary** — 35 contract-grounded terms with business purpose,
+- **Learning Center** — 10 modules with per-section progress tracking (localStorage)
+- **Interactive Domain Dictionary** — 93 terms across contract and operational fundamentals, with business purpose,
   developer relevance, examples, related-term graph navigation
 - **Bidding Academy** — bid-cycle timeline with contract references; reserve processing flow;
   implementation-complexity watchlist from the LOA
@@ -52,7 +50,7 @@ Real Examples · Interactive Quiz — pure domain, no developer jargon.
   contextual lesson links, not separate scenarios.
   Award moments also name the awarding system in the narrative. A compact clock note gives relevant
   bid cutoffs, award checks or acknowledgement times with DFW/HBT labels. Each scene has a specific
-  date: September 10 PBS submission, September 15 cutoff, and September 18 award review.
+  date: September 10 PBS submission, September 15 cutoff, September 18 preliminary award view, and September 20 official award publication.
   The story follows one bid-to-award journey, not a separate final bidding round; referenced rules still require current verification.
   Leo is introduced as Maya's school-age son. An October 22 missed-report scene shows prompt
   crew-desk contact, confirmed revised instructions and family consequences without assuming

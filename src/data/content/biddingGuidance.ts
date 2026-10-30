@@ -26,7 +26,7 @@ export const dailySchedule: ContentBlock = {
 
 export const reserveDays: ContentBlock = {
   kind: 'steps',
-  title: 'The 4-step Reserve days-off lifecycle: PBS → GDFD → RTDO/ETB → Operation',
+  title: 'The 4-step Reserve days-off lifecycle: PBS → GDFD → TTS/ETB → Operation',
   items: [
     {
       day: 'Step 1 · PBS Bid (~Days 10–15)',
@@ -35,16 +35,16 @@ export const reserveDays: ContentBlock = {
         'Rank preferred off dates in PBS. PBS awards the total monthly days off (12 minimum in a 30-day month) and 18 reserve duty days while enforcing legal patterns (2–8 off days, 3–6 duty days). PBS awards the off days, not their Golden/Flex designation.',
     },
     {
-      day: 'Step 2 · GDFD Tool (~Days 18–21)',
+      day: 'Step 2 · GDFD Tool (after final PBS award)',
       title: 'Designate Golden Days vs Flex Days (GDFD)',
       detail:
-        'Open the GDFD application in Crew Portal to view and customize which awarded days off are Golden (8 days, protected) vs Flex (4 days, assignable). If Golden and Flex days are grouped together, Flex Days must precede Golden Days (§10.D.16.b.iii).',
+        'Use the GDFD application in Crew Portal to review and designate awarded days off as Golden (8 days, protected) or Flex (4 days, assignable) in a full Reserve month. Follow the published window for the bid period. If grouped together, Flex Days must precede Golden Days (§10.D.16.b.iii).',
     },
     {
-      day: 'Step 3 · Trade Days Off (~Day 24 onwards)',
-      title: 'Trade days off in TTS (Company) or ETB (Peer)',
+      day: 'Step 3 · Reserve day-off trades (TTS / ETB)',
+      title: 'Request a Company trade in TTS or a peer trade in ETB',
       detail:
-        'Reserve Trade Days Off is a TTS action, not a separate application. Published APFA implementation guidance uses a 2300 HBT cutoff two days before the requested trade date and overnight results by 0400 HBT. Confirm the current TTS guide rather than relying on the older noon contractual process. Peer reserve day-off trades use ETB.',
+        'Company Reserve day-off trades are a TTS request, not a separate RTDO application. APFA implementation guidance uses a 2300 HBT cutoff two days before the requested trade date and results by 0400 HBT after overnight processing. The first run is scheduled separately from trip trading; check the current bid-period calendar. Peer Reserve day-off trades use ETB.',
     },
     {
       day: 'Step 4 · Live Operation',

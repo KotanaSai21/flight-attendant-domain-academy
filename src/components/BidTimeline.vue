@@ -27,13 +27,13 @@ const steps = [
   {
     title: 'Award Generated & GDFD Designation',
     detail:
-      'Lines of Time (70–90 hrs standard) and Reserve lines post. Awards in seniority order; Reserves use the GDFD application to customize 8 Golden and 4 Flex Days (closes Day 21 at 1200 CT).',
+      'A preliminary PBS award is viewable on the 18th; official publication is due by the 20th at 1200 DFW. Reserves designate Golden/Flex days in GDFD during the separately published window.',
     ref: '§10.D.15, §10.D.16.b, §12.B',
   },
   {
-    title: 'Schedule Published → TTS / UBL / RTDO Open',
+    title: 'Schedule Published → TTS / UBL / ETB Open',
     detail:
-      'Post-award reshaping begins: TTS nightly trading, ETB real-time swaps, and RTDO ballots for Reserves to trade days off with the Company (opens 24th).',
+      'Post-award reshaping begins: TTS processes trip trades and Reserve Company day-off requests; ETB handles real-time peer trades, including eligible Reserve day-off exchanges. The first Reserve day-off TTS run is scheduled separately from trip trading.',
     ref: '§10.E–K, §12.C.1–2',
   },
   {

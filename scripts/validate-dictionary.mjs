@@ -256,7 +256,7 @@ const missedReport = maya.chapters.find((chapter) => chapter.id === 'birthday-de
 checkMonth(missedReport.text.includes('Crew Scheduling/Tracking') &&
   missedReport.text.includes('not a TTS drop or an automatic day off') &&
   missedReport.timing.includes('attendance review') &&
-  missedReport.branches.every((branch) => branch.text.includes('confirms revised duty instructions')),
+  missedReport.text.includes('confirms revised duty instructions'),
   'missed-report scene must explain contact, confirmed next steps and circumstance-dependent consequences')
 const moment = (person, id, choices = {}) => monthSnapshot(person, person.chapters.findIndex((chapter) => chapter.id === id), choices)
 const hasEvent = (state, id) => state.events.some((event) => event.id === id)
@@ -284,6 +284,9 @@ checkMonth(hasEvent(moment(maya, 'trade-result', { 'trade-choice': 'keep' }), 'b
 checkMonth(eventsForDay(moment(maya, 'birthday-delay', { 'repair-bill': 'home' }).events, 22)
   .some((event) => event.id === 'delay' && event.kind === 'flying'),
   'missed report must retain revised duty rather than silently create a day off')
+checkMonth(eventsForDay(moment(maya, 'deadhead').events, 22)
+  .some((event) => event.id === 'deadhead-home' && event.kind === 'flying'),
+  'a confirmed deadhead must appear on the calendar rather than only in the narrative')
 for (const dropChoices of [
   { 'drop-day-before': 'etb-day-before' },
   { 'drop-day-before': 'ubl-day-before' },
@@ -304,6 +307,8 @@ for (const dropChoices of [
     }
     checkMonth(hasEvent(moment(maya, 'near-term-result', choices), 'premium-trip') === (pickup === 'pickup'),
       'dropping MIA must not erase or award an unrelated October 24 pickup request')
+    checkMonth(!hasEvent(moment(maya, 'deadhead', choices), 'deadhead-home'),
+      'a dropped MIA sequence must not gain a deadhead assignment')
   }
 }
 const sameDayDropIndex = maya.chapters.findIndex((chapter) => chapter.id === 'same-day-drop')
@@ -341,6 +346,8 @@ checkMonth(hasEvent(mayaPendingPickup, 'premium-request') && !hasEvent(mayaPendi
   missedReport.branches.find((branch) => branch.option === 'pickup').text.includes('not on UBL yet'),
   'October 22 pickup must remain pending for TTS, not appear as an early UBL request or award')
 const nearTermPickup = maya.chapters.find((chapter) => chapter.id === 'near-term-result')
+checkMonth(!/her (near-term )?pickup request/i.test(nearTermPickup.text),
+  'the shared pickup-result introduction must also make sense when no pickup was requested')
 checkMonth(nearTermPickup.branches.find((branch) => branch.option === 'pickup').text.includes('On October 23') &&
   nearTermPickup.branches.find((branch) => branch.option === 'pickup').text.includes('elected participation'),
   'Maya must enter UBL on the eligible date with participation elected')
@@ -440,6 +447,11 @@ checkMonth(/originating today or tomorrow/.test(ublTiming.does) &&
   /Late bids use the same today\/tomorrow window; later departures remain for TTS/.test(ublTiming.does),
   'UBL late bids must not bypass the today/tomorrow origination horizon')
 const rotdTiming = systemTimings.find((system) => system.system === 'ROTD')
+checkMonth(systemGuide.ROTA.name === 'Reserve Open Time Assignment/Award' &&
+  systemGuide.ROTD.name === 'Reserve Open Time Assignment/Award Daily',
+  'reserve system labels must show their official full forms')
+checkMonth(rotdTiming.practiceChapter === 'day-of-change',
+  'ROTD practice must open the assignment scenario, not the earlier availability-only chapter')
 checkMonth(['00:01', '05:00 HBT', 'after 11:00 HBT', 'may be held until 07:00 HBT']
   .every((text) => rotdTiming.ends.includes(text)),
   'ROTD timing must include the permitted overnight hold, not an unconditional 60-minute deadline')
@@ -465,6 +477,40 @@ const beforeReplay = JSON.stringify(monthlyPersonas)
 moment(maya, 'month-close', { 'trade-choice': 'trade', 'repair-bill': 'pickup' })
 moment(maya, 'kitchen-table')
 checkMonth(JSON.stringify(monthlyPersonas) === beforeReplay, 'calendar replay must not mutate shared story data')
+let reviewedPaths = 0
+for (const person of monthlyPersonas) {
+  let paths = [{}]
+  for (const [index, chapter] of person.chapters.entries()) {
+    paths = paths.flatMap((choices) => {
+      const previous = monthSnapshot(person, index - 1, choices)
+      const visible = chapterForEvents(chapter, previous.events)
+      checkMonth(scenarioEntryIndex(person, index, choices) === index,
+        `${person.id}/${chapter.id}: a sequential walkthrough must not loop back to an earlier decision`)
+      return visible.choice
+        ? visible.choice.options.map((option) => ({ ...choices, [chapter.id]: option.id }))
+        : [choices]
+    })
+  }
+  reviewedPaths += paths.length
+  for (const choices of paths) {
+    const ending = monthSnapshot(person, person.chapters.length - 1, choices)
+    checkMonth(!ending.events.some((event) => event.kind === 'request'),
+      `${person.id}: completed story paths must resolve pending requests`)
+    if (person.id === 'maya') {
+      const dropped = ['ubl-day-before', 'etb-day-before'].includes(choices['drop-day-before']) || choices['same-day-drop'] === 'etb-same-day'
+      checkMonth(hasEvent(ending, 'mia') === !dropped && hasEvent(ending, 'deadhead-home') === !dropped &&
+        hasEvent(ending, 'delay') === !dropped && hasEvent(ending, 'premium-trip') === (choices['repair-bill'] === 'pickup'),
+        'Maya: drop and premium-pickup decisions must remain independent across every complete path')
+      checkMonth(hasEvent(ending, 'replacement') === (choices['trade-choice'] === 'trade') &&
+        hasEvent(ending, 'peer-trip') === (choices['peer-offer'] === 'accept'),
+        'Maya: later scenarios must preserve earlier confirmed trades')
+    } else {
+      checkMonth(hasEvent(ending, 'swapped-off') === (choices['appointment-request'] === 'request') &&
+        hasEvent(ending, 'reserve-premium') === (choices['extra-income'] === 'pickup'),
+        'Jordan: day-off trades and voluntary pickups must remain independent across every complete path')
+    }
+  }
+}
 for (const person of monthlyPersonas) {
   const award = person.chapters.find((chapter) => chapter.id === 'month-award')
   checkMonth(award.text.includes('PBS') && award.date.startsWith('September 20') && award.timing.includes('12:00 DFW') &&
@@ -552,6 +598,11 @@ for (const system of systemTimings) {
     }
   }
   checkMonth(moduleIds.has(system.lessonId), `calendar timings/${system.system}: invalid lesson`)
+  if (system.practiceChapter) {
+    checkMonth(monthlyPersonas.some((person) => person.chapters.some((chapter) =>
+      chapter.id === system.practiceChapter && chapter.systems?.some((item) => item.name === system.system))),
+      `calendar timings/${system.system}: practice link must target a matching scenario`)
+  }
 }
 for (const name of calendarSystemNames) checkMonth(timingNames.has(name), `calendar timings: missing ${name}`)
 checkMonth(!timingNames.has('RTDO'), 'calendar timings: reserve day-off trades run in TTS, not a separate RTDO system')
@@ -588,3 +639,4 @@ if (errors.length) {
 
 console.log(`Content validation passed: ${dictionary.length} terms, ${scenarios.length} simulator scenarios, and ${lifeScenarios.length} life scenarios covering all ${moduleIds.size} modules are complete and connected.`)
 console.log(`Monthly story validation passed: ${monthlyPersonas.length} personas, all scheduling systems linked, and calendar branch/replay checks passed.`)
+console.log(`Scenario path review passed: ${reviewedPaths} complete choice paths, including skipped and retained duty scenarios.`)
